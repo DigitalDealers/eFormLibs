@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Confirm Delete</h2>
+<mat-dialog-content>
+  <p>Are you sure you want to delete this item?</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button type="button" mat-stroked-button class="inverted" [matDialogClose]="false">
+    Cancel
+  </button>
+  <button type="button" mat-stroked-button color="warn" [matDialogClose]="true">
+    Confirm
+  </button>
+</mat-dialog-actions>

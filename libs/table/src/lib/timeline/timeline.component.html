@@ -1,0 +1,25 @@
+<div class="tabl group-table">
+  <div *ngFor="let row of rows" class="group-container">
+    <div class="group-title">{{ row.title }}</div>
+    <div class="row portal-row" *ngFor="let item of row.items" (click)="handleSelectRow(item)">
+      <div class="column" *ngFor="let column of settings.columns" [ngStyle]="column?.style">
+        <div *ngIf="!column?.items">{{ item[column.key] }}</div>
+        <div *ngIf="column?.items">
+          <div *ngFor="let subColumn of column.items" [ngStyle]="subColumn?.style">
+            {{ item[subColumn.key] }}
+          </div>
+        </div>
+      </div>
+
+      <div class="actions" *ngIf="settings.showActions">
+        <button type="button"
+                class="column"
+                mat-icon-button
+                *ngFor="let action of settings.actions"
+                (click)="handleActionClick($event, item, action, settings.disableAction(item, action))">
+          <mat-icon>{{ action.name }}</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

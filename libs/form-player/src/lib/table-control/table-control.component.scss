@@ -1,0 +1,34 @@
+.table-control-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-item-container {
+  display: flex;
+  justify-content: center;
+
+  button {
+    margin: 1rem 0;
+  }
+}
+
+.table-control-column {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.table-control-cell {
+  display: flex;
+  flex-direction: column;
+
+  img {
+    width: 100%;
+  }
+}
+
+.table-control-actions {
+  display: flex;
+  align-items: center;
+}

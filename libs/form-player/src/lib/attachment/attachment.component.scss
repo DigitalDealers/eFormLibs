@@ -1,0 +1,30 @@
+@import '../vars';
+
+:host {
+  .upload-button-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  input[type=file] {
+    display: none;
+  }
+
+  .upload-button {
+    margin-top: 1em;
+  }
+
+  .file-item-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.3rem;
+  }
+
+  .file-name-label {
+    font-weight: 600;
+    margin-left: 5px;
+    color: $primary;
+  }
+}

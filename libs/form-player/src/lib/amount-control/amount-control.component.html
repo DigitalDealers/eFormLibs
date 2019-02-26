@@ -1,0 +1,39 @@
+<div [formGroup]="multiForm">
+  <div formArrayName="items" *ngFor="let item of formData.controls; let i = index">
+    <div [formGroupName]="i" class="multi-input-row">
+      <mat-form-field *ngIf="!hidden"
+                      class="input-sub-control title-column"
+                      [class.readonly]="readonly"
+                      appearance="outline">
+        <input matInput
+               formControlName="title"
+               [readonly]="readonly"
+               autocomplete="off">
+      </mat-form-field>
+      <mat-form-field *ngIf="!hidden"
+                      class="input-sub-control value-column"
+                      [class.readonly]="readonly"
+                      appearance="outline">
+        <mat-label>Amount</mat-label>
+        <input type="number"
+               matInput
+               formControlName="value"
+               [readonly]="readonly"
+               autocomplete="off">
+      </mat-form-field>
+      <button mat-icon-button (click)="removeControl(i)" *ngIf="!readonly">
+        <mat-icon>delete_outlined</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="actions-container">
+    <button type="button"
+            *ngIf="!readonly"
+            class="inverted"
+            mat-stroked-button
+            (click)="handleClick()">
+      <mat-icon>add_outlined</mat-icon>
+      Add Item
+    </button>
+  </div>
+</div>

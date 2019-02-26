@@ -1,0 +1,161 @@
+@import 'vars';
+
+:host {
+  width: 100%;
+  position: relative;
+  display: block;
+  ::ng-deep {
+    .dp-custom-grid .selected {
+      background: rgba(0, 0, 0, 0.05) !important;
+    }
+  }
+  .dp-custom-grid {
+    width: auto;
+  }
+  .dp-custom-grid table {
+    border-collapse: separate;
+    border-spacing: 0 0.8em;
+    border: none;
+    width: 100%;
+  }
+  .dp-custom-grid table tr th {
+    font-size: 1em;
+    border: none;
+    padding: 0 1em;
+    font-weight: normal;
+    background: $backgroundColor;
+    white-space: nowrap;
+  }
+  .dp-custom-grid table tr td {
+    font-size: 1em;
+    border: none;
+    padding: 0.9em 1em;
+    background-color: transparent;
+    position: relative;
+    white-space: nowrap;
+  }
+  .dp-custom-grid table tr {
+    background-color: $white;
+  }
+  .dp-custom-grid table tbody tr:hover td:first-child,
+  .dp-custom-grid table tbody .selected td:first-child {
+    box-shadow: 3px 0 #e4bf05 inset;
+  }
+  .dp-custom-grid table thead tr {
+    background-color: transparent;
+    th {
+      background-color: transparent;
+    }
+  }
+  .dp-custom-grid table tbody tr:hover {
+    cursor: pointer;
+  }
+  a {
+    color: #0275d8;
+  }
+  .grid-row-container {
+    width: 100%;
+  }
+  .head-actions {
+    width: auto;
+    position: absolute !important;
+    left: calc(100% - 4rem * attr(data-actions));
+  }
+  .cell-actions {
+    position: absolute !important;
+    right: 0;
+    padding: 0 !important;
+  }
+  .actions {
+    line-height: 0;
+    display: flex;
+  }
+  .actions>a {
+    display: block;
+    position: relative;
+    padding: 0.75em 0.9em;
+    outline: none;
+    background-color: $white;
+    border-left: 0.8rem solid transparent;
+  }
+  .actions>a>span {
+    position: relative;
+    z-index: 1;
+  }
+  .actions>a:not(.disabled):hover {
+    color: $black;
+  }
+  .actions>a:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: -1px;
+    width: 0.8rem;
+    background: $backgroundColor;
+    left: -0.8rem;
+    z-index: 2;
+  }
+  .actions>a:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: -1px;
+    left: 0;
+    background: $white;
+    width: 100%;
+  }
+  .actions>a i {
+    font-size: 1.4rem;
+  }
+  .actions>a.disabled {
+    opacity: 0.62;
+  }
+  .paginator-container {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+  }
+  .row {
+    position: relative;
+    height: auto;
+    border-bottom: 1px solid #efefef;
+    background: #fff;
+    list-style: none !important;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
+    margin-bottom: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .tabl {
+    display: flex;
+    flex-direction: column;
+  }
+  .column:first-child {
+    color: rgba(0, 0, 0, 0.87);
+    font-size: 17px;
+  }
+  .column:last-child,
+  .column {
+    color: rgba(0, 0, 0, 0.54);
+  }
+  th {
+    text-align: -webkit-left !important;
+  }
+  .group-title {
+    font-size: 22px;
+    font-weight: 400;
+    color: $primary;
+    margin-bottom: 10px;
+  }
+  .group-table {
+    .group-container {
+      margin-top: 20px;
+      &:first-child {
+        margin-top: 0 !important;
+      }
+    }
+  }
+}

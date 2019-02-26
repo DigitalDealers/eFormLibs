@@ -1,0 +1,142 @@
+<form
+  [formGroup]="form"
+  [ngClass]="{
+    field: !skipStyle,
+    'text-section': field.response.type === 'text-section',
+    'didi-hidden': hidden,
+    'section-control': field.response.type === 'section',
+    required: required
+  }"
+>
+  <div [ngSwitch]="field.response.type" [class.group-container]="field.response.type === 'section'">
+    <label class="qLabel" *ngIf="!hidden">{{ field.question }}</label>
+    <div *ngIf="field.image && field.response.type === 'text-section'">
+      <img [src]="field?.image?.url" class="text-section-img" />
+    </div>
+
+    <div *ngSwitchCase="'input-text'">
+      <didi-input-control
+        [form]="form"
+        [field]="field"
+        [value]="value"
+        [type]="'text'"
+        [hidden]="hidden"
+        [invalid]="invalid"
+        [readonly]="readonly"
+        (setFieldValue)="handleSetFieldValue({ value: $event, controlName: field.controlName })"
+      >
+      </didi-input-control>
+    </div>
+
+    <div *ngSwitchCase="'input-number'">
+      <didi-input-control
+        [form]="form"
+        [field]="field"
+        [value]="value"
+        [type]="'number'"
+        [hidden]="hidden"
+        [invalid]="invalid"
+        [readonly]="readonly"
+        (setFieldValue)="handleSetFieldValue({ value: $event, controlName: field.controlName })"
+      >
+      </didi-input-control>
+    </div>
+
+    <div *ngSwitchCase="'photo'" class="photo-field">
+      <didi-upload-button
+        [field]="value"
+        [multi]="field?.multi"
+        [readonly]="readonly"
+        *ngIf="!hidden"
+        (filePath)="handleSetFieldValue({ value: $event, controlName: field.controlName })"
+      >
+      </didi-upload-button>
+    </div>
+
+    <div *ngSwitchCase="'single-choice'">
+      <mat-radio-group
+        class="singleRadio"
+        [ngClass]="{ bigSignleSelect: field.response.choices.length > 2 }"
+        *ngIf="!hidden"
+        [formControlName]="field.controlName"
+      >
+        <mat-radio-button *ngFor="let choice of field.response.choices; trackBy: trackByFn" [value]="choice">
+          {{ choice }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <div *ngSwitchCase="'multiple-choice'">
+      <mat-selection-list [formControlName]="field.controlName" *ngIf="!hidden">
+        <mat-list-option
+          *ngFor="let choice of field.response.choices; trackBy: trackByFn"
+          [value]="choice"
+          class="muliple-choice-container"
+        >
+          {{ choice }}
+        </mat-list-option>
+      </mat-selection-list>
+      <mat-error *ngIf="invalid">Field is required</mat-error>
+    </div>
+
+    <div *ngSwitchCase="'dropdown'">
+      <didi-dropdown
+        [field]="field"
+        [value]="form.get(field.controlName).value"
+        (handleSelect)="handleSetFieldValue($event)"
+      >
+      </didi-dropdown>
+    </div>
+
+    <div *ngSwitchCase="'electronic-signature'">
+      <didi-electronic-signature
+        [field]="value"
+        [invalid]="invalid"
+        [readonly]="readonly"
+        (filePath)="handleSetFieldValue({ value: $event, controlName: field.controlName })"
+      >
+      </didi-electronic-signature>
+    </div>
+
+    <div *ngSwitchCase="'datetime'">
+      <didi-datetime-picker [form]="form" [field]="field" [readonly]="readonly"></didi-datetime-picker>
+    </div>
+
+    <div *ngSwitchCase="'attachment'">
+      <didi-attachment
+        [form]="form"
+        [field]="value"
+        [readonly]="readonly"
+        *ngIf="!hidden"
+        (filePath)="handleSetFieldValue({ value: $event, controlName: field.controlName })"
+      >
+      </didi-attachment>
+    </div>
+
+    <div *ngSwitchCase="'amount'">
+      <didi-amount-control
+        [form]="form"
+        [field]="field"
+        [value]="value"
+        [hidden]="hidden"
+        [invalid]="invalid"
+        [readonly]="readonly"
+        (setFieldValue)="handleSetFieldValue({ value: $event, controlName: field.controlName })"
+      >
+      </didi-amount-control>
+    </div>
+
+    <div *ngSwitchCase="'table'">
+      <didi-table-control
+        [form]="form"
+        [field]="field"
+        [value]="value"
+        [hidden]="hidden"
+        [invalid]="invalid"
+        [readonly]="readonly"
+        (setFieldValue)="handleSetFieldValue({ value: $event, controlName: field.controlName })"
+      >
+      </didi-table-control>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,37 @@
+<div class="dp-custom-grid table-responsive">
+  <didi-custom-table *ngIf="isCustomTable"
+                     [settings]="settings"
+                     [rows]="rows"
+                     [colCount]="colCount"
+                     (actionClick)="onActionClick($event)"
+                     (selectRow)="onSelectRow($event)">
+  </didi-custom-table>
+
+  <didi-timeline *ngIf="isTimeline"
+                 [settings]="settings"
+                 [rows]="rows"
+                 [colCount]="colCount"
+                 (actionClick)="onActionClick($event)"
+                 (selectRow)="onSelectRow($event)">
+  </didi-timeline>
+
+  <didi-default-table *ngIf="isDefaultTable"
+                      [settings]="settings"
+                      [rows]="rows"
+                      [colCount]="colCount"
+                      (actionClick)="onActionClick($event)"
+                      (selectRow)="onSelectRow($event)">
+  </didi-default-table>
+</div>
+
+<div class="paginator-container" *ngIf="!settings.isShort">
+  <ngb-pagination *ngIf="collectionSize > limit"
+                  [(page)]="currentPage"
+                  [collectionSize]="collectionSize"
+                  [maxSize]="3"
+                  [rotate]="true"
+                  [ellipses]="true"
+                  [boundaryLinks]="false"
+                  (pageChange)="onPageChange($event)">
+  </ngb-pagination>
+</div>

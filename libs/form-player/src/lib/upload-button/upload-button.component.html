@@ -1,0 +1,35 @@
+<ng-container *ngIf="!readonly">
+  <div [hidden]="!multi || loading">
+    <input type="file" multiple="multiple" #inputUploadMulti (change)="upload($event)">
+    <button type="button"
+            class="upload-btn inverted"
+            mat-stroked-button
+            (click)="inputUploadMulti.click()">
+      <mat-icon>camera_alt</mat-icon>
+      Add photo
+    </button>
+  </div>
+
+  <div [hidden]="multi || loading || field?.length">
+    <input type="file" #inputUpload (change)="upload($event)">
+    <button type="button"
+            class="upload-btn inverted"
+            mat-stroked-button
+            (click)="inputUpload.click()">
+      <mat-icon>camera_alt</mat-icon>
+      Add photo
+    </button>
+  </div>
+</ng-container>
+
+<div class="img-container" [hidden]="loading || !field" *ngFor="let item of field">
+  <button type="button"
+          *ngIf="!readonly"
+          mat-icon-button
+          (click)="remove(item.url)">
+    <mat-icon>clear</mat-icon>
+  </button>
+  <img [src]="item.url" alt="Image">
+</div>
+
+<mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>

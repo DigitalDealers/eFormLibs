@@ -1,0 +1,30 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  input[type=file] {
+    display: none;
+  }
+
+  .upload-btn {
+    margin: 1rem 0;
+  }
+
+  .img-container {
+    position: relative;
+
+    button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #dfe3e6;
+    }
+
+    img {
+      width: 100%;
+    }
+  }
+}

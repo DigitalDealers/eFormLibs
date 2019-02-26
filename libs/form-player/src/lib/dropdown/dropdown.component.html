@@ -1,0 +1,8 @@
+<mat-form-field class="input-control" appearance="outline">
+  <input type="text" matInput [formControl]="dropdownControl" [matAutocomplete]="auto">
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+    <mat-option *ngFor="let option of (filteredOptions | async); trackBy: trackByFn" [value]="option">
+      {{ option.value }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

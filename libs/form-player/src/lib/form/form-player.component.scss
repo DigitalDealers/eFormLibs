@@ -1,0 +1,22 @@
+form {
+  margin: 2rem 0 1rem;
+}
+
+.actions {
+  margin-bottom: 0.5em;
+  background: #ffffff;
+  padding: 2em;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
+  display: flex;
+  justify-content: center;
+
+  .mat-raised-button {
+    max-width: 150px;
+  }
+}
+
+.form-id {
+  margin: 0 0 2rem;
+  text-align: right;
+  color: rgba(0, 0, 0, 0.54);
+}
