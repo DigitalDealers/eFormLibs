@@ -1,12 +1,5 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  EventEmitter,
-  Output,
-  ViewChild,
-  ElementRef
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+
 import { SafetyApiService } from '@didi/safety-api';
 import { FileUploadedItem } from '../types';
 
@@ -20,9 +13,7 @@ export class UploadButtonComponent {
   @Input() public multi = false;
   @Input() public field;
   @Input() public readonly;
-  @Output() public filePath: EventEmitter<
-    FileUploadedItem[]
-  > = new EventEmitter();
+  @Output() public filePath = new EventEmitter<FileUploadedItem[]>();
   @ViewChild('inputUpload') public inputUpload: ElementRef;
   @ViewChild('inputUploadMulti') public inputUploadMulti: ElementRef;
 

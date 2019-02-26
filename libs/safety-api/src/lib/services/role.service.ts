@@ -3,13 +3,15 @@ import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SafetyRole } from './safety-role';
 
-// @dynamic
+import { prepareItem } from '../helpers/prepare-item';
+import { prepareList } from '../helpers/prepare-list';
+import { SafetyRole } from '../interfaces/safety-role';
+
 @Injectable()
 export class RoleService {
   private get _path() {
-    return `roles`;
+    return `<baseUrl>/roles`;
   }
 
   constructor(
@@ -17,23 +19,9 @@ export class RoleService {
     private _storage: LocalStorageService
   ) {}
 
-  public static prepareList(list): SafetyRole[] {
-    return list.map(el => {
-      const element = el.payload.doc.data() as SafetyRole;
-      element.id = el.payload.doc.id;
-      return element;
-    });
-  }
-
-  public static prepareItem(data): SafetyRole {
-    const doc = data.data() as SafetyRole;
-    doc.id = data.id;
-    return doc;
-  }
-
   public getOne(id) {
     const doc = this._db.collection<SafetyRole>(this._path).doc(id);
-    return doc.get().pipe(map(RoleService.prepareItem));
+    return doc.get().pipe(map(item => prepareItem<SafetyRole>(item)));
   }
 
   public getRef(id): DocumentReference {
@@ -50,7 +38,7 @@ export class RoleService {
           .limit(options.limit);
       })
       .snapshotChanges()
-      .pipe(map(RoleService.prepareList));
+      .pipe(map(list => prepareList<SafetyRole>(list)));
   }
 
   public save(data) {

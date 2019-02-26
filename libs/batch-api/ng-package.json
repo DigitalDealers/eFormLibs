@@ -1,7 +1,6 @@
 {
-  "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../../wwwroot/didi/batch-api",
-  "deleteDestPath": false,
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/batch-api",
   "lib": {
     "entryFile": "src/public_api.ts"
   }

@@ -1,8 +1,13 @@
 {
-  "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../../wwwroot/didi/firebase-api",
-  "deleteDestPath": false,
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/firebase-api",
   "lib": {
-    "entryFile": "src/public_api.ts"
+    "entryFile": "src/public_api.ts",
+    "umdModuleIds": {
+      "angular-2-local-storage": "angular2LocalStorage",
+      "date-fns": "dateFns",
+      "firebase/app": "firebase",
+      "lodash-es": "lodashEs"
+    }
   }
 }

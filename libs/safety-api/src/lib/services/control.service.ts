@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
-
 import { AngularFirestore } from '@angular/fire/firestore';
 import { LocalStorageService } from 'angular-2-local-storage';
-import { Observable, combineLatest } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SafetyControl } from './safety-control';
+
+import { SafetyControl } from '../interfaces/safety-control';
 
 @Injectable()
 export class ControlService {
   private get _path() {
-    return `controls`;
+    return `<baseUrl>/controls`;
   }
   constructor(
     private _db: AngularFirestore,

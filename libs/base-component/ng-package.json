@@ -1,7 +1,6 @@
 {
-  "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../../wwwroot/didi/base-component",
-  "deleteDestPath": false,
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/base-component",
   "lib": {
     "entryFile": "src/public_api.ts"
   }

@@ -1,14 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
-import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
-
-import { SafetyMyForm } from './safety-my-form';
+import { format } from 'date-fns';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { format } from 'date-fns';
+
+import { SafetyMyForm } from '../interfaces/safety-my-form';
 
 export interface MyFormListOptions {
   limit?: number;
@@ -16,11 +15,10 @@ export interface MyFormListOptions {
   where?: [];
 }
 
-// @dynamic
 @Injectable()
 export class MyFormService {
   private get _path() {
-    return `my-forms`;
+    return `<baseUrl>/my-forms`;
   }
   constructor(
     private _db: AngularFirestore,

@@ -1,5 +1,5 @@
 {
-  "name": "@didi/geostore",
-  "version": "0.0.1",
-  "peerDependencies": {}
+  "peerDependencies": {
+    "firebase": "^5.8.4"
+  }
 }

@@ -3,13 +3,13 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, RouterStateSnapshot } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Assigment, FireStoreService } from '@didi/firebase-api';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable, of, Subscription, throwError, timer } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { catchError, mergeMap, switchMap } from 'rxjs/operators';
 
-import { User } from './user';
+import { Assigment, FireStoreService } from '@didi/firebase-api';
+import { User } from './interfaces/user';
 
 @Injectable()
 export class AuthService implements CanActivate, CanActivateChild, OnDestroy {

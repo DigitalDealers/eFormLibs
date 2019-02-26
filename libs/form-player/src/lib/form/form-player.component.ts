@@ -1,18 +1,6 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  EventEmitter,
-  Output,
-  SimpleChanges,
-  OnChanges
-} from '@angular/core';
-import {
-  FormGroup,
-  FormBuilder,
-  FormControl,
-  Validators
-} from '@angular/forms';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+
 import { SafetyApiService, SafetyForm } from '@didi/safety-api';
 import { FormObserverService } from '../form-observer.service';
 
@@ -23,10 +11,7 @@ import { FormObserverService } from '../form-observer.service';
 })
 export class FormPlayerComponent implements OnInit, OnChanges {
   public sections = {};
-  public logicControls = {};
   public form: FormGroup;
-  public downloadURL = {};
-  public controls = {};
 
   @Input() public isPreview;
   @Input() public config: SafetyForm;

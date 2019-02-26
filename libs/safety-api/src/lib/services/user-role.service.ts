@@ -4,13 +4,14 @@ import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { SafetyUserRole } from './safety-user-role';
+import { prepareItem } from '../helpers/prepare-item';
+import { prepareList } from '../helpers/prepare-list';
+import { SafetyUserRole } from '../interfaces/safety-user-role';
 
-// @dynamic
 @Injectable()
 export class UserRoleService {
   private get _path() {
-    return `usersRoles`;
+    return `<baseUrl>/usersRoles`;
   }
 
   constructor(
@@ -18,23 +19,9 @@ export class UserRoleService {
     private _storage: LocalStorageService
   ) {}
 
-  public static prepareList(list): SafetyUserRole[] {
-    return list.map(el => {
-      const element = el.payload.doc.data() as SafetyUserRole;
-      element.id = el.payload.doc.id;
-      return element;
-    });
-  }
-
-  public static prepareItem(data): SafetyUserRole {
-    const doc = data.data() as SafetyUserRole;
-    doc.id = data.id;
-    return doc;
-  }
-
   public getOne(id) {
     const doc = this._db.collection<SafetyUserRole>(this._path).doc(id);
-    return doc.get().pipe(map(UserRoleService.prepareItem));
+    return doc.get().pipe(map(item => prepareItem<SafetyUserRole>(item)));
   }
 
   public getRef(id): DocumentReference {
@@ -56,7 +43,7 @@ export class UserRoleService {
       .doc(id)
       .collection('users')
       .snapshotChanges()
-      .pipe(map(UserRoleService.prepareList));
+      .pipe(map(list => prepareList<SafetyUserRole>(list)));
   }
 
   public save(data) {

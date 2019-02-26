@@ -1,11 +1,7 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import {
-  FormGroup,
-  FormBuilder,
-  FormControl,
-  Validators
-} from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+
 import { FormObserverService } from '../form-observer.service';
 
 @Component({

@@ -1,9 +1,9 @@
-import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-
-import { map, startWith, debounceTime, switchMap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
+import { debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+
 import { BatchApiService } from '@didi/batch-api';
 
 interface DropdownOption {

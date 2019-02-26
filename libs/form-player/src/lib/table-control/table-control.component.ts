@@ -1,9 +1,10 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+
 import { SafetyField } from '@didi/safety-api';
-import { TableColumnDialogService } from '../table-column-dialog/table-column-dialog.service';
 import { FormObserverService } from '../form-observer.service';
+import { TableColumnDialogService } from '../table-column-dialog/table-column-dialog.service';
 
 @Component({
   selector: 'didi-table-control',

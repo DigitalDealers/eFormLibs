@@ -4,13 +4,14 @@ import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { SafetyUser } from './safety-user';
+import { prepareItem } from '../helpers/prepare-item';
+import { prepareList } from '../helpers/prepare-list';
+import { SafetyUser } from '../interfaces/safety-user';
 
-// @dynamic
 @Injectable()
 export class UserService {
   private get _path() {
-    return `users`;
+    return `<baseUrl>/users`;
   }
 
   constructor(
@@ -18,23 +19,9 @@ export class UserService {
     private _storage: LocalStorageService
   ) {}
 
-  public static prepareList(list): SafetyUser[] {
-    return list.map(el => {
-      const element = el.payload.doc.data() as SafetyUser;
-      element.id = el.payload.doc.id;
-      return element;
-    });
-  }
-
-  public static prepareItem(data): SafetyUser {
-    const doc = data.data() as SafetyUser;
-    doc.id = data.id;
-    return doc;
-  }
-
   public getOne(id) {
     const doc = this._db.collection<SafetyUser>(this._path).doc(id);
-    return doc.get().pipe(map(UserService.prepareItem));
+    return doc.get().pipe(map(item => prepareItem<SafetyUser>(item)));
   }
 
   public getRef(id): DocumentReference {
@@ -49,7 +36,7 @@ export class UserService {
           .orderBy('displayName');
       })
       .snapshotChanges()
-      .pipe(map(UserService.prepareList));
+      .pipe(map(list => prepareList<SafetyUser>(list)));
   }
 
   public save(data) {

@@ -19,6 +19,50 @@
     "target": "es5",
     "typeRoots": [
       "node_modules/@types"
-    ]
+    ],
+    "paths": {
+      "@didi/auth": [
+        "dist/auth"
+      ],
+      "@didi/auth/*": [
+        "dist/auth/*"
+      ],
+      "@didi/firebase-api": [
+        "dist/firebase-api"
+      ],
+      "@didi/firebase-api/*": [
+        "dist/firebase-api/*"
+      ],
+      "@didi/geostore": [
+        "dist/geostore"
+      ],
+      "@didi/geostore/*": [
+        "dist/geostore/*"
+      ],
+      "@didi/interceptors": [
+        "dist/interceptors"
+      ],
+      "@didi/interceptors/*": [
+        "dist/interceptors/*"
+      ],
+      "@didi/batch-api": [
+        "dist/batch-api"
+      ],
+      "@didi/batch-api/*": [
+        "dist/batch-api/*"
+      ],
+      "@didi/dealer-api": [
+        "dist/dealer-api"
+      ],
+      "@didi/dealer-api/*": [
+        "dist/dealer-api/*"
+      ],
+      "@didi/safety-api": [
+        "dist/safety-api"
+      ],
+      "@didi/safety-api/*": [
+        "dist/safety-api/*"
+      ]
+    }
   }
 }

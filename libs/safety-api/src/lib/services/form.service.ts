@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 import { LocalStorageService } from 'angular-2-local-storage';
-import { Observable, combineLatest } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { SafetyForm } from './safety-form';
+import { prepareItem } from '../helpers/prepare-item';
+import { prepareList } from '../helpers/prepare-list';
+import { SafetyForm } from '../interfaces/safety-form';
 
 export interface FormListOptions {
   role?: string;
@@ -13,11 +15,10 @@ export interface FormListOptions {
   where?: any;
 }
 
-// @dynamic
 @Injectable()
 export class FormService {
   private get _path() {
-    return `forms`;
+    return `<baseUrl>/forms`;
   }
 
   constructor(
@@ -25,23 +26,9 @@ export class FormService {
     private _storage: LocalStorageService
   ) {}
 
-  public static prepareList(list): SafetyForm[] {
-    return list.map(el => {
-      const element = el.payload.doc.data() as SafetyForm;
-      element.id = el.payload.doc.id;
-      return element;
-    });
-  }
-
-  public static prepareItem(data): SafetyForm {
-    const doc = data.data() as SafetyForm;
-    doc.id = data.id;
-    return doc;
-  }
-
   public getOne(id) {
     const doc = this._db.collection<SafetyForm>(this._path).doc(id);
-    return doc.get().pipe(map(FormService.prepareItem));
+    return doc.get().pipe(map(item => prepareItem<SafetyForm>(item)));
   }
 
   public getRef(id): DocumentReference {
@@ -99,7 +86,7 @@ export class FormService {
         return filteredRef.orderBy('title');
       })
       .snapshotChanges()
-      .pipe(map(FormService.prepareList));
+      .pipe(map(list => prepareList<SafetyForm>(list)));
   }
 
   public save(data) {

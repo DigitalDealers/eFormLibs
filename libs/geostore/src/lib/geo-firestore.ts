@@ -12,18 +12,10 @@
 
 import * as firebase from 'firebase';
 
+import { GeoFireObj } from './interfaces/geo-fire-obj';
+import { QueryCriteria } from './interfaces/query-criteria';
 import { GeoFirestoreQuery } from './query';
-import {
-  decodeGeoFireObject,
-  degreesToRadians,
-  encodeGeoFireObject,
-  encodeGeohash,
-  validateLocation,
-  validateKey
-} from './utils';
-
-import { QueryCriteria } from './interfaces/queryCriteria';
-import { GeoFireObj } from './interfaces/geoFireObj';
+import { decodeGeoFireObject, encodeGeoFireObject, encodeGeohash, validateKey, validateLocation } from './utils';
 
 /**
  * Creates a GeoFirestore instance.

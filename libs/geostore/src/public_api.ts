@@ -1,8 +1,8 @@
-/*
- * Public API Surface of geostore
- */
+export * from './lib/geo-firestore';
+export * from './lib/geo-distance';
+export * from './lib/callback-registration';
+export * from './lib/query';
 
-export * from './lib/interfaces/queryCriteria';
-export * from './lib/interfaces/geoFireObj';
-export * from './lib/interfaces/geoFirestoreQueryState';
-export { GeoFirestore } from './lib/geofirestore';
+export * from './lib/interfaces/geo-fire-obj';
+export * from './lib/interfaces/geo-firestore-query-state';
+export * from './lib/interfaces/query-criteria';

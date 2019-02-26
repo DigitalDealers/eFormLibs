@@ -5,12 +5,12 @@ import { combineLatest, from, Observable } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { map } from 'rxjs/operators';
 
-import { SafetyCategory } from './safety-category';
+import { SafetyCategory } from '../interfaces/safety-category';
 
 @Injectable()
 export class CategoryService {
   private get _path() {
-    return `categories`;
+    return `<baseUrl>/categories`;
   }
 
   constructor(

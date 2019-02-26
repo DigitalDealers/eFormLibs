@@ -1,7 +1,10 @@
 import * as firebase from 'firebase';
 
-import { geoDistance } from './geoDistance';
-import { GeoCallbackRegistration } from './callbackRegistration';
+import { GeoCallbackRegistration } from './callback-registration';
+import { geoDistance } from './geo-distance';
+import { GeoFireObj } from './interfaces/geo-fire-obj';
+import { GeoFirestoreQueryState } from './interfaces/geo-firestore-query-state';
+import { QueryCriteria } from './interfaces/query-criteria';
 import {
   decodeGeoFireObject,
   encodeGeohash,
@@ -10,9 +13,6 @@ import {
   validateCriteria,
   validateLocation
 } from './utils';
-import { QueryCriteria } from './interfaces/queryCriteria';
-import { GeoFireObj } from './interfaces/geoFireObj';
-import { GeoFirestoreQueryState } from './interfaces/geoFirestoreQueryState';
 
 /**
  * Creates a GeoFirestoreQuery instance.

@@ -5,6 +5,10 @@ import { DataSetService } from './services/data-set.service';
 import { SearchService } from './services/search.service';
 
 @NgModule({
-  providers: [BatchApiService, DataSetService, SearchService]
+  providers: [
+    BatchApiService,
+    DataSetService,
+    SearchService
+  ]
 })
 export class DidiBatchApiModule {}

@@ -1,17 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
 import { AngularFirestore } from '@angular/fire/firestore';
 import { LocalStorageService } from 'angular-2-local-storage';
+import { isSameDay } from 'date-fns';
 import * as firebase from 'firebase/app';
+import { isEqual } from 'lodash-es';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { isSameDay } from 'date-fns';
-import { isEqual } from 'lodash-es';
-import { GeoFirestore } from '@didi/geostore';
 
-import { Assigment } from './assigment';
-import { Jobcard } from './jobcard';
+import { GeoFirestore } from '@didi/geostore';
+import { Assigment } from './interfaces/assigment';
+import { Jobcard } from './interfaces/jobcard';
 
 @Injectable()
 export class FireStoreService {

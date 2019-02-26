@@ -1,11 +1,10 @@
+import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Injectable, Inject } from '@angular/core';
-
 import { JwtHelperService } from '@auth0/angular-jwt';
 
-import { CONFIG } from './module.config';
 import { AuthService } from './auth.service';
-import { Config } from './config';
+import { Config } from './interfaces/config';
+import { CONFIG } from './module.config';
 
 @Injectable()
 export class AclService {

@@ -1,12 +1,5 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  ViewChild,
-  ElementRef,
-  Output,
-  EventEmitter
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+
 import { SafetyApiService } from '@didi/safety-api';
 import { FileUploadedItem } from '../types';
 
@@ -15,13 +8,11 @@ import { FileUploadedItem } from '../types';
   templateUrl: './attachment.component.html',
   styleUrls: ['./attachment.component.scss']
 })
-export class AttachmentComponent implements OnInit {
+export class AttachmentComponent {
   @Input() public field;
   @Input() public readonly;
   @Input() public form;
-  @Output() public filePath: EventEmitter<
-    FileUploadedItem[]
-  > = new EventEmitter();
+  @Output() public filePath = new EventEmitter<FileUploadedItem[]>();
 
   @ViewChild('inputUpload')
   public inputUpload: ElementRef;
@@ -29,8 +20,6 @@ export class AttachmentComponent implements OnInit {
   public loading = false;
 
   constructor(private _safetyApi: SafetyApiService) {}
-
-  ngOnInit() {}
 
   public async upload(event) {
     this.loading = true;

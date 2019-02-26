@@ -1,7 +1,10 @@
 {
-  "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../../wwwroot/didi/interceptors",
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/interceptors",
   "lib": {
-    "entryFile": "src/public_api.ts"
+    "entryFile": "src/public_api.ts",
+    "umdModuleIds": {
+      "angular-2-local-storage": "angular2LocalStorage"
+    }
   }
 }

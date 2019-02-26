@@ -1,14 +1,6 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  ViewChild,
-  AfterViewInit,
-  Output,
-  EventEmitter,
-  ElementRef
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
+
 import { SafetyApiService } from '@didi/safety-api';
 import { FileUploadedItem } from '../types';
 
@@ -17,7 +9,7 @@ import { FileUploadedItem } from '../types';
   templateUrl: './electronic-signature.component.html',
   styleUrls: ['./electronic-signature.component.scss']
 })
-export class DidiElectronicSignatureComponent implements OnInit, AfterViewInit {
+export class DidiElectronicSignatureComponent implements AfterViewInit {
   @Input() public field;
   @Input() public invalid;
   @Input() public readonly;
@@ -42,10 +34,7 @@ export class DidiElectronicSignatureComponent implements OnInit, AfterViewInit {
 
   constructor(private _safetyApi: SafetyApiService) {}
 
-  ngOnInit() {}
-
   public ngAfterViewInit() {
-    // this.signaturePad is now available
     if (this.signaturePad) {
       this.signaturePad.set('minWidth', 0.8); // set szimek/signature_pad options at runtime
       this.signaturePad.clear(); // invoke functions from szimek/signature_pad API

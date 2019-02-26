@@ -1,7 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
-
-import { distinctUntilChanged, debounceTime } from 'rxjs/operators';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'didi-input-control',

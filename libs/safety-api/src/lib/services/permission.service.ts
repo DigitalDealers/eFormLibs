@@ -4,13 +4,14 @@ import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { SafetyPermission } from './safety-permission';
+import { prepareItem } from '../helpers/prepare-item';
+import { prepareList } from '../helpers/prepare-list';
+import { SafetyPermission } from '../interfaces/safety-permission';
 
-// @dynamic
 @Injectable()
 export class PermissionService {
   private get _path() {
-    return `permissions`;
+    return `<baseUrl>/permissions`;
   }
 
   constructor(
@@ -18,23 +19,9 @@ export class PermissionService {
     private _storage: LocalStorageService
   ) {}
 
-  public static prepareList(list): SafetyPermission[] {
-    return list.map(el => {
-      const element = el.payload.doc.data() as SafetyPermission;
-      element.id = el.payload.doc.id;
-      return element;
-    });
-  }
-
-  public static prepareItem(data): SafetyPermission {
-    const doc = data.data() as SafetyPermission;
-    doc.id = data.id;
-    return doc;
-  }
-
   public getOne(id) {
     const doc = this._db.collection<SafetyPermission>(this._path).doc(id);
-    return doc.get().pipe(map(PermissionService.prepareItem));
+    return doc.get().pipe(map(item => prepareItem<SafetyPermission>(item)));
   }
 
   public getRef(id): DocumentReference {
@@ -53,7 +40,7 @@ export class PermissionService {
           .limit(options.limit);
       })
       .snapshotChanges()
-      .pipe(map(PermissionService.prepareList));
+      .pipe(map(list => prepareList<SafetyPermission>(list)));
   }
 
   public save(data) {

@@ -1,15 +1,9 @@
-import { Injectable, Inject } from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpEvent
-} from '@angular/common/http';
-
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable } from 'rxjs';
 
-import { ModuleOptions } from './module-options';
+import { ModuleOptions } from './module-options.interface';
 import { OPTIONS } from './options';
 
 @Injectable()
