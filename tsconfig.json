@@ -62,6 +62,12 @@
       ],
       "@didi/safety-api/*": [
         "dist/safety-api/*"
+      ],
+      "@didi/table": [
+        "dist/table"
+      ],
+      "@didi/table/*": [
+        "dist/table/*"
       ]
     }
   }
