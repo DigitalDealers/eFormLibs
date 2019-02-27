@@ -17,9 +17,8 @@ export interface MyFormListOptions {
 
 @Injectable()
 export class MyFormService {
-  private get _path() {
-    return `<baseUrl>/my-forms`;
-  }
+  private readonly collectionName = 'my-forms';
+
   constructor(
     private _db: AngularFirestore,
     private _afAuth: AngularFireAuth,
@@ -56,7 +55,7 @@ export class MyFormService {
   }
 
   public save(data) {
-    const collection = this._db.collection<SafetyMyForm>(this._path);
+    const collection = this._db.collection<SafetyMyForm>(this.collectionName);
 
     data.status = 'submitted';
     const currentTime = Date.now();
@@ -82,12 +81,12 @@ export class MyFormService {
   }
 
   private _getList(key, options) {
-    const { where = [] } = options;
+    const { where = [] } = options || {};
     return this._afAuth.authState.pipe(
       switchMap(user => {
         if (user) {
           return this._db
-            .collection<SafetyMyForm>(this._path, ref => {
+            .collection<SafetyMyForm>(this.collectionName, ref => {
               let filteredRef = ref.where(key, '==', user.uid);
               if (where && where.length) {
                 for (let i = 0; i < where.length; i += 1) {
@@ -113,7 +112,7 @@ export class MyFormService {
       switchMap(user => {
         if (user) {
           return this._db
-            .collection<SafetyMyForm>(this._path, ref => {
+            .collection<SafetyMyForm>(this.collectionName, ref => {
               return ref.where('assignedTo', '==', user.uid);
             })
             .snapshotChanges()
@@ -125,7 +124,7 @@ export class MyFormService {
   }
 
   public getOne(id): Observable<SafetyMyForm> {
-    const doc = this._db.collection<SafetyMyForm>(this._path).doc(id);
+    const doc = this._db.collection<SafetyMyForm>(this.collectionName).doc(id);
     return doc.get().pipe(map(MyFormService.prepareItem));
   }
 
@@ -173,7 +172,7 @@ export class MyFormService {
       switchMap(user => {
         if (user) {
           return this._db
-            .collection<SafetyMyForm>(this._path, ref =>
+            .collection<SafetyMyForm>(this.collectionName, ref =>
               ref.where('createdBy', '==', user.uid)
             )
             .snapshotChanges()
@@ -185,7 +184,7 @@ export class MyFormService {
   }
 
   public delete(id): Observable<void> {
-    const document = this._db.collection<SafetyMyForm>(this._path).doc(id);
+    const document = this._db.collection<SafetyMyForm>(this.collectionName).doc(id);
     return from(document.delete());
   }
 

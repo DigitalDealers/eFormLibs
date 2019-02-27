@@ -17,9 +17,7 @@ export interface FormListOptions {
 
 @Injectable()
 export class SafetyFormService {
-  private get _path() {
-    return `<baseUrl>/forms`;
-  }
+  private readonly collectionName = 'forms';
 
   constructor(
     private _db: AngularFirestore,
@@ -27,12 +25,12 @@ export class SafetyFormService {
   ) {}
 
   public getOne(id) {
-    const doc = this._db.collection<SafetyForm>(this._path).doc(id);
+    const doc = this._db.collection<SafetyForm>(this.collectionName).doc(id);
     return doc.get().pipe(map(item => prepareItem<SafetyForm>(item)));
   }
 
   public getRef(id): DocumentReference {
-    return this._db.doc(`${this._path}/${id}`).ref;
+    return this._db.doc(`${this.collectionName}/${id}`).ref;
   }
 
   public getListBulk(options?: FormListOptions): Observable<SafetyForm[]> {
@@ -66,7 +64,7 @@ export class SafetyFormService {
   public getList(options: FormListOptions): Observable<SafetyForm[]> {
     const { role = '', where = [] } = options;
     return this._db
-      .collection<SafetyForm>(this._path, ref => {
+      .collection<SafetyForm>(this.collectionName, ref => {
         let filteredRef = ref.where(
           'dealerId',
           '==',
@@ -90,24 +88,24 @@ export class SafetyFormService {
   }
 
   public save(data) {
-    const collection = this._db.collection<SafetyForm>(this._path);
+    const collection = this._db.collection<SafetyForm>(this.collectionName);
     collection.add(data);
   }
 
   public update(id, data) {
     delete data.id;
-    const document = this._db.collection<SafetyForm>(this._path).doc(id);
+    const document = this._db.collection<SafetyForm>(this.collectionName).doc(id);
     return document.update(data);
   }
 
   public delete(id) {
-    const document = this._db.collection<SafetyForm>(this._path).doc(id);
+    const document = this._db.collection<SafetyForm>(this.collectionName).doc(id);
     return document.delete();
   }
 
   public getCount() {
     return this._db
-      .collection<SafetyForm>(this._path, ref => {
+      .collection<SafetyForm>(this.collectionName, ref => {
         return ref.where('dealerId', '==', this._storage.get('dealerId'));
       })
       .snapshotChanges()

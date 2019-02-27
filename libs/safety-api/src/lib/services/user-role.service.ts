@@ -10,9 +10,7 @@ import { SafetyUserRole } from '../interfaces/safety-user-role';
 
 @Injectable()
 export class UserRoleService {
-  private get _path() {
-    return `<baseUrl>/usersRoles`;
-  }
+  private readonly collectionName = 'usersRoles';
 
   constructor(
     private _db: AngularFirestore,
@@ -20,12 +18,12 @@ export class UserRoleService {
   ) {}
 
   public getOne(id) {
-    const doc = this._db.collection<SafetyUserRole>(this._path).doc(id);
+    const doc = this._db.collection<SafetyUserRole>(this.collectionName).doc(id);
     return doc.get().pipe(map(item => prepareItem<SafetyUserRole>(item)));
   }
 
   public getRef(id): DocumentReference {
-    return this._db.doc(`${this._path}/${id}`).ref;
+    return this._db.doc(`${this.collectionName}/${id}`).ref;
   }
 
   public getList(
@@ -33,7 +31,7 @@ export class UserRoleService {
     options = { limit: 10, offset: 0 }
   ): Observable<SafetyUserRole[]> {
     return this._db
-      .collection<SafetyUserRole>(this._path, ref => {
+      .collection<SafetyUserRole>(this.collectionName, ref => {
         return ref
           .where('roleId', '==', id)
           .orderBy('userId')
@@ -48,24 +46,24 @@ export class UserRoleService {
 
   public save(data) {
     data['dealerId'] = this._storage.get('dealerId');
-    const collection = this._db.collection<SafetyUserRole>(this._path);
+    const collection = this._db.collection<SafetyUserRole>(this.collectionName);
     collection.add(data);
   }
 
   public update(id, data) {
     delete data.id;
-    const document = this._db.collection<SafetyUserRole>(this._path).doc(id);
+    const document = this._db.collection<SafetyUserRole>(this.collectionName).doc(id);
     return document.update(data);
   }
 
   public delete(id) {
-    const document = this._db.collection<SafetyUserRole>(this._path).doc(id);
+    const document = this._db.collection<SafetyUserRole>(this.collectionName).doc(id);
     return document.delete();
   }
 
   public getCount(id) {
     return this._db
-      .collection<SafetyUserRole>(this._path, ref =>
+      .collection<SafetyUserRole>(this.collectionName, ref =>
         ref.where('roleId', '==', id)
       )
       .snapshotChanges()

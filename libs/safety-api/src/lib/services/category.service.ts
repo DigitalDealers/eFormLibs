@@ -9,9 +9,7 @@ import { SafetyCategory } from '../interfaces/safety-category';
 
 @Injectable()
 export class CategoryService {
-  private get _path() {
-    return `<baseUrl>/categories`;
-  }
+  private readonly collectionName = 'categories';
 
   constructor(
     private _db: AngularFirestore,
@@ -35,7 +33,7 @@ export class CategoryService {
       dealerId,
       title: categoryName
     }));
-    const collection = this._db.firestore.collection(this._path);
+    const collection = this._db.firestore.collection(this.collectionName);
     const batch = this._db.firestore.batch();
     categories.forEach(category => {
       const docRef = collection.doc();
@@ -46,12 +44,12 @@ export class CategoryService {
 
   public getList(): Observable<SafetyCategory[]> {
     const ref1 = this._db
-      .collection<SafetyCategory>(this._path, ref => {
+      .collection<SafetyCategory>(this.collectionName, ref => {
         return ref.where('dealerId', '==', this._storage.get('dealerId'));
       })
       .snapshotChanges();
     const ref2 = this._db
-      .collection<SafetyCategory>(this._path, ref => {
+      .collection<SafetyCategory>(this.collectionName, ref => {
         return ref.where('dealerId', '==', null);
       })
       .snapshotChanges();
@@ -64,7 +62,7 @@ export class CategoryService {
 
   public remove(categoryId: string): Observable<void> {
     return fromPromise(
-      this._db.collection<SafetyCategory>(this._path).doc(categoryId).delete()
+      this._db.collection<SafetyCategory>(this.collectionName).doc(categoryId).delete()
     );
   }
 }

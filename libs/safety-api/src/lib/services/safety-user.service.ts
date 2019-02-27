@@ -10,9 +10,7 @@ import { SafetyUser } from '../interfaces/safety-user';
 
 @Injectable()
 export class SafetyUserService {
-  private get _path() {
-    return `<baseUrl>/users`;
-  }
+  private readonly collectionName = 'users';
 
   constructor(
     private _db: AngularFirestore,
@@ -20,17 +18,17 @@ export class SafetyUserService {
   ) {}
 
   public getOne(id) {
-    const doc = this._db.collection<SafetyUser>(this._path).doc(id);
+    const doc = this._db.collection<SafetyUser>(this.collectionName).doc(id);
     return doc.get().pipe(map(item => prepareItem<SafetyUser>(item)));
   }
 
   public getRef(id): DocumentReference {
-    return this._db.doc(`${this._path}/${id}`).ref;
+    return this._db.doc(`${this.collectionName}/${id}`).ref;
   }
 
   public getList(options = { limit: 10, offset: 0 }): Observable<SafetyUser[]> {
     return this._db
-      .collection<SafetyUser>(this._path, ref => {
+      .collection<SafetyUser>(this.collectionName, ref => {
         return ref
           .where('dealerId', '==', this._storage.get('dealerId'))
           .orderBy('displayName');
@@ -40,24 +38,24 @@ export class SafetyUserService {
   }
 
   public save(data) {
-    const collection = this._db.collection<SafetyUser>(this._path);
+    const collection = this._db.collection<SafetyUser>(this.collectionName);
     collection.add(data);
   }
 
   public update(id, data) {
     delete data.id;
-    const document = this._db.collection<SafetyUser>(this._path).doc(id);
+    const document = this._db.collection<SafetyUser>(this.collectionName).doc(id);
     return document.update(data);
   }
 
   public delete(id) {
-    const document = this._db.collection<SafetyUser>(this._path).doc(id);
+    const document = this._db.collection<SafetyUser>(this.collectionName).doc(id);
     return document.delete();
   }
 
   public getCount() {
     return this._db
-      .collection<SafetyUser>(this._path, ref => {
+      .collection<SafetyUser>(this.collectionName, ref => {
         return ref.where('dealerId', '==', this._storage.get('dealerId'));
       })
       .snapshotChanges()

@@ -8,9 +8,8 @@ import { SafetyControl } from '../interfaces/safety-control';
 
 @Injectable()
 export class ControlService {
-  private get _path() {
-    return `<baseUrl>/controls`;
-  }
+  private readonly collectionName = 'controls';
+
   constructor(
     private _db: AngularFirestore,
     private _storage: LocalStorageService
@@ -59,12 +58,12 @@ export class ControlService {
         : ControlService.prepareList;
 
     const ref1 = this._db
-      .collection<SafetyControl>(this._path, ref => {
+      .collection<SafetyControl>(this.collectionName, ref => {
         return ref.where('dealerId', '==', this._storage.get('dealerId'));
       })
       .snapshotChanges();
     const ref2 = this._db
-      .collection<SafetyControl>(this._path, ref => {
+      .collection<SafetyControl>(this.collectionName, ref => {
         return ref.where('dealerId', '==', null);
       })
       .snapshotChanges();
@@ -76,18 +75,18 @@ export class ControlService {
   }
 
   public save(data) {
-    const collection = this._db.collection<SafetyControl>(this._path);
+    const collection = this._db.collection<SafetyControl>(this.collectionName);
     collection.add(data);
   }
 
   public update(id, data) {
     delete data.id;
-    const itemsRef = this._db.collection(this._path).doc(id);
+    const itemsRef = this._db.collection(this.collectionName).doc(id);
     return itemsRef.update(data);
   }
 
   public delete(id) {
-    const itemsRef = this._db.collection(this._path).doc(id);
+    const itemsRef = this._db.collection(this.collectionName).doc(id);
     itemsRef.delete();
   }
 
@@ -133,7 +132,7 @@ export class ControlService {
       }
     ];
     for (let i = 0; i < defaultControls.length; i += 1) {
-      const doc = this._db.collection(this._path).doc(this._db.createId()).ref;
+      const doc = this._db.collection(this.collectionName).doc(this._db.createId()).ref;
       batch.set(doc, defaultControls[i]);
     }
     batch.commit();

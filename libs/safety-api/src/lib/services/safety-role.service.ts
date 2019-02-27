@@ -10,9 +10,7 @@ import { SafetyRole } from '../interfaces/safety-role';
 
 @Injectable()
 export class SafetyRoleService {
-  private get _path() {
-    return `<baseUrl>/roles`;
-  }
+  private readonly collectionName = 'roles';
 
   constructor(
     private _db: AngularFirestore,
@@ -20,17 +18,17 @@ export class SafetyRoleService {
   ) {}
 
   public getOne(id) {
-    const doc = this._db.collection<SafetyRole>(this._path).doc(id);
+    const doc = this._db.collection<SafetyRole>(this.collectionName).doc(id);
     return doc.get().pipe(map(item => prepareItem<SafetyRole>(item)));
   }
 
   public getRef(id): DocumentReference {
-    return this._db.doc(`${this._path}/${id}`).ref;
+    return this._db.doc(`${this.collectionName}/${id}`).ref;
   }
 
   public getList(options = { limit: 10, offset: 0 }): Observable<SafetyRole[]> {
     return this._db
-      .collection<SafetyRole>(this._path, ref => {
+      .collection<SafetyRole>(this.collectionName, ref => {
         return ref
           .where('dealerId', '==', this._storage.get('dealerId'))
           .orderBy('name')
@@ -42,24 +40,24 @@ export class SafetyRoleService {
   }
 
   public save(data) {
-    const collection = this._db.collection<SafetyRole>(this._path);
+    const collection = this._db.collection<SafetyRole>(this.collectionName);
     collection.add(data);
   }
 
   public update(id, data) {
     delete data.id;
-    const document = this._db.collection<SafetyRole>(this._path).doc(id);
+    const document = this._db.collection<SafetyRole>(this.collectionName).doc(id);
     return document.update(data);
   }
 
   public delete(id) {
-    const document = this._db.collection<SafetyRole>(this._path).doc(id);
+    const document = this._db.collection<SafetyRole>(this.collectionName).doc(id);
     return document.delete();
   }
 
   public getCount() {
     return this._db
-      .collection<SafetyRole>(this._path, ref => {
+      .collection<SafetyRole>(this.collectionName, ref => {
         return ref.where('dealerId', '==', this._storage.get('dealerId'));
       })
       .snapshotChanges()

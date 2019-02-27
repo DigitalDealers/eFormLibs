@@ -10,9 +10,7 @@ import { SafetyPermission } from '../interfaces/safety-permission';
 
 @Injectable()
 export class PermissionService {
-  private get _path() {
-    return `<baseUrl>/permissions`;
-  }
+  private readonly collectionName = 'permissions';
 
   constructor(
     private _db: AngularFirestore,
@@ -20,19 +18,19 @@ export class PermissionService {
   ) {}
 
   public getOne(id) {
-    const doc = this._db.collection<SafetyPermission>(this._path).doc(id);
+    const doc = this._db.collection<SafetyPermission>(this.collectionName).doc(id);
     return doc.get().pipe(map(item => prepareItem<SafetyPermission>(item)));
   }
 
   public getRef(id): DocumentReference {
-    return this._db.doc(`${this._path}/${id}`).ref;
+    return this._db.doc(`${this.collectionName}/${id}`).ref;
   }
 
   public getList(
     options = { limit: 10, offset: 0 }
   ): Observable<SafetyPermission[]> {
     return this._db
-      .collection<SafetyPermission>(this._path, ref => {
+      .collection<SafetyPermission>(this.collectionName, ref => {
         return ref
           .where('dealerId', '==', this._storage.get('dealerId'))
           .orderBy('title')
@@ -45,24 +43,24 @@ export class PermissionService {
 
   public save(data) {
     data['dealerId'] = this._storage.get('dealerId');
-    const collection = this._db.collection<SafetyPermission>(this._path);
+    const collection = this._db.collection<SafetyPermission>(this.collectionName);
     collection.add(data);
   }
 
   public update(id, data) {
     delete data.id;
-    const document = this._db.collection<SafetyPermission>(this._path).doc(id);
+    const document = this._db.collection<SafetyPermission>(this.collectionName).doc(id);
     return document.update(data);
   }
 
   public delete(id) {
-    const document = this._db.collection<SafetyPermission>(this._path).doc(id);
+    const document = this._db.collection<SafetyPermission>(this.collectionName).doc(id);
     return document.delete();
   }
 
   public getCount() {
     return this._db
-      .collection<SafetyPermission>(this._path, ref => {
+      .collection<SafetyPermission>(this.collectionName, ref => {
         return ref.where('dealerId', '==', this._storage.get('dealerId'));
       })
       .snapshotChanges()
