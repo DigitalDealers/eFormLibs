@@ -5,9 +5,9 @@
   "scripts": {
     "build": "ng-packagr -p libs",
     "lint": "tslint -p tsconfig.json",
-    "copy": "cpy --parents --cwd=dist '**/*.*' '..'",
+    "copy": "cpy --parents --cwd=dist '**/*.*' '..' && del -f dist",
     "remove": "del -f dist",
-    "prepare": "npm run build && npm run copy && npm run remove"
+    "prepare": "npm run build && npm run copy"
   },
   "devDependencies": {
     "@angular/animations": "^7.2.6",
