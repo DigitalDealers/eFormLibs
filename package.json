@@ -5,7 +5,7 @@
   "scripts": {
     "build": "ng-packagr -p libs",
     "lint": "tslint -p tsconfig.json",
-    "copy": "cpy --parents --cwd=dist '**/*.*' '../tmp'",
+    "copy": "cpy --parents --cwd=dist '**/*.*' '..'",
     "remove": "del -f dist",
     "prepare": "npm run build && npm run copy && npm run remove"
   },
