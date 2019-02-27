@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { SearchMapper } from '../mappers/search.mapper';
 
 @Injectable()
-export class SearchService {
+export class BatchSearchService {
   private get _batchUrl() {
     return `<batchApi>/dealers/<dealerId>`;
   }

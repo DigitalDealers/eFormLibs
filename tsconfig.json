@@ -21,52 +21,82 @@
       "node_modules/@types"
     ],
     "paths": {
-      "@didi/auth": [
+      "eformlibs/auth": [
         "dist/auth"
       ],
-      "@didi/auth/*": [
+      "eformlibs/auth/*": [
         "dist/auth/*"
       ],
-      "@didi/firebase-api": [
-        "dist/firebase-api"
+      "eformlibs/auth-api": [
+        "dist/auth-api"
       ],
-      "@didi/firebase-api/*": [
-        "dist/firebase-api/*"
+      "eformlibs/auth-api/*": [
+        "dist/auth-api/*"
       ],
-      "@didi/geostore": [
-        "dist/geostore"
+      "eformlibs/base-component": [
+        "dist/base-component"
       ],
-      "@didi/geostore/*": [
-        "dist/geostore/*"
+      "eformlibs/base-component/*": [
+        "dist/base-component/*"
       ],
-      "@didi/interceptors": [
-        "dist/interceptors"
-      ],
-      "@didi/interceptors/*": [
-        "dist/interceptors/*"
-      ],
-      "@didi/batch-api": [
+      "eformlibs/batch-api": [
         "dist/batch-api"
       ],
-      "@didi/batch-api/*": [
+      "eformlibs/batch-api/*": [
         "dist/batch-api/*"
       ],
-      "@didi/dealer-api": [
+      "eformlibs/confirm": [
+        "dist/confirm"
+      ],
+      "eformlibs/confirm/*": [
+        "dist/confirm/*"
+      ],
+      "eformlibs/dealer-api": [
         "dist/dealer-api"
       ],
-      "@didi/dealer-api/*": [
+      "eformlibs/dealer-api/*": [
         "dist/dealer-api/*"
       ],
-      "@didi/safety-api": [
+      "eformlibs/error-handler": [
+        "dist/error-handler"
+      ],
+      "eformlibs/error-handler/*": [
+        "dist/error-handler/*"
+      ],
+      "eformlibs/firebase-api": [
+        "dist/firebase-api"
+      ],
+      "eformlibs/firebase-api/*": [
+        "dist/firebase-api/*"
+      ],
+      "eformlibs/form-player": [
+        "dist/form-player"
+      ],
+      "eformlibs/form-player/*": [
+        "dist/form-player/*"
+      ],
+      "eformlibs/geostore": [
+        "dist/geostore"
+      ],
+      "eformlibs/geostore/*": [
+        "dist/geostore/*"
+      ],
+      "eformlibs/interceptors": [
+        "dist/interceptors"
+      ],
+      "eformlibs/interceptors/*": [
+        "dist/interceptors/*"
+      ],
+      "eformlibs/safety-api": [
         "dist/safety-api"
       ],
-      "@didi/safety-api/*": [
+      "eformlibs/safety-api/*": [
         "dist/safety-api/*"
       ],
-      "@didi/table": [
+      "eformlibs/table": [
         "dist/table"
       ],
-      "@didi/table/*": [
+      "eformlibs/table/*": [
         "dist/table/*"
       ]
     }

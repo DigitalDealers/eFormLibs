@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { UserMapper } from '../mappers/user.mapper';
 
 @Injectable()
-export class UserService {
+export class AuthUserService {
   private _baseUrl = '<authApi>';
 
   private get _dealerId() {

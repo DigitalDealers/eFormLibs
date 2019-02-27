@@ -8,7 +8,7 @@ import { isEqual } from 'lodash-es';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { GeoFirestore } from '@didi/geostore';
+import { GeoFirestore } from 'eformlibs/geostore';
 import { Assigment } from './interfaces/assigment';
 import { Jobcard } from './interfaces/jobcard';
 

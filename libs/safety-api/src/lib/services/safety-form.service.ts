@@ -16,7 +16,7 @@ export interface FormListOptions {
 }
 
 @Injectable()
-export class FormService {
+export class SafetyFormService {
   private get _path() {
     return `<baseUrl>/forms`;
   }

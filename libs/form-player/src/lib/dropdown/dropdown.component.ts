@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 
-import { BatchApiService } from '@didi/batch-api';
+import { BatchApiService } from 'eformlibs/batch-api';
 
 interface DropdownOption {
   key: string;

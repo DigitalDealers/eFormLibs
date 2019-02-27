@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { DataSetMapper } from '../mappers/data-set.mapper';
 
 @Injectable()
-export class DataSetService {
+export class DealerDataSetService {
   public get _url() {
     return `<dealerApi>/dealers/<dealerId>/dataSets`;
   }

@@ -3,7 +3,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule, FirestoreSettingsToken } from '@angular/fire/firestore';
 import { JwtModule } from '@auth0/angular-jwt';
 import { LocalStorageModule } from 'angular-2-local-storage';
-import { FirebaseApiModule } from '@didi/firebase-api';
+import { FirebaseApiModule } from 'eformlibs/firebase-api';
 
 import { AclService } from './acl.service';
 import { AuthService } from './auth.service';

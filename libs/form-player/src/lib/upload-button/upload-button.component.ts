@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 
-import { SafetyApiService } from '@didi/safety-api';
+import { SafetyApiService } from 'eformlibs/safety-api';
 import { FileUploadedItem } from '../types';
 
 @Component({

@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { RoleMapper } from '../mappers/role.mapper';
 
 @Injectable()
-export class RoleService {
+export class AuthRoleService {
   private get _url() {
     return `<authApi>/dealers/<dealerId>/roles`;
   }

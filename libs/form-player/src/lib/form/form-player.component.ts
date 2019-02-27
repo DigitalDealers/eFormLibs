@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { SafetyApiService, SafetyForm } from '@didi/safety-api';
+import { SafetyApiService, SafetyForm } from 'eformlibs/safety-api';
 import { FormObserverService } from '../form-observer.service';
 
 @Component({

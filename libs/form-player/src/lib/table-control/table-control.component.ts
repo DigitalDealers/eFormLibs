@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
-import { SafetyField } from '@didi/safety-api';
+import { SafetyField } from 'eformlibs/safety-api';
 import { FormObserverService } from '../form-observer.service';
 import { TableColumnDialogService } from '../table-column-dialog/table-column-dialog.service';
 

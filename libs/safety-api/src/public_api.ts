@@ -10,3 +10,12 @@ export * from './lib/interfaces/safety-permission';
 export * from './lib/interfaces/safety-role';
 export * from './lib/interfaces/safety-user-role';
 export * from './lib/interfaces/safety-user';
+
+export * from './lib/services/category.service';
+export * from './lib/services/control.service';
+export * from './lib/services/safety-form.service';
+export * from './lib/services/my-form.service';
+export * from './lib/services/permission.service';
+export * from './lib/services/safety-role.service';
+export * from './lib/services/user-role.service';
+export * from './lib/services/safety-user.service';

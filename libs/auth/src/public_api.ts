@@ -4,4 +4,5 @@ export * from './lib/guard.service';
 export * from './lib/auth.module';
 
 export * from './lib/interfaces/config';
-export * from './lib/interfaces/user';
+
+export * from './lib/module.config';

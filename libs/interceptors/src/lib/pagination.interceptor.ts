@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable()
-export class PaginationIntercepter implements HttpInterceptor {
+export class PaginationInterceptor implements HttpInterceptor {
   public intercept(
     request: HttpRequest<any>,
     next: HttpHandler

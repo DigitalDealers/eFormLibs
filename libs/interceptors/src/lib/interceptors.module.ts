@@ -5,8 +5,8 @@ import { BaseUrlInterceptor } from './base-url.interceptor';
 import { DeleteResponseInterceptor } from './delete-response.interceptor';
 import { ModuleOptions } from './module-options.interface';
 import { OPTIONS } from './options';
-import { PaginationIntercepter } from './pagination.intercepter';
-import { ServerErrorsIntercepter } from './server-errors.intercepter';
+import { PaginationInterceptor } from './pagination.interceptor';
+import { ServerErrorsInterceptor } from './server-errors.interceptor';
 import { TokenInterceptor } from './token.interceptor';
 
 @NgModule({
@@ -27,12 +27,12 @@ import { TokenInterceptor } from './token.interceptor';
     },
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: PaginationIntercepter,
+      useClass: PaginationInterceptor,
       multi: true
     },
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: ServerErrorsIntercepter,
+      useClass: ServerErrorsInterceptor,
       multi: true
     }
   ]

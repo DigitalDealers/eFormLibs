@@ -6,8 +6,8 @@ import { BotService } from './services/bot.service';
 import { DashboardService } from './services/dashboard.service';
 import { DealerService } from './services/dealer.service';
 import { PaymentService } from './services/payment.service';
-import { UserService } from './services/user.service';
-import { RoleService } from './services/role.service';
+import { AuthUserService } from './services/auth-user.service';
+import { AuthRoleService } from './services/auth-role.service';
 
 @NgModule({
   providers: [
@@ -16,8 +16,8 @@ import { RoleService } from './services/role.service';
     DashboardService,
     DealerService,
     PaymentService,
-    RoleService,
-    UserService,
+    AuthRoleService,
+    AuthUserService,
     AuthApiService
   ]
 })

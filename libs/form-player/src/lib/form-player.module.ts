@@ -15,7 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { SignaturePadModule } from 'angular2-signaturepad';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 
-import { DidiSafetyApiModule } from '@didi/safety-api';
+import { DidiSafetyApiModule } from 'eformlibs/safety-api';
 import { AmountControlComponent } from './amount-control/amount-control.component';
 import { AttachmentComponent } from './attachment/attachment.component';
 import { DatetimePickerComponent } from './datetime-picker/datetime-picker.component';

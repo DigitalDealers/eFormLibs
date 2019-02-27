@@ -5,8 +5,8 @@ import { BotService } from './services/bot.service';
 import { DashboardService } from './services/dashboard.service';
 import { DealerService } from './services/dealer.service';
 import { PaymentService } from './services/payment.service';
-import { UserService } from './services/user.service';
-import { RoleService } from './services/role.service';
+import { AuthUserService } from './services/auth-user.service';
+import { AuthRoleService } from './services/auth-role.service';
 
 @Injectable()
 export class AuthApiService {
@@ -16,7 +16,7 @@ export class AuthApiService {
     public dashboard: DashboardService,
     public dealer: DealerService,
     public payment: PaymentService,
-    public role: RoleService,
-    public user: UserService
+    public role: AuthRoleService,
+    public user: AuthUserService
   ) {}
 }

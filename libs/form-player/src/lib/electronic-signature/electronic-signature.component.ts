@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 
-import { SafetyApiService } from '@didi/safety-api';
+import { SafetyApiService } from 'eformlibs/safety-api';
 import { FileUploadedItem } from '../types';
 
 @Component({

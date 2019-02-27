@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable()
-export class DataSetService {
+export class BatchDataSetService {
   private get _batchurl() {
     return `<batchApi>/dealers/<dealerId>/dataSets`;
   }

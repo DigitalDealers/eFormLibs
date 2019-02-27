@@ -8,8 +8,7 @@ import { Observable, of, Subscription, throwError, timer } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { catchError, mergeMap, switchMap } from 'rxjs/operators';
 
-import { Assigment, FireStoreService } from '@didi/firebase-api';
-import { User } from './interfaces/user';
+import { Assigment, FireStoreService, User } from 'eformlibs/firebase-api';
 
 @Injectable()
 export class AuthService implements CanActivate, CanActivateChild, OnDestroy {

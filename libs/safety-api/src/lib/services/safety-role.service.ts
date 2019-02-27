@@ -9,7 +9,7 @@ import { prepareList } from '../helpers/prepare-list';
 import { SafetyRole } from '../interfaces/safety-role';
 
 @Injectable()
-export class RoleService {
+export class SafetyRoleService {
   private get _path() {
     return `<baseUrl>/roles`;
   }
