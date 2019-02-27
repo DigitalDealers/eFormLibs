@@ -2,9 +2,6 @@
   "name": "eformlibs",
   "version": "1.0.0",
   "private": true,
-  "files": [
-    "dist/**/*"
-  ],
   "scripts": {
     "build": "ng-packagr -p libs",
     "lint": "tslint -p tsconfig.json",
