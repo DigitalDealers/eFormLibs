@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "build": "ng-packagr -p libs",
+    "build:table": "ng-packagr -p libs/table",
+    "publish:table": "npm publish dist/table --access=public",
     "lint": "tslint -p tsconfig.json",
     "move": "cpy --parents --cwd=dist '**/*.*' '..' && del -f dist",
     "prepare": "npm run build && npm run move"
