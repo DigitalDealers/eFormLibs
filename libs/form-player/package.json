@@ -1,6 +1,6 @@
 {
   "name": "@digitaldealers/form-player",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "peerDependencies": {
     "@agm/core": "^1.0.0-beta.5",
     "@angular-material-extensions/google-maps-autocomplete": "^1.4.0",
@@ -11,6 +11,7 @@
     "@angular/forms": "^7.0.0",
     "@angular/material": "^7.0.0",
     "@digitaldealers/batch-api": "^0.0.1",
+    "@digitaldealers/safety-api": "^0.0.1",
     "angular2-signaturepad": "^2.8.0",
     "ngx-perfect-scrollbar": "^7.2.0",
     "rxjs": "^6.0.0"
