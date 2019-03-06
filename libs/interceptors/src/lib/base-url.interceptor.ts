@@ -35,12 +35,9 @@ export class BaseUrlInterceptor implements HttpInterceptor {
     } else if (url.includes('<batchApi>')) {
       url = url.replace('<batchApi>', this._options.batchApi);
     } else if (url.includes('<dealerApi>')) {
-      url = url.replace(
-        '<dealerApi>',
-        this._options.dealerApi || `${this._options.baseUrl}/api/v1`
-      );
+      url = url.replace('<dealerApi>', this._options.dealerApi);
     } else if (url.includes('<baseUrl>')) {
-      url = url.replace('<baseUrl>', `${this._options.baseUrl}/api/v1`);
+      url = url.replace('<baseUrl>', this._options.baseUrl);
     }
 
     if (url.includes('<dealerId>')) {

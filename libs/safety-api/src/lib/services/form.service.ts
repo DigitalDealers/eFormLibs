@@ -16,7 +16,7 @@ export interface FormListOptions {
 }
 
 @Injectable()
-export class SafetyFormService {
+export class FormService {
   private readonly collectionName = 'forms';
 
   constructor(

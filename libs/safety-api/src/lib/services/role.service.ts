@@ -6,11 +6,11 @@ import { map } from 'rxjs/operators';
 
 import { prepareItem } from '../helpers/prepare-item';
 import { prepareList } from '../helpers/prepare-list';
-import { SafetyUser } from '../interfaces/safety-user';
+import { SafetyRole } from '../interfaces/safety-role';
 
 @Injectable()
-export class SafetyUserService {
-  private readonly collectionName = 'users';
+export class RoleService {
+  private readonly collectionName = 'roles';
 
   constructor(
     private _db: AngularFirestore,
@@ -18,44 +18,46 @@ export class SafetyUserService {
   ) {}
 
   public getOne(id) {
-    const doc = this._db.collection<SafetyUser>(this.collectionName).doc(id);
-    return doc.get().pipe(map(item => prepareItem<SafetyUser>(item)));
+    const doc = this._db.collection<SafetyRole>(this.collectionName).doc(id);
+    return doc.get().pipe(map(item => prepareItem<SafetyRole>(item)));
   }
 
   public getRef(id): DocumentReference {
     return this._db.doc(`${this.collectionName}/${id}`).ref;
   }
 
-  public getList(options = { limit: 10, offset: 0 }): Observable<SafetyUser[]> {
+  public getList(options = { limit: 10, offset: 0 }): Observable<SafetyRole[]> {
     return this._db
-      .collection<SafetyUser>(this.collectionName, ref => {
+      .collection<SafetyRole>(this.collectionName, ref => {
         return ref
           .where('dealerId', '==', this._storage.get('dealerId'))
-          .orderBy('displayName');
+          .orderBy('name')
+          .startAt(options.offset)
+          .limit(options.limit);
       })
       .snapshotChanges()
-      .pipe(map(list => prepareList<SafetyUser>(list)));
+      .pipe(map(list => prepareList<SafetyRole>(list)));
   }
 
   public save(data) {
-    const collection = this._db.collection<SafetyUser>(this.collectionName);
+    const collection = this._db.collection<SafetyRole>(this.collectionName);
     collection.add(data);
   }
 
   public update(id, data) {
     delete data.id;
-    const document = this._db.collection<SafetyUser>(this.collectionName).doc(id);
+    const document = this._db.collection<SafetyRole>(this.collectionName).doc(id);
     return document.update(data);
   }
 
   public delete(id) {
-    const document = this._db.collection<SafetyUser>(this.collectionName).doc(id);
+    const document = this._db.collection<SafetyRole>(this.collectionName).doc(id);
     return document.delete();
   }
 
   public getCount() {
     return this._db
-      .collection<SafetyUser>(this.collectionName, ref => {
+      .collection<SafetyRole>(this.collectionName, ref => {
         return ref.where('dealerId', '==', this._storage.get('dealerId'));
       })
       .snapshotChanges()

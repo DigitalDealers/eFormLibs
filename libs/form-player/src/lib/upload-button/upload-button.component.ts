@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { SafetyApiService } from '@digitaldealers/safety-api';
 
-import { SafetyApiService } from 'eformlibs/safety-api';
-import { FileUploadedItem } from '../types';
+import { FileUploadedItem } from '../types/upload-file-item';
 
 @Component({
   selector: 'didi-upload-button',

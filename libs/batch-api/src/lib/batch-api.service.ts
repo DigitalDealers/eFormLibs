@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import { BatchDataSetService } from './services/batch-data-set.service';
-import { BatchSearchService } from './services/batch-search.service';
+import { DataSetService } from './services/data-set.service';
+import { SearchService } from './services/search.service';
 
 @Injectable()
 export class BatchApiService {
-  constructor(
-    public dataSet: BatchDataSetService,
-    public search: BatchSearchService
-  ) {}
+  constructor(public dataSet: DataSetService, public search: SearchService) {
+  }
 }

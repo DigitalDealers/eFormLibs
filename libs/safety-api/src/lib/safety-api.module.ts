@@ -8,12 +8,12 @@ import { LocalStorageModule } from 'angular-2-local-storage';
 import { SafetyApiService } from './safety-api.service';
 import { CategoryService } from './services/category.service';
 import { ControlService } from './services/control.service';
-import { SafetyFormService } from './services/safety-form.service';
+import { FormService } from './services/form.service';
 import { MyFormService } from './services/my-form.service';
 import { PermissionService } from './services/permission.service';
-import { SafetyRoleService } from './services/safety-role.service';
+import { RoleService } from './services/role.service';
 import { UserRoleService } from './services/user-role.service';
-import { SafetyUserService } from './services/safety-user.service';
+import { UserService } from './services/user.service';
 
 @NgModule({
   imports: [
@@ -27,13 +27,14 @@ import { SafetyUserService } from './services/safety-user.service';
     { provide: FirestoreSettingsToken, useValue: {} },
     CategoryService,
     ControlService,
-    SafetyFormService,
+    FormService,
     MyFormService,
     PermissionService,
-    SafetyRoleService,
+    RoleService,
     SafetyApiService,
     UserRoleService,
-    SafetyUserService
+    UserService
   ]
 })
-export class DidiSafetyApiModule {}
+export class DidiSafetyApiModule {
+}

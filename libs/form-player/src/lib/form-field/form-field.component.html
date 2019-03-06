@@ -11,7 +11,7 @@
   <div [ngSwitch]="field.response.type" [class.group-container]="field.response.type === 'section'">
     <label class="qLabel" *ngIf="!hidden">{{ field.question }}</label>
     <div *ngIf="field.image && field.response.type === 'text-section'">
-      <img [src]="field?.image?.url" class="text-section-img" />
+      <img [src]="field?.image?.url" class="text-section-img" alt="image" />
     </div>
 
     <div *ngSwitchCase="'input-text'">
@@ -96,6 +96,16 @@
         (filePath)="handleSetFieldValue({ value: $event, controlName: field.controlName })"
       >
       </didi-electronic-signature>
+    </div>
+    <div *ngSwitchCase="'location'">
+      <didi-location-control
+        [field]="field"
+        [value]="value"
+        [hidden]="hidden"
+        [invalid]="invalid"
+        [readonly]="readonly"
+        (setFieldValue)="handleSetFieldValue({ value: $event, controlName: field.controlName })"
+      ></didi-location-control>
     </div>
 
     <div *ngSwitchCase="'datetime'">

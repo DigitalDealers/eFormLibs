@@ -1,10 +1,9 @@
 import { HttpParams } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { BatchApiService } from '@digitaldealers/batch-api';
 import { Observable, of } from 'rxjs';
 import { debounceTime, map, startWith, switchMap } from 'rxjs/operators';
-
-import { BatchApiService } from 'eformlibs/batch-api';
 
 interface DropdownOption {
   key: string;

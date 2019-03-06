@@ -1,5 +1,0 @@
-.gitignore
-tsconfig.json
-libs/
-tslint.json
-package-lock.json

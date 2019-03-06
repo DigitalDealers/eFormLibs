@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 
 import { BatchApiService } from './batch-api.service';
-import { BatchDataSetService } from './services/batch-data-set.service';
-import { BatchSearchService } from './services/batch-search.service';
+import { DataSetService } from './services/data-set.service';
+import { SearchService } from './services/search.service';
 
 @NgModule({
   providers: [
     BatchApiService,
-    BatchDataSetService,
-    BatchSearchService
+    DataSetService,
+    SearchService
   ]
 })
-export class DidiBatchApiModule {}
+export class DidiBatchApiModule {
+}

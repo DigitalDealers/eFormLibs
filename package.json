@@ -1,16 +1,23 @@
 {
   "name": "eformlibs",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
-    "build": "ng-packagr -p libs",
+    "lint": "tslint -p tsconfig.json",
     "build:table": "ng-packagr -p libs/table",
     "publish:table": "npm publish dist/table --access=public",
-    "lint": "tslint -p tsconfig.json",
-    "move": "cpy --parents --cwd=dist '**/*.*' '..' && del -f dist",
-    "prepare": "npm run build && npm run move"
+    "build:form-player": "ng-packagr -p libs/form-player",
+    "publish:form-player": "npm publish dist/form-player --access=public",
+    "build:batch-api": "ng-packagr -p libs/batch-api",
+    "publish:batch-api": "npm publish dist/batch-api --access=public",
+    "build:safety-api": "ng-packagr -p libs/safety-api",
+    "publish:safety-api": "npm publish dist/safety-api --access=public",
+    "build:interceptors": "ng-packagr -p libs/interceptors",
+    "publish:interceptors": "npm publish dist/interceptors --access=public"
   },
   "devDependencies": {
+    "@agm/core": "^1.0.0-beta.5",
+    "@angular-material-extensions/google-maps-autocomplete": "^1.4.0",
     "@angular/animations": "^7.2.6",
     "@angular/cdk": "^7.3.3",
     "@angular/common": "^7.2.6",
@@ -24,6 +31,8 @@
     "@angular/platform-browser-dynamic": "^7.2.6",
     "@angular/router": "^7.2.6",
     "@auth0/angular-jwt": "^2.1.0",
+    "@digitaldealers/batch-api": "^0.0.1",
+    "@digitaldealers/safety-api": "^0.0.1",
     "@ng-bootstrap/ng-bootstrap": "^4.0.4",
     "angular-2-local-storage": "^3.0.2",
     "angular2-signaturepad": "^2.8.0",

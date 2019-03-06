@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { SafetyApiService } from '@digitaldealers/safety-api';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 
-import { SafetyApiService } from 'eformlibs/safety-api';
-import { FileUploadedItem } from '../types';
+import { FileUploadedItem } from '../types/upload-file-item';
 
 @Component({
   selector: 'didi-electronic-signature',
