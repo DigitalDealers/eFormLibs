@@ -8,6 +8,7 @@ import { prepareItem } from '../helpers/prepare-item';
 import { prepareList } from '../helpers/prepare-list';
 import { SafetyUser } from '../interfaces/safety-user';
 
+// @dynamic
 @Injectable()
 export class UserService {
   private readonly collectionName = 'users';
@@ -26,12 +27,10 @@ export class UserService {
     return this._db.doc(`${this.collectionName}/${id}`).ref;
   }
 
-  public getList(options = { limit: 10, offset: 0 }): Observable<SafetyUser[]> {
+  public getList(): Observable<SafetyUser[]> {
     return this._db
       .collection<SafetyUser>(this.collectionName, ref => {
-        return ref
-          .where('dealerId', '==', this._storage.get('dealerId'))
-          .orderBy('displayName');
+        return ref.where('dealerId', '==', this._storage.get('dealerId')).orderBy('displayName');
       })
       .snapshotChanges()
       .pipe(map(list => prepareList<SafetyUser>(list)));

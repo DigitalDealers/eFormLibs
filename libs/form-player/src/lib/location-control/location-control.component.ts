@@ -1,8 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MouseEvent } from '@agm/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { SafetyField } from '@digitaldealers/safety-api';
 
 import { googleMapStyle } from './google-map-style';
-import { FormGroup } from '@angular/forms';
 
 interface MapInit {
   lat: number;
@@ -16,17 +17,19 @@ interface MapInit {
   styleUrls: ['./location-control.component.scss']
 })
 export class LocationControlComponent implements OnInit {
-  @Input() public field;
+  @Input() public field: SafetyField;
   @Input() public value;
   @Input() public hidden;
   @Input() public invalid;
   @Input() public readonly;
   @Output() public setFieldValue: EventEmitter<any> = new EventEmitter();
 
+  public addressCtrl = new FormControl();
+
   public styles = googleMapStyle;
   private _centerMap: MapInit = {
-    lat: -23.47769229354325,
-    lng: 144.2656763331221,
+    lat: -23.4344651,
+    lng: 144.2616852,
     zoom: 6
   };
 
@@ -55,26 +58,35 @@ export class LocationControlComponent implements OnInit {
     this._marker = { ...this._marker, ...value };
   }
 
-  constructor() {}
-
   ngOnInit() {
     if (this.value) {
-      this.marker = this.value;
+      const { address, ...data } = this.value;
+      this.marker = data;
       this.centerMap = {
-        ...this.value
+        ...data
       };
+      this.addressCtrl.patchValue(address, { emitEvent: false });
     }
+
+    if (this.field.manual) {
+      this.centerMap.zoom = 14;
+    }
+  }
+
+  @HostListener('mousewheel', ['$event']) onScroll(event: Event): void {
+    event.stopPropagation();
   }
 
   public mapClicked($event: MouseEvent) {
-    if (this.field.manual) {
+    if (this.field.manual || this.readonly) {
       return false;
     }
     const { lat, lng } = $event.coords;
-    this.setData({ lat, lng });
+    this.setData({ lat, lng, address: '' });
   }
 
   public onAutocompleteSelected(event) {
+    const address = event.formatted_address;
     const { lat, lng } = event.geometry.location;
     const latitude = lat();
     const longitude = lng();
@@ -83,13 +95,13 @@ export class LocationControlComponent implements OnInit {
       lat: latitude,
       lng: longitude
     };
-    this.setData({ lat: latitude, lng: longitude });
+    this.setData({ lat: latitude, lng: longitude, address });
   }
 
-  private setData({ lat, lng }) {
+  private setData({ lat, lng, address }) {
     this.marker = { lat, lng };
 
-    this.setFieldValue.emit({ lat, lng });
+    this.setFieldValue.emit({ lat, lng, address });
   }
 }
 

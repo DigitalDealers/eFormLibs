@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { FormMapper } from '../mappers/form.mapper';
 
 @Injectable()
-export class DealerFormService {
+export class FormService {
   private get _url() {
     return `<dealerApi>/dealers/<dealerId>/formtypes`;
   }

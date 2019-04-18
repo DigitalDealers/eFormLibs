@@ -1,35 +1,32 @@
 <form [formGroup]="form" *ngIf="config">
   <div *ngFor="let field of config?.fields">
-    <didi-form-field
-      [form]="form"
-      [field]="field"
-      (setFieldValue)="setFieldValue($event)"
-    >
+    <didi-form-field [form]="form"
+                     [field]="field"
+                     [assetKey]="assetKey"
+                     (setFieldValue)="setFieldValue($event)">
     </didi-form-field>
 
-    <div *ngIf="field?.logic && toggleLogicSection(field)">
+    <div *ngIf="toggleLogicSection(field)">
       <div *ngFor="let child of field?.children">
-        <didi-form-field
-          [form]="form"
-          [field]="child"
-          (setFieldValue)="setFieldValue($event)"
-        >
+        <didi-form-field [form]="form"
+                         [field]="child"
+                         [assetKey]="assetKey"
+                         (setFieldValue)="setFieldValue($event)">
         </didi-form-field>
       </div>
     </div>
 
-    <div *ngIf="!field?.logic && field.response.type !== 'table'">
+    <div *ngIf="field.response.type !== 'table'">
       <div *ngFor="let child of field?.children">
-        <didi-form-field
-          [form]="form"
-          [field]="child"
-          (setFieldValue)="setFieldValue($event)"
-        >
+        <didi-form-field [form]="form"
+                         [field]="child"
+                         [assetKey]="assetKey"
+                         (setFieldValue)="setFieldValue($event)">
         </didi-form-field>
       </div>
     </div>
 
-    <div *ngIf="!field?.logic && field?.sections && field?.sections?.length">
+    <div *ngIf="field?.sections && field?.sections?.length">
       <div *ngFor="let section of field?.sections">
         <div
           *ngIf="
@@ -41,11 +38,10 @@
           "
         >
           <div *ngFor="let item of section?.items">
-            <didi-form-field
-              [form]="form"
-              [field]="item"
-              (setFieldValue)="setFieldValue($event)"
-            >
+            <didi-form-field [form]="form"
+                             [field]="item"
+                             [assetKey]="assetKey"
+                             (setFieldValue)="setFieldValue($event)">
             </didi-form-field>
           </div>
         </div>
@@ -54,13 +50,11 @@
   </div>
 
   <div class="actions" *ngIf="!isPreview">
-    <button
-      type="button"
-      mat-stroked-button
-      color="warn"
-      [disabled]="form.invalid"
-      (click)="submit()"
-    >
+    <button type="button" *ngIf="prevFormId" mat-stroked-button color="primary" (click)="backToMainForm(prevFormId)">
+      Save & Back
+    </button>
+
+    <button type="button" mat-stroked-button color="warn" [disabled]="form.invalid" (click)="submit()">
       Save & Close
     </button>
   </div>

@@ -6,10 +6,12 @@
     "umdModuleIds": {
       "@agm/core": "core",
       "@angular-material-extensions/google-maps-autocomplete": "googleMapsAutocomplete",
+      "@digitaldealers/base-component": "baseComponent",
       "@digitaldealers/batch-api": "batchApi",
       "@digitaldealers/safety-api": "safetyApi",
       "angular2-signaturepad": "angular2Signaturepad",
       "angular2-signaturepad/signature-pad": "signaturePad",
+      "moment": "moment_",
       "ngx-perfect-scrollbar": "ngxPerfectScrollbar"
     }
   }

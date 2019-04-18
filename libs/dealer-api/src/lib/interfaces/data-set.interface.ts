@@ -1,0 +1,34 @@
+export interface DataSet {
+  cron: any;
+  dataSetName: string;
+  dataSourceId: number;
+  dealerId: number;
+  duration: number;
+  enabled: boolean;
+  enableNotifications: boolean;
+  forms: any;
+  gridColumns: number;
+  headerKey: string;
+  id: number;
+  incrementalKeys: any;
+  isPowerBI: boolean;
+  jobStatus: any;
+  lastExecuted: string;
+  lastExecutedAt: string;
+  lastExecutedField: string;
+  lineItemKey: string;
+  lineSqlQuery: string;
+  liveConnection: boolean;
+  notifiedUsers: any;
+  notifiedUsersList: any;
+  pbDataSetName: string;
+  pbDataSetType: string;
+  pbTableName: string;
+  sortOrder: number;
+  sqlQuery: string;
+  startAt: string;
+  state: any;
+  status: any;
+  timeout: number;
+  updateType: string;
+}

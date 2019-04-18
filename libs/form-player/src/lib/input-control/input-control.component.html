@@ -1,15 +1,15 @@
 <div *ngIf="!field.multi" [formGroup]="form">
   <mat-form-field *ngIf="!hidden" class="input-control" [class.readonly]="readonly" appearance="outline">
-    <input [attr.type]="type" matInput [formControlName]="field.controlName" [readonly]="readonly" autocomplete="off">
+    <input [attr.type]="type" matInput [formControlName]="field.controlName" [readonly]="readonly" autocomplete="off" />
   </mat-form-field>
   <mat-error *ngIf="invalid">Field is required</mat-error>
 </div>
 
-<div *ngIf="field.multi" [formGroup]="multiForm">
+<div *ngIf="field.multi" [formGroup]="form">
   <div formArrayName="items" *ngFor="let item of formData.controls; let i = index">
     <div [formGroupName]="i" class="multi-input-row">
       <mat-form-field *ngIf="!hidden" class="input-sub-control" [class.readonly]="readonly" appearance="outline">
-        <input [attr.type]="type" matInput formControlName="value" [readonly]="readonly" autocomplete="off">
+        <input [attr.type]="type" matInput formControlName="value" [readonly]="readonly" autocomplete="off" />
       </mat-form-field>
       <button mat-icon-button (click)="removeControl(i)" *ngIf="!readonly">
         <mat-icon>delete_outlined</mat-icon>
@@ -18,11 +18,7 @@
   </div>
 
   <div class="actions-container">
-    <button type="button"
-            *ngIf="!readonly"
-            class="inverted"
-            mat-stroked-button
-            (click)="handleClick()">
+    <button type="button" *ngIf="!readonly" class="inverted" mat-stroked-button (click)="handleClick()">
       <mat-icon>add_outlined</mat-icon>
       Add Item
     </button>

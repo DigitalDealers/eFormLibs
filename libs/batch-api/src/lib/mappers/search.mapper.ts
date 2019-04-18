@@ -1,5 +1,7 @@
+import { DataSetSearchResponse } from '../interfaces/data-set-search-response.interface';
+
 export class SearchMapper {
-  public static prepareDataList(res) {
+  public static prepareDataList(res): DataSetSearchResponse {
     const {
       headerColumns,
       headerGridColumns,

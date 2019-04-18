@@ -1,10 +1,6 @@
 <div [hidden]="loading || field" *ngIf="!readonly">
-  <div class="control-container" (window:resize)="beResponsive()" #container>
-    <img [src]="imageUrl" alt="" *ngIf="imageUrl">
-    <signature-pad [options]="signaturePadOptions"
-                   (onBeginEvent)="drawStart()"
-                   (onEndEvent)="drawComplete()">
-    </signature-pad>
+  <div class="control-container" #container>
+    <signature-pad [options]="signaturePadOptions"></signature-pad>
 
     <div class="actions-container">
       <button type="button"
@@ -32,7 +28,7 @@
           (click)="remove()">
     <mat-icon>clear</mat-icon>
   </button>
-  <img *ngIf="field?.url" [src]="field?.url" alt="Signature">
+  <img *ngIf="fileUrl" [src]="fileUrl" alt="Signature">
 </div>
 
 <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>

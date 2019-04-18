@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 @Injectable()
-export class DealerRoleService {
+export class RoleService {
   private get _reportsUrl() {
     return `<dealerApi>/dealers/<dealerId>/reports`;
   }

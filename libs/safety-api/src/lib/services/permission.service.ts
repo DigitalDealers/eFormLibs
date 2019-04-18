@@ -8,6 +8,7 @@ import { prepareItem } from '../helpers/prepare-item';
 import { prepareList } from '../helpers/prepare-list';
 import { SafetyPermission } from '../interfaces/safety-permission';
 
+// @dynamic
 @Injectable()
 export class PermissionService {
   private readonly collectionName = 'permissions';

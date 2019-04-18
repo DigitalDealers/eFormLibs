@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { combineLatest, Observable } from 'rxjs';
+import { fromPromise } from 'rxjs/internal-compatibility';
 import { map } from 'rxjs/operators';
 
 import { prepareItem } from '../helpers/prepare-item';
@@ -15,6 +16,7 @@ export interface FormListOptions {
   where?: any;
 }
 
+// @dynamic
 @Injectable()
 export class FormService {
   private readonly collectionName = 'forms';
@@ -24,7 +26,7 @@ export class FormService {
     private _storage: LocalStorageService
   ) {}
 
-  public getOne(id) {
+  public getOne(id: string): Observable<SafetyForm> {
     const doc = this._db.collection<SafetyForm>(this.collectionName).doc(id);
     return doc.get().pipe(map(item => prepareItem<SafetyForm>(item)));
   }
@@ -33,15 +35,13 @@ export class FormService {
     return this._db.doc(`${this.collectionName}/${id}`).ref;
   }
 
-  public getListBulk(options?: FormListOptions): Observable<SafetyForm[]> {
+  public getListBulk(options: FormListOptions = {}): Observable<SafetyForm[]> {
     const { where = [] } = options;
     const roles: [string] = this._storage.get('roles');
     const reqs = [];
     for (let i = 0; i < roles.length; i += 1) {
       reqs.push(
         this.getList({
-          // limit: limit || 100,
-          // offset: offset || 0,
           role: roles[i],
           where
         })
@@ -87,23 +87,23 @@ export class FormService {
       .pipe(map(list => prepareList<SafetyForm>(list)));
   }
 
-  public save(data) {
+  public save(data: SafetyForm): Observable<DocumentReference> {
     const collection = this._db.collection<SafetyForm>(this.collectionName);
-    collection.add(data);
+    return fromPromise<DocumentReference>(collection.add(data));
   }
 
-  public update(id, data) {
+  public update(id: string, data: SafetyForm): Observable<void> {
     delete data.id;
     const document = this._db.collection<SafetyForm>(this.collectionName).doc(id);
-    return document.update(data);
+    return fromPromise<void>(document.update(data));
   }
 
-  public delete(id) {
+  public delete(id: string): Observable<void> {
     const document = this._db.collection<SafetyForm>(this.collectionName).doc(id);
-    return document.delete();
+    return fromPromise<void>(document.delete());
   }
 
-  public getCount() {
+  public getCount(): Observable<number> {
     return this._db
       .collection<SafetyForm>(this.collectionName, ref => {
         return ref.where('dealerId', '==', this._storage.get('dealerId'));

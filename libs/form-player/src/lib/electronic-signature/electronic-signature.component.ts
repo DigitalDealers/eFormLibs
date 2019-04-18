@@ -1,24 +1,38 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { SafetyApiService } from '@digitaldealers/safety-api';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
+import { MatSnackBar } from '@angular/material';
+import { BaseComponent } from '@digitaldealers/base-component';
+import { BatchApiService } from '@digitaldealers/batch-api';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
+import { Subject } from 'rxjs';
+import { debounceTime, finalize } from 'rxjs/operators';
 
-import { FileUploadedItem } from '../types/upload-file-item';
+import { FileUploadedItem } from '../interfaces/upload-file-item';
 
 @Component({
   selector: 'didi-electronic-signature',
   templateUrl: './electronic-signature.component.html',
   styleUrls: ['./electronic-signature.component.scss']
 })
-export class DidiElectronicSignatureComponent implements AfterViewInit {
-  @Input() public field;
-  @Input() public invalid;
-  @Input() public readonly;
-
-  @Output()
-  public filePath: EventEmitter<FileUploadedItem> = new EventEmitter();
-
+export class DidiElectronicSignatureComponent extends BaseComponent implements AfterViewInit, OnInit {
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   @ViewChild('container') container: ElementRef;
+
+  @Input() public field: FileUploadedItem;
+  @Input() public invalid: boolean;
+  @Input() public readonly: boolean;
+  @Input() public assetKey: string;
+
+  @Output() public filePath = new EventEmitter<FileUploadedItem>();
 
   public signaturePadOptions: Object = {
     dotSize: 1,
@@ -27,24 +41,38 @@ export class DidiElectronicSignatureComponent implements AfterViewInit {
     canvasWidth: 500,
     canvasHeight: 150
   };
-
-  public imageUrl = '';
-
   public loading = false;
 
-  constructor(private _safetyApi: SafetyApiService) {}
+  public get fileUrl(): string {
+    return this.field && (this.field.url + this.assetKey) || '';
+  }
+
+  private windowResize$ = new Subject<void>();
+
+  constructor(
+    private snackBar: MatSnackBar,
+    private batchApi: BatchApiService
+  ) {
+    super();
+  }
+
+  @HostListener('window:resize') onResizeWindow() {
+    this.windowResize$.next();
+  }
+
+  public ngOnInit(): void {
+    this.subs = this.windowResize$.asObservable()
+      .pipe(debounceTime(500))
+      .subscribe(() => this.beResponsive());
+  }
 
   public ngAfterViewInit() {
+    // this.signaturePad is now available
     if (this.signaturePad) {
       this.signaturePad.set('minWidth', 0.8); // set szimek/signature_pad options at runtime
       this.signaturePad.clear(); // invoke functions from szimek/signature_pad API
       this.beResponsive();
     }
-  }
-
-  public beResponsive() {
-    const { clientWidth } = this.container.nativeElement;
-    this.signaturePad.set('canvasWidth', clientWidth);
   }
 
   public clear() {
@@ -54,29 +82,33 @@ export class DidiElectronicSignatureComponent implements AfterViewInit {
   public remove() {
     this.signaturePad.clear();
     this.filePath.emit(null);
+    // Set correct canvas width after removing image
+    setTimeout(() => this.beResponsive());
   }
 
-  public drawComplete() {
-    // will be notified of szimek/signature_pad's onEnd event
-  }
-
-  public drawStart() {
-    // will be notified of szimek/signature_pad's onBegin event
-  }
-
-  public async save() {
+  public save(): void {
     this.loading = true;
-    const urls: FileUploadedItem[] = await this._safetyApi.myForm.uploadFiles([
-      this._dataURItoBlob(this.signaturePad.toDataURL())
-    ]);
+    const file = this.dataURItoBlob(this.signaturePad.toDataURL());
 
-    this.filePath.emit(urls[0]);
-    setTimeout(() => {
-      this.loading = false;
-    }, 1000);
+    this.subs = this.batchApi.upload.uploadFiles([file], 'signature.png')
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: res => this.filePath.emit(res[0]),
+        error: err => {
+          console.error(err);
+          this.snackBar.open('File upload error. Please try again.', null, { duration: 3000 });
+        }
+      });
   }
 
-  private _dataURItoBlob(dataURI) {
+  private beResponsive(): void {
+    if (this.container) {
+      const { clientWidth } = this.container.nativeElement;
+      this.signaturePad.set('canvasWidth', clientWidth);
+    }
+  }
+
+  private dataURItoBlob(dataURI): Blob {
     // convert base64 to raw binary data held in a string
     // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
     const byteString = atob(dataURI.split(',')[1]);

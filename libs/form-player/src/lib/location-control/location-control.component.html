@@ -1,23 +1,28 @@
-<mat-google-maps-autocomplete
-  *ngIf="field.manual"
-  [country]="[]"
-  [types]="[]"
-  (onAutocompleteSelected)="onAutocompleteSelected($event)"
->
-</mat-google-maps-autocomplete>
+<mat-form-field *ngIf="field.manual" appearance="outline">
+  <mat-label>Address</mat-label>
+  <input matInput
+         matGoogleMapsAutocomplete
+         [formControl]="addressCtrl"
+         [country]="[]"
+         [types]="[]"
+         [readonly]="readonly"
+         (onAutocompleteSelected)="onAutocompleteSelected($event)">
+</mat-form-field>
+
 <agm-map
   [latitude]="centerMap.lat"
   [longitude]="centerMap.lng"
   [zoom]="centerMap.zoom"
+  [scrollwheel]="null"
+  [gestureHandling]="'cooperative'"
+  [streetViewControl]="false"
   [styles]="styles"
-  (mapClick)="mapClicked($event)"
->
+  (mapClick)="mapClicked($event)">
   <agm-marker
     [latitude]="marker?.lat"
     [longitude]="marker?.lng"
     [label]="marker?.label"
     [iconUrl]="iconUrl"
-    [markerDraggable]="marker?.draggable"
-  >
+    [markerDraggable]="marker?.draggable">
   </agm-marker>
 </agm-map>

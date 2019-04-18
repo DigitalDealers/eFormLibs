@@ -8,6 +8,7 @@ import { prepareItem } from '../helpers/prepare-item';
 import { prepareList } from '../helpers/prepare-list';
 import { SafetyRole } from '../interfaces/safety-role';
 
+// @dynamic
 @Injectable()
 export class RoleService {
   private readonly collectionName = 'roles';

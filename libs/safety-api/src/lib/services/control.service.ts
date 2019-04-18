@@ -1,21 +1,26 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentChangeAction, DocumentReference } from '@angular/fire/firestore';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { combineLatest, Observable } from 'rxjs';
+import { fromPromise } from 'rxjs/internal-compatibility';
 import { map } from 'rxjs/operators';
 
-import { SafetyControl } from '../interfaces/safety-control';
+import {
+  ControlListType,
+  DictionarySafetyControls,
+  MappedSafetyControls,
+  SafetyControl
+} from '../interfaces/safety-control';
+
+type DataMapper = (data: DocumentChangeAction<SafetyControl>[]) => DictionarySafetyControls | MappedSafetyControls;
 
 @Injectable()
 export class ControlService {
   private readonly collectionName = 'controls';
 
-  constructor(
-    private _db: AngularFirestore,
-    private _storage: LocalStorageService
-  ) {}
+  constructor(private _db: AngularFirestore, private _storage: LocalStorageService) {}
 
-  static prepareList(data) {
+  static prepareList(data: DocumentChangeAction<SafetyControl>[]): MappedSafetyControls {
     const res = {
       singleChoice: [],
       multipleChoice: [],
@@ -40,7 +45,7 @@ export class ControlService {
     return res;
   }
 
-  public static prepareDictionary(data) {
+  public static prepareDictionary(data: DocumentChangeAction<SafetyControl>[]): DictionarySafetyControls {
     const res = {};
     for (let i = 0; i < data.length; i += 1) {
       const doc = data[i].payload.doc.data() as SafetyControl;
@@ -51,11 +56,8 @@ export class ControlService {
     return res;
   }
 
-  public getList(type = 'default'): Observable<any> {
-    const mapper =
-      type === 'dictionary'
-        ? ControlService.prepareDictionary
-        : ControlService.prepareList;
+  public getList(type: ControlListType = 'default'): Observable<MappedSafetyControls | DictionarySafetyControls> {
+    const mapper: DataMapper = type === 'dictionary' ? ControlService.prepareDictionary : ControlService.prepareList;
 
     const ref1 = this._db
       .collection<SafetyControl>(this.collectionName, ref => {
@@ -68,73 +70,32 @@ export class ControlService {
       })
       .snapshotChanges();
 
-    return combineLatest(ref1, ref2).pipe(
+    return combineLatest([ref1, ref2]).pipe(
       map(res => [...res[0], ...res[1]]),
       map(mapper)
     );
   }
 
-  public save(data) {
-    const collection = this._db.collection<SafetyControl>(this.collectionName);
-    collection.add(data);
+  public save(data: SafetyControl): Observable<DocumentReference> {
+    return fromPromise<DocumentReference>(this._db.collection<SafetyControl>(this.collectionName).add(data));
   }
 
-  public update(id, data) {
+  public update(id: string, data: SafetyControl): Observable<void> {
     delete data.id;
-    const itemsRef = this._db.collection(this.collectionName).doc(id);
-    return itemsRef.update(data);
+    return fromPromise(
+      this._db
+        .collection(this.collectionName)
+        .doc(id)
+        .update(data)
+    );
   }
 
-  public delete(id) {
-    const itemsRef = this._db.collection(this.collectionName).doc(id);
-    itemsRef.delete();
-  }
-
-  private _createDefaultControls() {
-    const batch = this._db.firestore.batch();
-    const dealerId = this._storage.get('dealerId');
-    const defaultControls = [
-      {
-        dealerId,
-        icon: 'title',
-        title: 'Text',
-        type: 'input-text'
-      },
-      {
-        dealerId,
-        icon: 'photo_library',
-        title: 'Photo',
-        type: 'photo'
-      },
-      {
-        dealerId,
-        icon: 'view_list',
-        title: 'Dropdown',
-        type: 'dropdown'
-      },
-      {
-        dealerId,
-        icon: 'format_list_numbered',
-        title: 'Number',
-        type: 'input-number'
-      },
-      {
-        dealerId,
-        icon: 'wrap_text',
-        title: 'Text Section',
-        type: 'text-section'
-      },
-      {
-        dealerId,
-        icon: 'dialpad',
-        title: 'Section',
-        type: 'section'
-      }
-    ];
-    for (let i = 0; i < defaultControls.length; i += 1) {
-      const doc = this._db.collection(this.collectionName).doc(this._db.createId()).ref;
-      batch.set(doc, defaultControls[i]);
-    }
-    batch.commit();
+  public delete(id: string): Observable<void> {
+    return fromPromise(
+      this._db
+        .collection(this.collectionName)
+        .doc(id)
+        .delete()
+    );
   }
 }

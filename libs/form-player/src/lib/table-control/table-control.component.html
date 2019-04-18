@@ -1,11 +1,19 @@
 <div class="table-control-container">
-  <div *ngFor="let column of table; let i = index" class="table-control-column">
-    <div class="table-control-cell" *ngFor="let cell of column">
+  <div *ngFor="let column of table; index as i" class="table-control-column">
+    <div class="table-control-cell" *ngFor="let cell of column; index as j">
       <div [ngSwitch]="cell.type">
         <ng-container *ngSwitchCase="'photo'">
           <div *ngFor="let img of cell.value">
-            <img [src]="img.url" alt="Image">
+            <img [src]="img.url" alt="Image" />
           </div>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'dropdown'">
+          <div>{{ cell.value.value }}</div>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'datetime'">
+          <div>{{ getDateTime(cell.value, j) }}</div>
         </ng-container>
 
         <ng-container *ngSwitchDefault>
@@ -15,27 +23,17 @@
     </div>
 
     <div class="table-control-actions">
-      <button type="button"
-              *ngIf="!readonly"
-              mat-icon-button
-              (click)="editItem($event, i)">
+      <button type="button" *ngIf="!readonly" mat-icon-button (click)="editItem($event, i)">
         <mat-icon>edit</mat-icon>
       </button>
-      <button type="button"
-              *ngIf="!readonly"
-              mat-icon-button
-              (click)="removeItem($event, i)">
+      <button type="button" *ngIf="!readonly" mat-icon-button (click)="removeItem($event, i)">
         <mat-icon>delete_outlined</mat-icon>
       </button>
     </div>
   </div>
 
   <div class="add-item-container">
-    <button type="button"
-            *ngIf="!readonly"
-            class="inverted"
-            mat-stroked-button
-            (click)="handleClick()">
+    <button type="button" *ngIf="!readonly" class="inverted" mat-stroked-button (click)="handleClick()">
       <mat-icon>add_outlined</mat-icon>
       Add Item
     </button>

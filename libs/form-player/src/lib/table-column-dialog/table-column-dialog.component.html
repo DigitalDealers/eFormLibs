@@ -3,9 +3,10 @@
   <mat-dialog-content>
     <form name="form" [formGroup]="form">
       <div *ngFor="let field of config?.children">
-        <didi-form-field [skipStyle]="true"
-                         [form]="form"
+        <didi-form-field [form]="form"
                          [field]="field"
+                         [skipStyle]="true"
+                         [assetKey]="assetKey"
                          (setFieldValue)="setFieldValue($event)">
         </didi-form-field>
       </div>

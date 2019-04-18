@@ -1,15 +1,17 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { SafetyField } from '@digitaldealers/safety-api';
 
 @Component({
   selector: 'didi-form-field',
   templateUrl: './form-field.component.html',
   styleUrls: ['./form-field.component.scss']
 })
-export class FormFieldComponent {
+export class FormFieldComponent implements OnInit {
   @Input() public form: FormGroup;
-  @Input() public field;
+  @Input() public field: SafetyField;
   @Input() public skipStyle = false;
+  @Input() public assetKey: string;
 
   @Output() public setFieldValue: EventEmitter<any> = new EventEmitter();
 
@@ -34,11 +36,23 @@ export class FormFieldComponent {
     return this.field.state === 'required';
   }
 
-  public trackByFn(index, item) {
+  get imageUrl() {
+    return (this.field.image && this.field.image.url + this.assetKey) || '';
+  }
+
+  public ngOnInit(): void {
+    const selectedType = this.field.response.type === 'single-choice' || this.field.response.type === 'multiple-choice';
+    if (selectedType && this.readonly) {
+      const fieldCtrl = this.form.get(this.field.controlName);
+      fieldCtrl.disable({ emitEvent: false });
+    }
+  }
+
+  public trackByFn(_index, item) {
     return item;
   }
 
-  public trackByIdFn(index, item) {
+  public trackByIdFn(_index, item) {
     return item.id;
   }
 

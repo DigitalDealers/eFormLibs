@@ -9,12 +9,13 @@
   </button>
 </div>
 
-<div *ngIf="field?.length">
-  <div *ngFor="let item of field" class="file-item-container">
-    <button mat-icon-button (click)="remove(item.url)" *ngIf="!readonly">
-      <mat-icon>delete_outlined</mat-icon>
-    </button>
-    <a [href]="item.url" class="file-name-label" target="blank">{{ item.name }}</a>
-  </div>
+<div *ngFor="let item of field" class="file-item-container">
+  <button mat-icon-button (click)="remove(item.url)" *ngIf="!readonly">
+    <mat-icon>delete_outlined</mat-icon>
+  </button>
+  <a [href]="getFullUrl(item.url)" class="file-name-label" target="blank">
+    {{ item.name }}
+  </a>
 </div>
+
 <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>

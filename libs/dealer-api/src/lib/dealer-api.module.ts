@@ -1,22 +1,23 @@
 import { NgModule } from '@angular/core';
 
 import { DealerApiService } from './dealer-api.service';
-import { DealerDataSetService } from './services/dealer-data-set.service';
-import { DealerFormService } from './services/dealer-form.service';
+import { DataSetService } from './services/data-set.service';
+import { FormService } from './services/form.service';
 import { InteractionService } from './services/interaction.service';
 import { ReportsService } from './services/reports.service';
-import { DealerRoleService } from './services/dealer-role.service';
-import { DealerSearchService } from './services/dealer-search.service';
+import { RoleService } from './services/role.service';
+import { SearchService } from './services/search.service';
 
 @NgModule({
   providers: [
-    DealerDataSetService,
+    DataSetService,
     DealerApiService,
-    DealerFormService,
+    FormService,
     InteractionService,
     ReportsService,
-    DealerRoleService,
-    DealerSearchService
+    RoleService,
+    SearchService
   ]
 })
-export class DidiDealerApiModule {}
+export class DidiDealerApiModule {
+}

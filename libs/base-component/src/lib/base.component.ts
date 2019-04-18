@@ -2,39 +2,25 @@ import { OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 export class BaseComponent implements OnDestroy {
-  private subsArray: Subscription[] = [];
+  private subscriptions = new Subscription();
 
-  public get subs(): Subscription | Subscription[] {
-    return this.subsArray;
+  constructor() {
+    // Prevent memory leak when overriding destroy hook
+    const originalOnDestroy = this.ngOnDestroy;
+    this.ngOnDestroy = () => {
+      this.onDestroy();
+      originalOnDestroy.apply(this);
+    };
   }
 
-  public set subs(sub: Subscription | Subscription[]) {
-    if (sub && sub instanceof Subscription) {
-      this.subsArray.push(sub);
-    } else if (sub instanceof Array) {
-      this.subsArray = this.subsArray.concat(sub);
-    }
+  protected set subs(sub: Subscription) {
+    this.subscriptions.add(sub);
   }
 
-  public ngOnDestroy() {
-    this.unsubscribeAll();
+  public ngOnDestroy(): void {
   }
 
-  protected unsubscribe(sub: Subscription) {
-    const idx = this.subsArray.indexOf(sub);
-
-    if (idx >= 0) {
-      this.subsArray[idx].unsubscribe();
-      this.subsArray.splice(idx, 1);
-    }
-  }
-
-  protected unsubscribeAll() {
-    for (const sub of this.subsArray) {
-      if (sub) {
-        sub.unsubscribe();
-      }
-    }
-    this.subsArray = [];
+  private onDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

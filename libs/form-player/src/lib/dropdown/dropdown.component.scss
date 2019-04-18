@@ -1,0 +1,7 @@
+:host ::ng-deep {
+  .mat-form-field.readonly {
+    .mat-form-field-suffix {
+      display: none;
+    }
+  }
+}
