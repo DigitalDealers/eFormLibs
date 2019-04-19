@@ -54,7 +54,7 @@ export class DatetimePickerComponent implements OnInit {
         const date = this._combineDate();
         this._formObserver.emit({
           context: 'setFieldValue',
-          value: date.toDate(),
+          value: date && date.toDate(),
           type: 'datetime',
           controlName: this.field.controlName
         });
@@ -77,12 +77,15 @@ export class DatetimePickerComponent implements OnInit {
   }
 
   private getTime(value: any): string | null {
+    if (!value || !value.seconds) {
+      return null;
+    }
     const date = this.convertToMoment(value);
     return date ? date.format('HH:mm') : null;
   }
 
   private convertToMoment(value: any): moment_.Moment | null {
-    if (!value) {
+    if (!value || !value.seconds) {
       return null;
     }
 
