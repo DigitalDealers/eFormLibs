@@ -1,6 +1,6 @@
 {
   "name": "@digitaldealers/form-player",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "peerDependencies": {
     "@agm/core": "^1.0.0-beta.5",
     "@angular-material-extensions/google-maps-autocomplete": "^1.4.0",
@@ -12,8 +12,8 @@
     "@angular/material": "^7.0.0",
     "@angular/material-moment-adapter": "^6.0.0",
     "@digitaldealers/base-component": "^0.0.1",
-    "@digitaldealers/batch-api": "^0.0.2",
-    "@digitaldealers/safety-api": "^0.0.2",
+    "@digitaldealers/batch-api": "^0.0.4",
+    "@digitaldealers/safety-api": "^0.0.3",
     "angular2-signaturepad": "^2.8.0",
     "moment": "^2.24.0",
     "ngx-perfect-scrollbar": "^7.2.0",

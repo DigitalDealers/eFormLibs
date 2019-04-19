@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseComponent } from '@digitaldealers/base-component';
 import { SafetyApiService, SafetyMyForm } from '@digitaldealers/safety-api';
+import { Observable } from 'rxjs';
+import { catchError, finalize, tap } from 'rxjs/operators';
 
 import { FormObserverService } from '../form-observer.service';
 
@@ -24,13 +27,15 @@ export class FormPlayerComponent extends BaseComponent implements OnInit, OnChan
   public form: FormGroup;
   public controls = {};
   public prevFormId: string;
+  public saving: boolean;
 
   constructor(
     private _fb: FormBuilder,
     private safetyApi: SafetyApiService,
     private _formObserver: FormObserverService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar
   ) {
     super();
     this.form = this._fb.group({});
@@ -47,7 +52,7 @@ export class FormPlayerComponent extends BaseComponent implements OnInit, OnChan
     if (!this.isPreview) {
       // autosave form each 15 seconds
       // this.subs = sourceTimer.subscribe(() => {
-      //   this._saveForm(true);
+      //   this.subs = this._saveForm(true).subscribe();
       //   this._snackBar.open('Form was saved!', null, { duration: 3000, horizontalPosition: 'end' });
       // });
     }
@@ -75,7 +80,7 @@ export class FormPlayerComponent extends BaseComponent implements OnInit, OnChan
             }
             return el;
           });
-          this._saveForm(false, config);
+          this.subs = this._saveForm(false, config).subscribe();
           break;
         default: {
           if (index || index === 0) {
@@ -140,15 +145,17 @@ export class FormPlayerComponent extends BaseComponent implements OnInit, OnChan
   }
 
   public submit() {
-    this._saveForm();
-    this.saved.emit(true);
+    this.subs = this._saveForm().subscribe(() => {
+      this.saved.emit(true);
+    });
   }
 
-  public backToMainForm(id) {
+  public backToMainForm(): void {
     const queryParams = { ...this.route.snapshot.queryParams };
     delete queryParams.prevFormId;
-    this._saveForm();
-    this.router.navigate(['..', id], { relativeTo: this.route, queryParams });
+    this.subs = this._saveForm().subscribe(() => {
+      this.router.navigate(['..', this.prevFormId], { relativeTo: this.route, queryParams });
+    });
   }
 
   public upload({ value, controlName }) {
@@ -180,7 +187,8 @@ export class FormPlayerComponent extends BaseComponent implements OnInit, OnChan
     }
   }
 
-  private _saveForm(isAutosave = false, extraConfig = {}) {
+  private _saveForm(isAutosave = false, extraConfig = {}): Observable<string> {
+    this.saving = true;
     const { id, ...answers } = this.form.getRawValue();
     const { status, ...config } = this.config;
     let newStatus = '';
@@ -197,8 +205,14 @@ export class FormPlayerComponent extends BaseComponent implements OnInit, OnChan
       answers
     };
 
-    this.safetyApi.myForm.save(data).subscribe((res: string) => {
-      this.form.get('id').setValue(res);
-    });
+    return this.safetyApi.myForm.save(data).pipe(
+      finalize(() => this.saving = false),
+      tap((res: string) => this.form.get('id').setValue(res, { emitEvent: false })),
+      catchError(err => {
+        console.error(err);
+        this.snackBar.open('Form save error. Please try again.', null, { duration: 3000 });
+        throw err;
+      })
+    );
   }
 }

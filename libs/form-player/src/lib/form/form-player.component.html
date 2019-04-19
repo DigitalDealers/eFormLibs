@@ -50,11 +50,16 @@
   </div>
 
   <div class="actions" *ngIf="!isPreview">
-    <button type="button" *ngIf="prevFormId" mat-stroked-button color="primary" (click)="backToMainForm(prevFormId)">
+    <button type="button"
+            *ngIf="prevFormId"
+            mat-stroked-button
+            color="primary"
+            [disabled]="saving"
+            (click)="backToMainForm()">
       Save & Back
     </button>
 
-    <button type="button" mat-stroked-button color="warn" [disabled]="form.invalid" (click)="submit()">
+    <button type="button" mat-stroked-button color="warn" [disabled]="form.invalid || saving" (click)="submit()">
       Save & Close
     </button>
   </div>
