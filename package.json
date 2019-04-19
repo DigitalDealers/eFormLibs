@@ -14,6 +14,8 @@
     "publish:batch-api": "npm publish dist/batch-api --access=public",
     "build:safety-api": "ng-packagr -p libs/safety-api",
     "publish:safety-api": "npm publish dist/safety-api --access=public",
+    "build:auth-api": "ng-packagr -p libs/auth-api",
+    "publish:auth-api": "npm publish dist/auth-api --access=public",
     "build:interceptors": "ng-packagr -p libs/interceptors",
     "publish:interceptors": "npm publish dist/interceptors --access=public",
     "build:base-component": "ng-packagr -p libs/base-component",
