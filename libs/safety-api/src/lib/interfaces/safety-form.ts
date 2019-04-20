@@ -48,6 +48,7 @@ export interface SafetyForm {
   exportFunction?: string;
   fields: SafetyField[];
   id?: string;
+  isPublic?: boolean;
   roles?: string[];
   status: string;
   title1Field: string;
