@@ -1,9 +1,15 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/firebase-api",
+  "whitelistedNonPeerDependencies": [
+    "@digitaldealers/geostore",
+    "date-fns",
+    "lodash-es"
+  ],
   "lib": {
     "entryFile": "src/public_api.ts",
     "umdModuleIds": {
+      "@digitaldealers/geostore": "geostore",
       "angular-2-local-storage": "angular2LocalStorage",
       "date-fns": "dateFns",
       "firebase/app": "firebase",

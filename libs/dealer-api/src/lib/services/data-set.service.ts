@@ -7,74 +7,73 @@ import { DataSetMapper } from '../mappers/data-set.mapper';
 
 @Injectable()
 export class DataSetService {
-  public get _url() {
-    return `<dealerApi>/dealers/<dealerId>/dataSets`;
+  public readonly url = `<dealerApi>/dealers/<dealerId>/dataSets`;
+
+  constructor(private _http: HttpClient) {
   }
 
-  constructor(private _http: HttpClient) {}
-
   public create(body): Observable<any> {
-    return this._http.post(this._url, body).pipe(map(DataSetMapper.prepareData));
+    return this._http.post(this.url, body).pipe(map(DataSetMapper.prepareData));
   }
 
   public deleteItem(id): Observable<any> {
-    return this._http.delete(`${this._url}/${id}`, {});
+    return this._http.delete(`${this.url}/${id}`, {});
   }
 
   public getOne(id, params = new HttpParams()): Observable<any> {
-    return this._http.get(`${this._url}/${id}`, { params }).pipe(map(DataSetMapper.prepareData));
+    return this._http.get(`${this.url}/${id}`, { params }).pipe(map(DataSetMapper.prepareData));
   }
 
   public update(id, body): Observable<any> {
-    return this._http.put(`${this._url}/${id}`, body).pipe(map(DataSetMapper.prepareData));
+    return this._http.put(`${this.url}/${id}`, body).pipe(map(DataSetMapper.prepareData));
   }
 
   public getList(params = new HttpParams()): Observable<any> {
-    return this._http.get(this._url, { params }).pipe(map(DataSetMapper.prepareListData));
+    return this._http.get(this.url, { params }).pipe(map(DataSetMapper.prepareListData));
   }
 
   public getDataSetHistory(id, params = new HttpParams()): Observable<any> {
-    return this._http.get(`${this._url}/${id}/history`, { params }).pipe(map(DataSetMapper.prepareData));
+    return this._http.get(`${this.url}/${id}/history`, { params }).pipe(map(DataSetMapper.prepareData));
   }
 
   public removeFromRole(roleName, id): Observable<any> {
-    return this._http.delete(`${this._url}/${id}/roles/${roleName}`);
+    return this._http.delete(`${this.url}/${id}/roles/${roleName}`);
   }
 
   public assingToRole(id, roleName): Observable<any> {
-    return this._http.put(`${this._url}/${id}/roles/${roleName}`, {});
+    return this._http.put(`${this.url}/${id}/roles/${roleName}`, {});
   }
 
   public getListByRole(roleName, params = new HttpParams()): Observable<any> {
-    return this._http.get(`${this._url}/roles/${roleName}`, { params }).pipe(map(DataSetMapper.prepareListData));
+    return this._http.get(`${this.url}/roles/${roleName}`, { params }).pipe(map(DataSetMapper.prepareListData));
   }
 
   public getAlerts(): Observable<any> {
-    return this._http.get(`${this._url}/alerts/my`);
+    return this._http.get(`${this.url}/alerts/my`);
   }
 
   public setAlerts(alertId, data): Observable<any> {
-    return this._http.post(`${this._url}/alerts/${alertId}`, data);
+    return this._http.post(`${this.url}/alerts/${alertId}`, data);
   }
 
   public getAlert(dataSetId, alertId): Observable<any> {
-    return this._http.get(`${this._url}/${dataSetId}/alerts/${alertId}`);
+    return this._http.get(`${this.url}/${dataSetId}/alerts/${alertId}`);
   }
 
   public deleteAlert(dataSetId, alertId): Observable<any> {
-    return this._http.delete(`${this._url}/${dataSetId}/alerts/${alertId}`);
+    return this._http.delete(`${this.url}/${dataSetId}/alerts/${alertId}`);
   }
 
   public updateAlert(alertId, data): Observable<any> {
-    return this._http.put(`${this._url}/${data.dataSetId}/alerts/${alertId}`, data);
+    return this._http.put(`${this.url}/${data.dataSetId}/alerts/${alertId}`, data);
   }
 
   public addAlert(_alertId, data): Observable<any> {
-    return this._http.post(`${this._url}/${data.dataSetId}/alerts`, data);
+    return this._http.post(`${this.url}/${data.dataSetId}/alerts`, data);
   }
 
   public trigger(dataSetId): Observable<any> {
-    return this._http.post(`${this._url}/${dataSetId}/trigger`, {});
+    return this._http.post(`${this.url}/${dataSetId}/trigger`, {});
   }
 
   public getCustomerSync(): Observable<any> {
@@ -82,7 +81,7 @@ export class DataSetService {
   }
 
   public createCustomerSync(dataSetId, body): Observable<any> {
-    return this._http.post(`${this._url}/${dataSetId}/hooks/customerSync`, body);
+    return this._http.post(`${this.url}/${dataSetId}/hooks/customerSync`, body);
   }
 
   public deleteCustomerSync(): Observable<any> {
@@ -94,7 +93,7 @@ export class DataSetService {
   }
 
   public createVendorSync(dataSetId, body): Observable<any> {
-    return this._http.post(`${this._url}/${dataSetId}/hooks/vendorSync`, body);
+    return this._http.post(`${this.url}/${dataSetId}/hooks/vendorSync`, body);
   }
 
   public deleteVendorSync(): Observable<any> {

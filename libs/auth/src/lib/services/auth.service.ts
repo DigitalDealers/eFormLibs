@@ -1,14 +1,13 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, RouterStateSnapshot } from '@angular/router';
+import { CanActivate, CanActivateChild } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { Assigment, FireStoreService, User } from '@digitaldealers/firebase-api';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable, of, Subscription, throwError, timer } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { catchError, mergeMap, switchMap } from 'rxjs/operators';
-
-import { Assigment, FireStoreService, User } from 'eformlibs/firebase-api';
 
 @Injectable()
 export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
@@ -27,12 +26,12 @@ export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
     this.unscheduleFirebaseRenewal();
   }
 
-  public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+  public canActivate(): boolean {
     return !!this.fetchKioskProfile();
   }
 
-  public canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    return this.canActivate(route, state);
+  public canActivateChild(): boolean {
+    return this.canActivate();
   }
 
   public setSession(token: string): void {
@@ -49,7 +48,11 @@ export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
 
   public isAuthenticated(): boolean {
     const token = this.getToken();
-    return !this.jwtHelper.isTokenExpired(token);
+    try {
+      return !this.jwtHelper.isTokenExpired(token);
+    } catch (e) {
+      return false;
+    }
   }
 
   public getFirebaseToken(): Observable<any> {
@@ -62,19 +65,27 @@ export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
 
   private fetchKioskProfile(): any | null {
     const token = this.getToken();
-    return this.jwtHelper.isTokenExpired(token) ? null : this.jwtHelper.decodeToken(token);
+    try {
+      return this.jwtHelper.isTokenExpired(token) ? null : this.jwtHelper.decodeToken(token);
+    } catch (e) {
+      return null;
+    }
   }
 
   private _firebaseAuth(fbToken: string): Observable<any> {
     return fromPromise(this.afAuth.auth.signInWithCustomToken(fbToken))
       .pipe(
-        catchError(err => throwError(`${ err.code } Could not log into Firebase: ${ err.message }`)),
+        catchError(err => throwError(`${ err.code } Can't log into Firebase: ${ err.message }`)),
         switchMap(() => {
           this.scheduleFirebaseRenewal();
           const token = this.getToken();
-          const profile = this.jwtHelper.decodeToken(token);
-          this._localStorageService.set('dealerId', profile['https://digital-dealers.com/dealerid']);
-          return this.upsertUser(profile);
+          try {
+            const profile = this.jwtHelper.decodeToken(token);
+            this._localStorageService.set('dealerId', profile['https://digital-dealers.com/dealerid']);
+            return this.upsertUser(profile);
+          } catch (e) {
+            throw new Error(`Can't log into Firebase: invalid token`);
+          }
         })
       );
   }

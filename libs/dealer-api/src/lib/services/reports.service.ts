@@ -7,11 +7,10 @@ import { ReportMapper } from '../mappers/report.mapper';
 
 @Injectable()
 export class ReportsService {
-  public get _url() {
-    return `<dealerApi>/dealers/<dealerId>/reports`;
-  }
+  public readonly url = '<dealerApi>/dealers/<dealerId>/reports';
 
-  constructor(private _http: HttpClient) {}
+  constructor(private _http: HttpClient) {
+  }
 
   public getList(params = new HttpParams()): Observable<any> {
     if (params instanceof HttpParams && params.has('dealerId')) {
@@ -19,66 +18,66 @@ export class ReportsService {
     }
 
     return this._http
-      .get(this._url, { params })
+      .get(this.url, { params })
       .pipe(map(res => ReportMapper.prepareDataList(res)));
   }
 
   public create(data): Observable<any> {
     return this._http
-      .post(this._url, data)
+      .post(this.url, data)
       .pipe(map(res => ReportMapper.prepareData(res)));
   }
 
   public getOne(id, params = new HttpParams()): Observable<any> {
     return this._http
-      .get(`${this._url}/${id}`, { params })
+      .get(`${this.url}/${id}`, { params })
       .pipe(map(res => ReportMapper.prepareData(res)));
   }
 
   public upload(body): Observable<any> {
-    return this._http.post(`${this._url}/upload`, body);
+    return this._http.post(`${this.url}/upload`, body);
   }
 
   public update(id, body): Observable<any> {
     return this._http
-      .put(`${this._url}/${id}`, body)
+      .put(`${this.url}/${id}`, body)
       .pipe(map(res => ReportMapper.prepareData(res)));
   }
 
   public deleteItem(id): Observable<any> {
-    return this._http.delete(`${this._url}/${id}`);
+    return this._http.delete(`${this.url}/${id}`);
   }
 
   public getByTile(body): Observable<any> {
-    return this._http.post(`${this._url}/getByTile`, body);
+    return this._http.post(`${this.url}/getByTile`, body);
   }
 
   public getEmbedded(id): Observable<any> {
-    return this._http.get(`${this._url}/${id}/getembedded`);
+    return this._http.get(`${this.url}/${id}/getembedded`);
   }
 
   public getEmbeddedDashboards(): Observable<any> {
-    return this._http.get(`${this._url}/pbdashboards`);
+    return this._http.get(`${this.url}/pbdashboards`);
   }
 
   public getEmbeddedDashboardById(
     id,
     params = new HttpParams()
   ): Observable<any> {
-    return this._http.get(`${this._url}/dashboards/${id}`, { params });
+    return this._http.get(`${this.url}/dashboards/${id}`, { params });
   }
 
   public assingReportToRole(id, reportId, body): Observable<any> {
-    return this._http.put(`${this._url}/${reportId}/roles/${id}`, body);
+    return this._http.put(`${this.url}/${reportId}/roles/${id}`, body);
   }
 
   public removeReportFromRole(roleName, reportId): Observable<any> {
-    return this._http.delete(`${this._url}/${reportId}/roles/${roleName}`);
+    return this._http.delete(`${this.url}/${reportId}/roles/${roleName}`);
   }
 
   public getListByRole(roleName, params = new HttpParams()): Observable<any> {
     return this._http
-      .get(`${this._url}/roles/${roleName}`, { params })
+      .get(`${this.url}/roles/${roleName}`, { params })
       .pipe(map(res => ReportMapper.prepareDataList(res)));
   }
 

@@ -6,8 +6,8 @@ import { BotService } from './services/bot.service';
 import { DashboardService } from './services/dashboard.service';
 import { DealerService } from './services/dealer.service';
 import { PaymentService } from './services/payment.service';
-import { AuthUserService } from './services/auth-user.service';
-import { AuthRoleService } from './services/auth-role.service';
+import { RoleService } from './services/role.service';
+import { UserService } from './services/user.service';
 
 @NgModule({
   providers: [
@@ -16,9 +16,10 @@ import { AuthRoleService } from './services/auth-role.service';
     DashboardService,
     DealerService,
     PaymentService,
-    AuthRoleService,
-    AuthUserService,
+    RoleService,
+    UserService,
     AuthApiService
   ]
 })
-export class DidiAuthApiModule {}
+export class DidiAuthApiModule {
+}

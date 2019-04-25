@@ -48,6 +48,7 @@ export class GeoFirestoreQuery {
   /**
    * @param _collectionRef A Firestore Collection reference where the GeoFirestore data will be stored.
    * @param _queryCriteria The criteria which specifies the query's center and radius.
+   * @param exParams
    */
   constructor(
     private _collectionRef: firebase.firestore.CollectionReference,
@@ -55,9 +56,7 @@ export class GeoFirestoreQuery {
     exParams: any[]
   ) {
     // Firebase reference of the GeoFirestore which created this query
-    if (
-      Object.prototype.toString.call(this._collectionRef) !== '[object Object]'
-    ) {
+    if (Object.prototype.toString.call(this._collectionRef) !== '[object Object]') {
       throw new Error('firebaseRef must be an instance of Firestore');
     }
 
@@ -76,9 +75,6 @@ export class GeoFirestoreQuery {
     this._listenForNewGeohashes(exParams);
   }
 
-  /********************/
-  /*  PUBLIC METHODS  */
-  /********************/
   /**
    * Terminates this query so that it no longer sends location updates. All callbacks attached to this
    * query via on() will be cancelled. This query can no longer be used in the future.
@@ -99,10 +95,7 @@ export class GeoFirestoreQuery {
     const keys: string[] = Object.keys(this._currentGeohashesQueried);
     keys.forEach((geohashQueryStr: string) => {
       const query: string[] = this._stringToQuery(geohashQueryStr);
-      this._cancelGeohashQuery(
-        query,
-        this._currentGeohashesQueried[geohashQueryStr]
-      );
+      this._cancelGeohashQuery(query, this._currentGeohashesQueried[geohashQueryStr]);
       delete this._currentGeohashesQueried[geohashQueryStr];
     });
 
@@ -153,14 +146,10 @@ export class GeoFirestoreQuery {
    */
   public on(eventType: string, callback: Function): GeoCallbackRegistration {
     // Validate the inputs
-    if (
-      ['ready', 'key_entered', 'key_exited', 'key_moved'].indexOf(eventType) ===
-      -1
-    ) {
-      throw new Error(
-        `event type must be 'ready', 'key_entered', 'key_exited', or 'key_moved'`
-      );
+    if (['ready', 'key_entered', 'key_exited', 'key_moved'].indexOf(eventType) === -1 ) {
+      throw new Error(`event type must be 'ready', 'key_entered', 'key_exited', or 'key_moved'`);
     }
+
     if (typeof callback !== 'function') {
       throw new Error('callback must be a function');
     }
@@ -173,7 +162,7 @@ export class GeoFirestoreQuery {
       const keys: string[] = Object.keys(this._locationsTracked);
       keys.forEach((key: string) => {
         const locationDict = this._locationsTracked[key];
-        if (typeof locationDict !== 'undefined' && locationDict.isInQuery) {
+        if (locationDict && locationDict.isInQuery) {
           callback(key, locationDict.location, locationDict.distanceFromCenter);
         }
       });
@@ -186,10 +175,7 @@ export class GeoFirestoreQuery {
 
     // Return an event registration which can be used to cancel the callback
     return new GeoCallbackRegistration(() => {
-      this._callbacks[eventType].splice(
-        this._callbacks[eventType].indexOf(callback),
-        1
-      );
+      this._callbacks[eventType].splice(this._callbacks[eventType].indexOf(callback), 1);
     });
   }
 
@@ -206,11 +192,9 @@ export class GeoFirestoreQuery {
    * Updates the criteria for this query.
    *
    * @param newQueryCriteria The criteria which specifies the query's center and radius.
+   * @param exParams
    */
-  public updateCriteria(
-    newQueryCriteria: QueryCriteria,
-    exParams: any[]
-  ): void {
+  public updateCriteria(newQueryCriteria: QueryCriteria, exParams: any[]): void {
     // Validate and save the new query criteria
     validateCriteria(newQueryCriteria);
     this._center = newQueryCriteria.center || this._center;
@@ -222,7 +206,7 @@ export class GeoFirestoreQuery {
     for (const key of keys) {
       // If the query was cancelled while going through this loop, stop updating locations and stop
       // firing events
-      if (this._cancelled === true) {
+      if (this._cancelled) {
         break;
       }
       // Get the cached information for this location
@@ -264,19 +248,13 @@ export class GeoFirestoreQuery {
     this._listenForNewGeohashes(exParams);
   }
 
-  /*********************/
-  /*  PRIVATE METHODS  */
-  /*********************/
   /**
    * Turns off all callbacks for the provide geohash query.
    *
-   * @param query The geohash query.
+   * @param _query The geohash query.
    * @param queryState An object storing the current state of the query.
    */
-  private _cancelGeohashQuery(
-    query: string[],
-    queryState: GeoFirestoreQueryState
-  ): void {
+  private _cancelGeohashQuery(_query: string[], queryState: GeoFirestoreQueryState): void {
     queryState.childCallback();
     queryState.valueCallback();
   }
@@ -286,15 +264,9 @@ export class GeoFirestoreQuery {
    *
    * @param locationDataSnapshot A snapshot of the data stored for this location.
    */
-  private _childAddedCallback(
-    locationDataSnapshot: firebase.firestore.DocumentSnapshot
-  ): void {
+  private _childAddedCallback(locationDataSnapshot: firebase.firestore.DocumentSnapshot): void {
     const data = locationDataSnapshot.data();
-    this._updateLocation(
-      geoFirestoreGetKey(locationDataSnapshot),
-      data,
-      decodeGeoFireObject(data)
-    );
+    this._updateLocation(geoFirestoreGetKey(locationDataSnapshot), data, decodeGeoFireObject(data));
   }
 
   /**
@@ -302,15 +274,9 @@ export class GeoFirestoreQuery {
    *
    * @param locationDataSnapshot A snapshot of the data stored for this location.
    */
-  private _childChangedCallback(
-    locationDataSnapshot: firebase.firestore.DocumentSnapshot
-  ): void {
+  private _childChangedCallback(locationDataSnapshot: firebase.firestore.DocumentSnapshot): void {
     const data = locationDataSnapshot.data();
-    this._updateLocation(
-      geoFirestoreGetKey(locationDataSnapshot),
-      data,
-      decodeGeoFireObject(data)
-    );
+    this._updateLocation(geoFirestoreGetKey(locationDataSnapshot), data, decodeGeoFireObject(data));
   }
 
   /**
@@ -318,9 +284,7 @@ export class GeoFirestoreQuery {
    *
    * @param locationDataSnapshot A snapshot of the data stored for this location.
    */
-  private _childRemovedCallback(
-    locationDataSnapshot: firebase.firestore.DocumentSnapshot
-  ): void {
+  private _childRemovedCallback(locationDataSnapshot: firebase.firestore.DocumentSnapshot): void {
     const key: string = geoFirestoreGetKey(locationDataSnapshot);
     if (key in this._locationsTracked) {
       this._collectionRef
@@ -328,11 +292,8 @@ export class GeoFirestoreQuery {
         .get()
         .then((snapshot: firebase.firestore.DocumentSnapshot) => {
           const data = !snapshot.exists ? null : <GeoFireObj>snapshot.data();
-          const location: number[] = !snapshot.exists
-            ? null
-            : decodeGeoFireObject(data);
-          const geohash: string =
-            location !== null ? encodeGeohash(location) : null;
+          const location: number[] = !snapshot.exists ? null : decodeGeoFireObject(data);
+          const geohash: string = location ? encodeGeohash(location) : null;
           // Only notify observers if key is not part of any other geohash query or this actually might not be
           // a key exited event, but a key moved or entered event. These events will be triggered by updates
           // to a different query
@@ -350,7 +311,7 @@ export class GeoFirestoreQuery {
     let keys: string[] = Object.keys(this._currentGeohashesQueried);
     keys.forEach((geohashQueryStr: string) => {
       const queryState: any = this._currentGeohashesQueried[geohashQueryStr];
-      if (queryState.active === false) {
+      if (!queryState.active) {
         const query = this._stringToQuery(geohashQueryStr);
         // Delete the geohash since it should no longer be queried
         this._cancelGeohashQuery(query, queryState);
@@ -363,9 +324,7 @@ export class GeoFirestoreQuery {
     keys.forEach((key: string) => {
       if (!this._geohashInSomeQuery(this._locationsTracked[key].geohash)) {
         if (this._locationsTracked[key].isInQuery) {
-          throw new Error(
-            'Internal State error, trying to remove location that is still in query'
-          );
+          throw new Error('Internal State error, trying to remove location that is still in query');
         }
         delete this._locationsTracked[key];
       }
@@ -386,6 +345,7 @@ export class GeoFirestoreQuery {
    *
    * @param eventType The event type whose callbacks to fire. One of 'key_entered', 'key_exited', or 'key_moved'.
    * @param key The key of the location for which to fire the callbacks.
+   * @param data
    * @param location The location as [latitude, longitude] pair
    * @param distanceFromCenter The distance from the center or null.
    */
@@ -397,7 +357,7 @@ export class GeoFirestoreQuery {
     distanceFromCenter?: number
   ): void {
     this._callbacks[eventType].forEach(callback => {
-      if (typeof location === 'undefined' || location === null) {
+      if (!location) {
         callback(key, null, null);
       } else {
         callback(key, location, distanceFromCenter, data);
@@ -554,7 +514,7 @@ export class GeoFirestoreQuery {
     // geohashes were queried even if the client updates the radius of the query.
     // This results in no 'READY' event being fired after the .updateCriteria() call.
     // Check to see if this is the case, and trigger the 'READY' event.
-    if (geohashesToQuery.length === 0) {
+    if (!geohashesToQuery.length) {
       this._geohashQueryReadyCallback();
     }
   }
@@ -582,9 +542,7 @@ export class GeoFirestoreQuery {
     const locationDict = this._locationsTracked[key];
     delete this._locationsTracked[key];
     if (typeof locationDict !== 'undefined' && locationDict.isInQuery) {
-      const distanceFromCenter: number = currentLocation
-        ? geoDistance(currentLocation, this._center)
-        : null;
+      const distanceFromCenter: number = currentLocation ? geoDistance(currentLocation, this._center) : null;
       this._fireCallbacksForKey(
         'key_exited',
         key,
@@ -604,9 +562,7 @@ export class GeoFirestoreQuery {
   private _stringToQuery(str: string): string[] {
     const decoded: string[] = str.split(':');
     if (decoded.length !== 2) {
-      throw new Error(
-        'Invalid internal state! Not a valid geohash query: ' + str
-      );
+      throw new Error('Invalid internal state! Not a valid geohash query: ' + str);
     }
     return decoded;
   }
@@ -619,6 +575,7 @@ export class GeoFirestoreQuery {
    * any necessary cleanup.
    *
    * @param key The key of the GeoFirestore location.
+   * @param data
    * @param location The location as [latitude, longitude] pair.
    */
   private _updateLocation(key: string, data: any, location?: number[]): void {

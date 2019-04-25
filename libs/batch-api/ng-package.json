@@ -1,6 +1,9 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/batch-api",
+  "whitelistedNonPeerDependencies": [
+    "uuid"
+  ],
   "lib": {
     "entryFile": "src/public_api.ts",
     "umdModuleIds": {

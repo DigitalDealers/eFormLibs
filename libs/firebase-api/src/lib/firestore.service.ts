@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { GeoFirestore } from '@digitaldealers/geostore';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { isSameDay } from 'date-fns';
 import * as firebase from 'firebase/app';
@@ -8,7 +9,6 @@ import { isEqual } from 'lodash-es';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { GeoFirestore } from 'eformlibs/geostore';
 import { Assigment } from './interfaces/assigment';
 import { Jobcard } from './interfaces/jobcard';
 
@@ -18,35 +18,18 @@ export class FireStoreService {
   private paramsTimeQuery = [];
   private geoQuery: any = null;
   private geoQuerySub$ = new BehaviorSubject(null);
-
   geoQueryWorker: any = null;
-
-  private get _url() {
-    return `<baseUrl>/fireStore`;
-  }
-
-  private applyDealerFilter(query) {
-    query = query.where(
-      'dealerId',
-      '==',
-      this._localStorageService.get('dealerId')
-    );
-    return query;
-  }
-
-  private applyDealerField(item) {
-    item.dealerId = this._localStorageService.get('dealerId');
-    return item;
-  }
 
   constructor(
     private _http: HttpClient,
     private afs: AngularFirestore,
     private _localStorageService: LocalStorageService
-  ) {}
+  ) {
+  }
 
   public getFirebaseToken(): Observable<{ token: string }> {
-    return this._http.get<{ token: string }>(`${this._url}`);
+    const url = `<authApi>/dealers/getAppToken?appType=<applicationId>`;
+    return this._http.get<{ token: string }>(url);
   }
 
   getGeoWorkerAndAssigmnets(mapCenter, status, date, startTime, endTime) {
@@ -75,7 +58,6 @@ export class FireStoreService {
     const geoFirestore = new GeoFirestore(collectionRef);
 
     if (!this.geoQueryWorker) {
-      const events = {};
       this.geoQueryWorker = geoFirestore.query(
         {
           center: [mapCenter.center.lat(), mapCenter.center.lng()],
@@ -88,7 +70,7 @@ export class FireStoreService {
         this.geoQuerySub$.next({ event: 'ready_worker', value: null });
       });
 
-      this.geoQueryWorker.on('key_entered', (key, location, distance, data) => {
+      this.geoQueryWorker.on('key_entered', (key, location, _distance, data) => {
         this.geoQuerySub$.next({
           event: 'key_entered_worker',
           key: key,
@@ -97,7 +79,7 @@ export class FireStoreService {
         });
       });
 
-      this.geoQueryWorker.on('key_exited', (key, location, distance, data) => {
+      this.geoQueryWorker.on('key_exited', (key, location, _distance, data) => {
         this.geoQuerySub$.next({
           event: 'key_exited_worker',
           key: key,
@@ -106,7 +88,7 @@ export class FireStoreService {
         });
       });
 
-      this.geoQueryWorker.on('key_moved', (key, location, distance, data) => {
+      this.geoQueryWorker.on('key_moved', (key, location, _distance, data) => {
         this.geoQuerySub$.next({
           event: 'key_moved_worker',
           key: key,
@@ -156,7 +138,6 @@ export class FireStoreService {
     const geoFirestore = new GeoFirestore(collectionRef);
 
     if (!this.geoQuery) {
-      const events = {};
       this.geoQuery = geoFirestore.query(
         {
           center: [mapCenter.center.lat(), mapCenter.center.lng()],
@@ -169,15 +150,15 @@ export class FireStoreService {
         this.geoQuerySub$.next({ event: 'ready', value: null });
       });
 
-      this.geoQuery.on('key_entered', (key, location, distance, data) => {
+      this.geoQuery.on('key_entered', (key, location, _distance, data) => {
         this.handleAssignmentGeoQuery('key_entered', key, location, data);
       });
 
-      this.geoQuery.on('key_exited', (key, location, distance, data) => {
+      this.geoQuery.on('key_exited', (key, location, _distance, data) => {
         this.handleAssignmentGeoQuery('key_exited', key, location, data);
       });
 
-      this.geoQuery.on('key_moved', (key, location, distance, data) => {
+      this.geoQuery.on('key_moved', (key, location, _distance, data) => {
         this.handleAssignmentGeoQuery('key_moved', key, location, data);
       });
     } else {
@@ -230,8 +211,6 @@ export class FireStoreService {
   getDocsByAssignment(id) {
     return this.afs
       .collection('images', ref => {
-        // return ref.where('dealerId', '==',
-        // this._localStorageService.get('dealerId'))
         return ref.where('assignmentId', '==', id);
       })
       .snapshotChanges()
@@ -396,7 +375,7 @@ export class FireStoreService {
   }
 
   getCurrentLocation() {
-    const promise = new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(position => {
         resolve(
           new firebase.firestore.GeoPoint(
@@ -406,8 +385,6 @@ export class FireStoreService {
         );
       });
     });
-
-    return promise;
   }
 
   addTimeEnty(item: any) {

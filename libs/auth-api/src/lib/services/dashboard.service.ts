@@ -5,14 +5,13 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class DashboardService {
-  private get _url() {
-    return `<authApi>/dealers/<dealerId>/dashboards`;
+  private readonly url = '<authApi>/dealers/<dealerId>/dashboards';
+
+  constructor(private _http: HttpClient) {
   }
 
-  constructor(private _http: HttpClient) {}
-
   public getList(options = {}): Observable<any> {
-    return this._http.get(this._url, { ...options }).pipe(map(res => res));
+    return this._http.get(this.url, { ...options }).pipe(map(res => res));
   }
 
   public getDashboardsByRoleId(
@@ -28,13 +27,13 @@ export class DashboardService {
 
   public getOne(id, params = new HttpParams()): Observable<any> {
     return this._http
-      .get(`${this._url}/${id}`, { params })
+      .get(`${this.url}/${id}`, { params })
       .pipe(map(res => res));
   }
 
   public getForCurrentUser(params = new HttpParams()): Observable<any> {
     return this._http
-      .get(`${this._url}/current`, { params })
+      .get(`${this.url}/current`, { params })
       .pipe(map(res => res));
   }
 
@@ -43,43 +42,43 @@ export class DashboardService {
     params = new HttpParams()
   ): Observable<any> {
     return this._http
-      .get(`${this._url}/${userType}`, { params })
+      .get(`${this.url}/${userType}`, { params })
       .pipe(map(res => res));
   }
 
   public create(body): Observable<any> {
-    return this._http.post(this._url, body).pipe(map(res => res));
+    return this._http.post(this.url, body).pipe(map(res => res));
   }
 
   public update(body): Observable<any> {
     return this._http
-      .put(`${this._url}/${body.id}`, body)
+      .put(`${this.url}/${body.id}`, body)
       .pipe(map(res => res));
   }
 
   public deleteItem(id): Observable<any> {
-    return this._http.delete(`${this._url}/${id}`);
+    return this._http.delete(`${this.url}/${id}`);
   }
 
   public getTiles(id, params = new HttpParams()): Observable<any> {
     return this._http
-      .get(`${this._url}/${id}/tiles`, { params })
+      .get(`${this.url}/${id}/tiles`, { params })
       .pipe(map(res => res));
   }
 
   public addTile(id, body): Observable<any> {
     return this._http
-      .post(`${this._url}/${id}/tiles`, body)
+      .post(`${this.url}/${id}/tiles`, body)
       .pipe(map(res => res));
   }
 
   public updateTile(id, tileId, body): Observable<any> {
     return this._http
-      .put(`${this._url}/${id}/tiles/${tileId}`, body)
+      .put(`${this.url}/${id}/tiles/${tileId}`, body)
       .pipe(map(res => res));
   }
 
   public deleteTile(id, tileId): Observable<any> {
-    return this._http.delete(`${this._url}/${id}/tiles/${tileId}`);
+    return this._http.delete(`${this.url}/${id}/tiles/${tileId}`);
   }
 }

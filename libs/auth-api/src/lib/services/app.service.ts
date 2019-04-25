@@ -7,39 +7,37 @@ import { AppMapper } from '../mappers/app.mapper';
 
 @Injectable()
 export class AppService {
-  private get _url() {
-    return `<authApi>/dealers/<dealerId>/apps`;
-  }
+  private readonly url = `<authApi>/dealers/<dealerId>/apps`;
 
   constructor(private _http: HttpClient) {}
 
   public create(body): Observable<any> {
-    return this._http.post(this._url, body).pipe(map(AppMapper.prepareData));
+    return this._http.post(this.url, body).pipe(map(AppMapper.prepareData));
   }
 
   public deleteItem(id): Observable<any> {
-    return this._http.delete(`${this._url}/${id}`);
+    return this._http.delete(`${this.url}/${id}`);
   }
 
   public getOne(id): Observable<any> {
     return this._http
-      .get(`${this._url}/${id}`)
+      .get(`${this.url}/${id}`)
       .pipe(map(AppMapper.prepareData));
   }
 
   public update(id, data): Observable<any> {
     return this._http
-      .put(`${this._url}/${id}`, data)
+      .put(`${this.url}/${id}`, data)
       .pipe(map(AppMapper.prepareData));
   }
 
   public getList(params = new HttpParams()): Observable<any> {
     return this._http
-      .get(this._url, { params })
+      .get(this.url, { params })
       .pipe(map(AppMapper.prepareDataList));
   }
 
   public getListForUser(params = new HttpParams()): Observable<any> {
-    return this._http.get(`${this._url}/my`, { params });
+    return this._http.get(`${this.url}/my`, { params });
   }
 }

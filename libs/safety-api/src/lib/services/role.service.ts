@@ -16,7 +16,8 @@ export class RoleService {
   constructor(
     private _db: AngularFirestore,
     private _storage: LocalStorageService
-  ) {}
+  ) {
+  }
 
   public getOne(id) {
     const doc = this._db.collection<SafetyRole>(this.collectionName).doc(id);

@@ -1,6 +1,6 @@
-export * from './lib/geo-firestore';
-export * from './lib/geo-distance';
 export * from './lib/callback-registration';
+export * from './lib/geo-distance';
+export * from './lib/geo-firestore';
 export * from './lib/query';
 
 export * from './lib/interfaces/geo-fire-obj';

@@ -27,7 +27,8 @@ export class MyFormService {
     private _afAuth: AngularFireAuth,
     private _afStorage: AngularFireStorage,
     private http: HttpClient
-  ) {}
+  ) {
+  }
 
   public save(data: SafetyMyForm): Observable<string> {
     const collection = this._db.collection<SafetyMyForm>(this.collectionName);

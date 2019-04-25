@@ -6,13 +6,12 @@ import { DataSet } from '../interfaces/data-set.interface';
 
 @Injectable()
 export class SearchService {
-  private get _url() {
-    return `<dealerApi>/dealers/<dealerId>`;
+  private readonly url = '<dealerApi>/dealers/<dealerId>';
+
+  constructor(private _http: HttpClient) {
   }
 
-  constructor(private _http: HttpClient) {}
-
   public getSearchDataSets(params = new HttpParams()): Observable<DataSet[]> {
-    return this._http.get<DataSet[]>(`${this._url}/searchDataSets`, { params });
+    return this._http.get<DataSet[]>(`${this.url}/searchDataSets`, { params });
   }
 }

@@ -42,10 +42,7 @@ export class DidiInterceptorsModule {
     return {
       ngModule: DidiInterceptorsModule,
       providers: [
-        {
-          provide: OPTIONS,
-          useValue: host
-        }
+        { provide: OPTIONS, useValue: host }
       ]
     };
   }

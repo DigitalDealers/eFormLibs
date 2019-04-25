@@ -24,7 +24,8 @@ export class FormService {
   constructor(
     private _db: AngularFirestore,
     private _storage: LocalStorageService
-  ) {}
+  ) {
+  }
 
   public getOne(id: string): Observable<SafetyForm> {
     const doc = this._db.collection<SafetyForm>(this.collectionName).doc(id);

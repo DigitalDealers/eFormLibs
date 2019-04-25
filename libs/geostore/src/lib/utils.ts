@@ -33,12 +33,6 @@ export const g_E2 = 0.00669447819799;
 // Cutoff for rounding errors on double calculations
 export const g_EPSILON = 1e-12;
 
-Math.log2 =
-  Math.log2 ||
-  function(x) {
-    return Math.log(x) / Math.log(2);
-  };
-
 /**
  * Validates the inputted key and throws an error if it is invalid.
  *
@@ -49,7 +43,7 @@ export function validateKey(key: string): void {
 
   if (typeof key !== 'string') {
     error = 'key must be a string';
-  } else if (key.length === 0) {
+  } else if (!key) {
     error = 'key cannot be the empty string';
   } else if (1 + g_GEOHASH_PRECISION + key.length > 755) {
     // Firebase can only stored child paths up to 768 characters
@@ -60,8 +54,8 @@ export function validateKey(key: string): void {
     error = 'key cannot contain any of the following characters: . # $ ] [ /';
   }
 
-  if (typeof error !== 'undefined') {
-    throw new Error(`Invalid GeoFire key '${key}': error`);
+  if (error) {
+    throw new Error(`Invalid GeoFire key '${ key }': error`);
   }
 }
 
@@ -92,8 +86,8 @@ export function validateLocation(location: number[]): void {
     }
   }
 
-  if (typeof error !== 'undefined') {
-    throw new Error(`Invalid GeoFire location '${location}': ${error}`);
+  if (error) {
+    throw new Error(`Invalid GeoFire location '${ location }': ${ error }`);
   }
 }
 
@@ -107,18 +101,18 @@ export function validateGeohash(geohash: string): void {
 
   if (typeof geohash !== 'string') {
     error = 'geohash must be a string';
-  } else if (geohash.length === 0) {
+  } else if (!geohash) {
     error = 'geohash cannot be the empty string';
   } else {
     for (const letter of geohash) {
       if (g_BASE32.indexOf(letter) === -1) {
-        error = `geohash cannot contain '${letter}'`;
+        error = `geohash cannot contain '${ letter }'`;
       }
     }
   }
 
-  if (typeof error !== 'undefined') {
-    throw new Error(`Invalid GeoFire geohash '${geohash}': ${error}`);
+  if (error) {
+    throw new Error(`Invalid GeoFire geohash '${ geohash }': ${ error }`);
   }
 }
 
@@ -128,46 +122,31 @@ export function validateGeohash(geohash: string): void {
  * @param newQueryCriteria The criteria which specifies the query's center and/or radius.
  * @param requireCenterAndRadius The criteria which center and radius required.
  */
-export function validateCriteria(
-  newQueryCriteria: any,
-  requireCenterAndRadius: boolean = false
-): void {
+export function validateCriteria(newQueryCriteria: any, requireCenterAndRadius: boolean = false): void {
   if (typeof newQueryCriteria !== 'object') {
     throw new Error('query criteria must be an object');
-  } else if (
-    typeof newQueryCriteria.center === 'undefined' &&
-    typeof newQueryCriteria.radius === 'undefined'
-  ) {
+  } else if (!newQueryCriteria.center && !newQueryCriteria.radius) {
     throw new Error('radius and/or center must be specified');
-  } else if (
-    requireCenterAndRadius &&
-    (typeof newQueryCriteria.center === 'undefined' ||
-      typeof newQueryCriteria.radius === 'undefined')
-  ) {
-    throw new Error(
-      'query criteria for a new query must contain both a center and a radius'
-    );
+  } else if (requireCenterAndRadius && (!newQueryCriteria.center || !newQueryCriteria.radius)) {
+    throw new Error('query criteria for a new query must contain both a center and a radius');
   }
 
   // Throw an error if there are any extraneous attributes
   const keys: string[] = Object.keys(newQueryCriteria);
   for (const key of keys) {
     if (key !== 'center' && key !== 'radius') {
-      throw new Error(`Unexpected attribute '${key}' found in query criteria`);
+      throw new Error(`Unexpected attribute '${ key }' found in query criteria`);
     }
   }
 
   // Validate the 'center' attribute
-  if (typeof newQueryCriteria.center !== 'undefined') {
+  if (newQueryCriteria.center) {
     validateLocation(newQueryCriteria.center);
   }
 
   // Validate the 'radius' attribute
-  if (typeof newQueryCriteria.radius !== 'undefined') {
-    if (
-      typeof newQueryCriteria.radius !== 'number' ||
-      isNaN(newQueryCriteria.radius)
-    ) {
+  if (newQueryCriteria.radius) {
+    if (typeof newQueryCriteria.radius !== 'number' || Number.isNaN(newQueryCriteria.radius)) {
       throw new Error('radius must be a number');
     } else if (newQueryCriteria.radius < 0) {
       throw new Error('radius must be greater than or equal to 0');
@@ -182,7 +161,7 @@ export function validateCriteria(
  * @returns The number of radians equal to the inputted number of degrees.
  */
 export function degreesToRadians(degrees: number): number {
-  if (typeof degrees !== 'number' || isNaN(degrees)) {
+  if (typeof degrees !== 'number' || Number.isNaN(degrees)) {
     throw new Error('Error: degrees must be a number');
   }
 
@@ -198,13 +177,10 @@ export function degreesToRadians(degrees: number): number {
  * global default is used.
  * @returns The geohash of the inputted location.
  */
-export function encodeGeohash(
-  location: number[],
-  precision: number = g_GEOHASH_PRECISION
-): string {
+export function encodeGeohash(location: number[], precision: number = g_GEOHASH_PRECISION): string {
   validateLocation(location);
-  if (typeof precision !== 'undefined') {
-    if (typeof precision !== 'number' || isNaN(precision)) {
+  if (precision) {
+    if (typeof precision !== 'number' || Number.isNaN(precision)) {
       throw new Error('precision must be a number');
     } else if (precision <= 0) {
       throw new Error('precision must be greater than 0');
@@ -237,7 +213,7 @@ export function encodeGeohash(
       hashVal = (hashVal << 1) + 1;
       range.min = mid;
     } else {
-      hashVal = (hashVal << 1) + 0;
+      hashVal = hashVal << 1;
       range.max = mid;
     }
 
@@ -261,10 +237,7 @@ export function encodeGeohash(
  * @param latitude The latitude at which to calculate.
  * @returns The number of degrees the distance corresponds to.
  */
-export function metersToLongitudeDegrees(
-  distance: number,
-  latitude: number
-): number {
+export function metersToLongitudeDegrees(distance: number, latitude: number): number {
   const radians = degreesToRadians(latitude);
   const num = (Math.cos(radians) * g_EARTH_EQ_RADIUS * Math.PI) / 180;
   const denom = 1 / Math.sqrt(1 - g_E2 * Math.sin(radians) * Math.sin(radians));
@@ -284,12 +257,9 @@ export function metersToLongitudeDegrees(
  * @param latitude The latitude used in the conversion.
  * @return The bits necessary to reach a given resolution, in meters.
  */
-export function longitudeBitsForResolution(
-  resolution: number,
-  latitude: number
-): number {
+export function longitudeBitsForResolution(resolution: number, latitude: number): number {
   const degs = metersToLongitudeDegrees(resolution, latitude);
-  return Math.abs(degs) > 0.000001 ? Math.max(1, Math.log2(360 / degs)) : 1;
+  return Math.abs(degs) > 0.000001 ? Math.max(1, mathLog2(360 / degs)) : 1;
 }
 
 /**
@@ -300,7 +270,7 @@ export function longitudeBitsForResolution(
  */
 export function latitudeBitsForResolution(resolution: number): number {
   return Math.min(
-    Math.log2(g_EARTH_MERI_CIRCUMFERENCE / 2 / resolution),
+    mathLog2(g_EARTH_MERI_CIRCUMFERENCE / 2 / resolution),
     g_MAXIMUM_BITS_PRECISION
   );
 }
@@ -336,10 +306,8 @@ export function boundingBoxBits(coordinate: number[], size: number): number {
   const latitudeNorth = Math.min(90, coordinate[0] + latDeltaDegrees);
   const latitudeSouth = Math.max(-90, coordinate[0] - latDeltaDegrees);
   const bitsLat = Math.floor(latitudeBitsForResolution(size)) * 2;
-  const bitsLongNorth =
-    Math.floor(longitudeBitsForResolution(size, latitudeNorth)) * 2 - 1;
-  const bitsLongSouth =
-    Math.floor(longitudeBitsForResolution(size, latitudeSouth)) * 2 - 1;
+  const bitsLongNorth = Math.floor(longitudeBitsForResolution(size, latitudeNorth)) * 2 - 1;
+  const bitsLongSouth = Math.floor(longitudeBitsForResolution(size, latitudeSouth)) * 2 - 1;
   return Math.min(
     bitsLat,
     bitsLongNorth,
@@ -357,10 +325,7 @@ export function boundingBoxBits(coordinate: number[], size: number): number {
  * @param radius The radius of the circle.
  * @returns The eight bounding box points.
  */
-export function boundingBoxCoordinates(
-  center: number[],
-  radius: number
-): number[][] {
+export function boundingBoxCoordinates(center: number[], radius: number): number[][] {
   const latDegrees = radius / g_METERS_PER_DEGREE_LATITUDE;
   const latitudeNorth = Math.min(90, center[0] + latDegrees);
   const latitudeSouth = Math.max(-90, center[0] - latDegrees);
@@ -421,15 +386,13 @@ export function geohashQueries(center: number[], radius: number): string[][] {
   const queryBits = Math.max(1, boundingBoxBits(center, radius));
   const geohashPrecision = Math.ceil(queryBits / g_BITS_PER_CHAR);
   const coordinates = boundingBoxCoordinates(center, radius);
-  const queries = coordinates.map(function(coordinate) {
+  const queries = coordinates.map(function (coordinate) {
     return geohashQuery(encodeGeohash(coordinate, geohashPrecision), queryBits);
   });
   // remove duplicates
-  return queries.filter(function(query, index) {
-    return !queries.some(function(other, otherIndex) {
-      return (
-        index > otherIndex && query[0] === other[0] && query[1] === other[1]
-      );
+  return queries.filter(function (query, index) {
+    return !queries.some(function (other, otherIndex) {
+      return index > otherIndex && query[0] === other[0] && query[1] === other[1];
     });
   });
 }
@@ -441,10 +404,7 @@ export function geohashQueries(center: number[], radius: number): string[][] {
  * @param geohash The geohash of the location.
  * @returns The location encoded as GeoFire object.
  */
-export function encodeGeoFireObject(
-  location: number[],
-  geohash: string
-): GeoFireObj {
+export function encodeGeoFireObject(location: number[], geohash: string): GeoFireObj {
   validateLocation(location);
   validateGeohash(geohash);
   return { priority: geohash, g: geohash, l: location };
@@ -457,29 +417,20 @@ export function encodeGeoFireObject(
  * @returns The location as [latitude, longitude] pair or null if decoding fails.
  */
 export function decodeGeoFireObject(geoFireObj: any): number[] {
-  if (
-    geoFireObj &&
-    'l' in geoFireObj &&
-    Array.isArray(geoFireObj.l) &&
-    geoFireObj.l.length === 2
-  ) {
+  if (geoFireObj && 'l' in geoFireObj && Array.isArray(geoFireObj.l) && geoFireObj.l.length === 2) {
     return geoFireObj.l;
   } else {
-    throw new Error(
-      'Unexpected location object encountered: ' + JSON.stringify(geoFireObj)
-    );
+    throw new Error('Unexpected location object encountered: ' + JSON.stringify(geoFireObj));
   }
 }
 
 /**
  * Returns the key of a Firebase snapshot across SDK versions.
  *
- * @param A Firebase snapshot.
+ * @param snapshot Firebase snapshot.
  * @returns The Firebase snapshot's key.
  */
-export function geoFireGetKey(
-  snapshot: firebase.database.DataSnapshot
-): string {
+export function geoFireGetKey(snapshot: firebase.database.DataSnapshot): string {
   let key: string;
   if (typeof snapshot.key === 'string' || snapshot.key === null) {
     key = snapshot.key;
@@ -490,15 +441,17 @@ export function geoFireGetKey(
 /**
  * Returns the id of a Firestore snapshot across SDK versions.
  *
- * @param A Firestore snapshot.
+ * @param snapshot Firestore snapshot.
  * @returns The Firestore snapshot's id.
  */
-export function geoFirestoreGetKey(
-  snapshot: firebase.firestore.DocumentSnapshot
-): string {
+export function geoFirestoreGetKey(snapshot: firebase.firestore.DocumentSnapshot): string {
   let id: string;
   if (typeof snapshot.id === 'string' || snapshot.id === null) {
     id = snapshot.id;
   }
   return id;
+}
+
+function mathLog2(x: number): number {
+  return Math.log2 ? Math.log2(x) : (Math.log(x) / Math.log(2));
 }

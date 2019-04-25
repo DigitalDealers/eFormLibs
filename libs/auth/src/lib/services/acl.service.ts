@@ -2,9 +2,9 @@ import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
+import { Config } from '../interfaces/config';
+import { CONFIG } from '../module.config';
 import { AuthService } from './auth.service';
-import { Config } from './interfaces/config';
-import { CONFIG } from './module.config';
 
 @Injectable()
 export class AclService {
@@ -12,8 +12,13 @@ export class AclService {
 
   private get _permissions() {
     const jwtHelper = new JwtHelperService();
-    const decodedToken = jwtHelper.decodeToken(this._auth.getToken());
-    const claims = decodedToken[this._config.permissionClaims];
+    let claims;
+    try {
+      const decodedToken = jwtHelper.decodeToken(this._auth.getToken());
+      claims = decodedToken[this._config.permissionClaims];
+    } catch (e) {
+      claims = [];
+    }
     return claims || [];
   }
 

@@ -4,37 +4,36 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class PaymentService {
-  private get _url() {
-    return `<authApi>/dealers/<dealerId>`;
+  private readonly url = '<authApi>/dealers/<dealerId>';
+
+  constructor(private _http: HttpClient) {
   }
 
-  constructor(private _http: HttpClient) {}
-
   public getList(params = new HttpParams()): Observable<any> {
-    return this._http.get(`${this._url}/pgateway`, { params });
+    return this._http.get(`${this.url}/pgateway`, { params });
   }
 
   public create(body): Observable<any> {
-    return this._http.post(`${this._url}/pgateway`, body);
+    return this._http.post(`${this.url}/pgateway`, body);
   }
 
   public deleteItem(id): Observable<any> {
-    return this._http.delete(`${this._url}/pgateway/${id}`);
+    return this._http.delete(`${this.url}/pgateway/${id}`);
   }
 
   public getOne(id, params = new HttpParams()): Observable<any> {
-    return this._http.get(`${this._url}/pgateway/${id}`, { params });
+    return this._http.get(`${this.url}/pgateway/${id}`, { params });
   }
 
   public update(id, body): Observable<any> {
-    return this._http.put(`${this._url}/pgateway/${id}`, body);
+    return this._http.put(`${this.url}/pgateway/${id}`, body);
   }
 
   public getSecret(id): Observable<any> {
-    return this._http.get(`${this._url}/pgateway/${id}/creds`, {});
+    return this._http.get(`${this.url}/pgateway/${id}/creds`, {});
   }
 
   public getFingerPrint(body): Observable<any> {
-    return this._http.post(`${this._url}/securePay/fingerPrint`, body);
+    return this._http.post(`${this.url}/securePay/fingerPrint`, body);
   }
 }

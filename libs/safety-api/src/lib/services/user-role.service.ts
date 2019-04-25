@@ -16,7 +16,8 @@ export class UserRoleService {
   constructor(
     private _db: AngularFirestore,
     private _storage: LocalStorageService
-  ) {}
+  ) {
+  }
 
   public getOne(id) {
     const doc = this._db.collection<SafetyUserRole>(this.collectionName).doc(id);
@@ -40,7 +41,7 @@ export class UserRoleService {
           .limit(options.limit);
       })
       .doc(id)
-      .collection('users')
+      .collection<SafetyUserRole>('users')
       .snapshotChanges()
       .pipe(map(list => prepareList<SafetyUserRole>(list)));
   }

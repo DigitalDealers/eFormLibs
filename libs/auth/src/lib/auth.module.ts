@@ -1,23 +1,19 @@
 import { NgModule } from '@angular/core';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule, FirestoreSettingsToken } from '@angular/fire/firestore';
-import { JwtModule } from '@auth0/angular-jwt';
-import { LocalStorageModule } from 'angular-2-local-storage';
-import { FirebaseApiModule } from 'eformlibs/firebase-api';
+import { FirebaseApiModule } from '@digitaldealers/firebase-api';
 
-import { AclService } from './acl.service';
-import { AuthService } from './auth.service';
 import { Config } from './interfaces/config';
-import { Guard } from './guard.service';
 import { CONFIG } from './module.config';
+import { AclService } from './services/acl.service';
+import { AuthService } from './services/auth.service';
+import { Guard } from './services/guard.service';
 
 @NgModule({
   imports: [
     AngularFireAuthModule,
     AngularFirestoreModule,
-    FirebaseApiModule,
-    JwtModule,
-    LocalStorageModule
+    FirebaseApiModule
   ],
   providers: [
     { provide: FirestoreSettingsToken, useValue: {} },
@@ -31,10 +27,7 @@ export class DidiAuthModule {
     return {
       ngModule: DidiAuthModule,
       providers: [
-        {
-          provide: CONFIG,
-          useValue: host
-        }
+        { provide: CONFIG, useValue: host }
       ]
     };
   }

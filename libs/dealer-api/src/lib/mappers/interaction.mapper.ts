@@ -3,8 +3,8 @@ import { DatePipe } from '@angular/common';
 export class InteractionMapper {
   public static formatDate(data) {
     const datePipe = new DatePipe('en-US');
-    const { сreatedOn, modifiedOn } = data;
-    data.сreatedOn = datePipe.transform(сreatedOn, 'dd/MM/yyyy');
+    const { createdOn, modifiedOn } = data;
+    data.createdOn = datePipe.transform(createdOn, 'dd/MM/yyyy');
     data.modifiedOn = datePipe.transform(modifiedOn, 'dd/MM/yyyy');
     return data;
   }

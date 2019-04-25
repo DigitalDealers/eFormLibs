@@ -10,7 +10,8 @@ import { SearchMapper } from '../mappers/search.mapper';
 export class SearchService {
   private readonly batchUrl = '<batchApi>/dealers/<dealerId>';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   public getSearchEntities(id: number, params = new HttpParams()): Observable<DataSetSearchResponse> {
     return this.http

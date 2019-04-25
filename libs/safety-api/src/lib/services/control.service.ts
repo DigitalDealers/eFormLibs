@@ -18,7 +18,8 @@ type DataMapper = (data: DocumentChangeAction<SafetyControl>[]) => DictionarySaf
 export class ControlService {
   private readonly collectionName = 'controls';
 
-  constructor(private _db: AngularFirestore, private _storage: LocalStorageService) {}
+  constructor(private _db: AngularFirestore, private _storage: LocalStorageService) {
+  }
 
   static prepareList(data: DocumentChangeAction<SafetyControl>[]): MappedSafetyControls {
     const res = {

@@ -6,24 +6,22 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class Guard implements CanActivate {
-  constructor(private _acl: AclService, private _auth: AuthService) {}
-
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    const url: string = state.url;
-    const key = this._acl.getKeyByUrl(url);
-    return this.checkLogin(url) && this._checkAccess(key);
+  constructor(private _acl: AclService, private _auth: AuthService) {
   }
 
-  canActivateChild(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): boolean {
+  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    const url: string = state.url;
+    const key = this._acl.getKeyByUrl(url);
+    return this.checkLogin() && this._checkAccess(key);
+  }
+
+  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const url: string = state.url;
     const key = this._acl.getKeyByUrl(url);
     return this.canActivate(route, state) && this._checkAccess(key);
   }
 
-  checkLogin(url: string): boolean {
+  checkLogin(): boolean {
     return this._auth.isAuthenticated();
   }
 

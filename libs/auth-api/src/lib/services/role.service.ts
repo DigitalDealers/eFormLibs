@@ -3,39 +3,43 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { Role } from '../interfaces/role.interface';
 import { RoleMapper } from '../mappers/role.mapper';
 
+interface RoleRespone {
+  data: Role[];
+  total: number;
+}
+
 @Injectable()
-export class AuthRoleService {
-  private get _url() {
-    return `<authApi>/dealers/<dealerId>/roles`;
-  }
+export class RoleService {
+  private readonly url = `<authApi>/dealers/<dealerId>/roles`;
 
   constructor(private _http: HttpClient) {}
 
-  public getList(params = new HttpParams()): Observable<any> {
+  public getList(params = new HttpParams()): Observable<RoleRespone> {
     return this._http
-      .get(this._url, { params })
+      .get<RoleRespone>(this.url, { params })
       .pipe(map(res => RoleMapper.prepareDataList(res)));
   }
 
   public create(body): Observable<any> {
-    return this._http.post(this._url, body);
+    return this._http.post(this.url, body);
   }
 
   public deleteItem(id): Observable<any> {
-    return this._http.delete(`${this._url}/${id}`);
+    return this._http.delete(`${this.url}/${id}`);
   }
 
   public getOne(id, params = new HttpParams()): Observable<any> {
     return this._http
-      .get(`${this._url}/${id}`, { params })
+      .get(`${this.url}/${id}`, { params })
       .pipe(map(res => RoleMapper.prepareData(res)));
   }
 
   public getPermissions(id, params = new HttpParams()): Observable<any> {
     return this._http
-      .get(`${this._url}/${id}/permissions`, { params })
+      .get(`${this.url}/${id}/permissions`, { params })
       .pipe(map(res => res));
   }
 
@@ -44,63 +48,63 @@ export class AuthRoleService {
     body,
     params = new HttpParams()
   ): Observable<any> {
-    return this._http.post(`${this._url}/${id}/permissions`, body, { params });
+    return this._http.post(`${this.url}/${id}/permissions`, body, { params });
   }
 
   public getApps(roleId, params = new HttpParams()): Observable<any> {
-    return this._http.get(`${this._url}/${roleId}/apps`, { params });
+    return this._http.get(`${this.url}/${roleId}/apps`, { params });
   }
 
   public addApp(roleId, appId, body = {}): Observable<any> {
-    return this._http.put(`${this._url}/${roleId}/apps/${appId}`, body);
+    return this._http.put(`${this.url}/${roleId}/apps/${appId}`, body);
   }
 
   public deleteApp(roleId, appId): Observable<any> {
-    return this._http.delete(`${this._url}/${roleId}/apps/${appId}`);
+    return this._http.delete(`${this.url}/${roleId}/apps/${appId}`);
   }
 
   public getBots(roleId, params = new HttpParams()): Observable<any> {
-    return this._http.get(`${this._url}/${roleId}/bots`, { params });
+    return this._http.get(`${this.url}/${roleId}/bots`, { params });
   }
 
   public addBot(roleId, botId, body = {}): Observable<any> {
-    return this._http.put(`${this._url}/${roleId}/bots/${botId}`, body);
+    return this._http.put(`${this.url}/${roleId}/bots/${botId}`, body);
   }
 
   public deleteBot(roleId, botId): Observable<any> {
-    return this._http.delete(`${this._url}/${roleId}/bots/${botId}`);
+    return this._http.delete(`${this.url}/${roleId}/bots/${botId}`);
   }
 
   public getListByUserId(userId, params): Observable<any> {
     return this._http
-      .get(`${this._url}/users/${userId}`, params)
+      .get(`${this.url}/users/${userId}`, params)
       .pipe(map(res => RoleMapper.prepareDataList(res)));
   }
 
   public deleteUser(id, userId): Observable<any> {
-    return this._http.delete(`${this._url}/${id}/users/${userId}`);
+    return this._http.delete(`${this.url}/${id}/users/${userId}`);
   }
 
   public deletePermission(roleId, permission): Observable<any> {
     return this._http.delete(
-      `${this._url}/${roleId}/permissions/${permission}`
+      `${this.url}/${roleId}/permissions/${permission}`
     );
   }
 
   public addUser(id, userId): Observable<any> {
-    return this._http.put(`${this._url}/${id}/users/${userId}`, {});
+    return this._http.put(`${this.url}/${id}/users/${userId}`, {});
   }
 
   public addDashboard(roleId, dashboardId): Observable<any> {
     return this._http.put(
-      `${this._url}/${roleId}/dashboards/${dashboardId}`,
+      `${this.url}/${roleId}/dashboards/${dashboardId}`,
       {}
     );
   }
 
   public deleteDashboard(roleId, dashboardId): Observable<any> {
     return this._http.delete(
-      `${this._url}/${roleId}/dashboards/${dashboardId}`
+      `${this.url}/${roleId}/dashboards/${dashboardId}`
     );
   }
 }

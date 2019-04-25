@@ -25,18 +25,11 @@ export class GeoFirestore {
    * @param _collectionRef A Firestore Collection reference where the GeoFirestore data will be stored.
    */
   constructor(private _collectionRef: firebase.firestore.CollectionReference) {
-    if (
-      Object.prototype.toString.call(this._collectionRef) !== '[object Object]'
-    ) {
-      throw new Error(
-        'collectionRef must be an instance of a Firestore Collection'
-      );
+    if (Object.prototype.toString.call(this._collectionRef) !== '[object Object]') {
+      throw new Error('collectionRef must be an instance of a Firestore Collection');
     }
   }
 
-  /********************/
-  /*  PUBLIC METHODS  */
-  /********************/
   /**
    * Returns a promise fulfilled with the location corresponding to the provided key.
    *
@@ -88,18 +81,16 @@ export class GeoFirestore {
    *
    * @param keyOrLocations The key representing the location to add or a mapping of key - location pairs which
    * represent the locations to add.
+   * @param payload
    * @param location The [latitude, longitude] pair to add.
    * @returns A promise that is fulfilled when the write is complete.
    */
-  public set(
-    keyOrLocations: string | any,
-    payload: any,
-    location?: number[]
-  ): Promise<any> {
+  public set(keyOrLocations: string | any, payload: any, location?: number[]): Promise<any> {
     keyOrLocations = keyOrLocations ? keyOrLocations : '<xxx>';
-    if (typeof keyOrLocations === 'string' && keyOrLocations.length !== 0) {
+
+    if (typeof keyOrLocations === 'string' && keyOrLocations) {
       validateKey(keyOrLocations);
-      if (location === null) {
+      if (!location) {
         // Setting location to null is valid since it will remove the key
         return this._collectionRef.doc(keyOrLocations).delete();
       } else {
@@ -107,7 +98,7 @@ export class GeoFirestore {
         const geohash: string = encodeGeohash(location);
         const geohashToSave = encodeGeoFireObject(location, geohash);
         if (payload) {
-          Object.assign(payload, geohashToSave);
+          payload = { ...payload, ...geohashToSave };
         }
         if (keyOrLocations !== '<xxx>') {
           return this._collectionRef.doc(keyOrLocations).set(payload);
@@ -116,31 +107,26 @@ export class GeoFirestore {
         }
       }
     } else if (typeof keyOrLocations === 'object') {
-      if (typeof location !== 'undefined') {
-        throw new Error(
-          'The location argument should not be used if you pass an object to set().'
-        );
+      if (location) {
+        throw new Error('The location argument should not be used if you pass an object to set().');
       }
     } else {
-      throw new Error(
-        'keyOrLocations must be a string or a mapping of key - location pairs.'
-      );
+      throw new Error('keyOrLocations must be a string or a mapping of key - location pairs.');
     }
 
     const batch: firebase.firestore.WriteBatch = this._collectionRef.firestore.batch();
     Object.keys(keyOrLocations).forEach(key => {
       validateKey(key);
       const ref = this._collectionRef.doc(key);
-      if (keyOrLocations[key] === null) {
+      if (!keyOrLocations[key]) {
         batch.delete(ref);
       } else {
         validateLocation(keyOrLocations[key]);
         const geohash: string = encodeGeohash(keyOrLocations[key]);
-        batch.set(ref, encodeGeoFireObject(keyOrLocations[key], geohash), {
-          merge: true
-        });
+        batch.set(ref, encodeGeoFireObject(keyOrLocations[key], geohash), { merge: true });
       }
     });
+
     return batch.commit();
   }
 
@@ -148,12 +134,10 @@ export class GeoFirestore {
    * Returns a new GeoQuery instance with the provided queryCriteria.
    *
    * @param queryCriteria The criteria which specifies the GeoQuery's center and radius.
+   * @param exParams
    * @return A new GeoFirestoreQuery object.
    */
-  public query(
-    queryCriteria: QueryCriteria,
-    exParams: any[]
-  ): GeoFirestoreQuery {
+  public query(queryCriteria: QueryCriteria, exParams: any[]): GeoFirestoreQuery {
     return new GeoFirestoreQuery(this._collectionRef, queryCriteria, exParams);
   }
 }

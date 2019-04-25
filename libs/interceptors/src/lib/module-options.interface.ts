@@ -4,4 +4,5 @@ export interface ModuleOptions {
   batchApi?: string;
   baseUrl: string;
   dealerApi?: string;
+  applicationId?: number;
 }

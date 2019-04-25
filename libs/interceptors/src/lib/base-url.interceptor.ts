@@ -44,6 +44,10 @@ export class BaseUrlInterceptor implements HttpInterceptor {
       url = url.replace('<dealerId>', this._dealerId);
     }
 
+    if (url.includes('<applicationId>')) {
+      url = url.replace('<applicationId>', this._options.applicationId.toString());
+    }
+
     return url;
   }
 }

@@ -1,9 +1,7 @@
 import { NgModule } from '@angular/core';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFirestoreModule, FirestoreSettingsToken } from '@angular/fire/firestore';
 import { AngularFireStorageModule } from '@angular/fire/storage';
-import { LocalStorageModule } from 'angular-2-local-storage';
 
 import { SafetyApiService } from './safety-api.service';
 import { CategoryService } from './services/category.service';
@@ -18,10 +16,8 @@ import { UserService } from './services/user.service';
 @NgModule({
   imports: [
     AngularFireAuthModule,
-    AngularFireDatabaseModule,
     AngularFireStorageModule,
-    AngularFirestoreModule,
-    LocalStorageModule
+    AngularFirestoreModule
   ],
   providers: [
     { provide: FirestoreSettingsToken, useValue: {} },
