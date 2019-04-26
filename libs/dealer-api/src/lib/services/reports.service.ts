@@ -82,6 +82,6 @@ export class ReportsService {
   }
 
   public getDashboard(): Observable<any> {
-    return this._http.get(`dealers/<dealerId>/getdashboard`);
+    return this._http.get('<dealerApi>/dealers/<dealerId>/getdashboard');
   }
 }

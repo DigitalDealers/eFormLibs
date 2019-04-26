@@ -8,6 +8,7 @@ import { DataSetMapper } from '../mappers/data-set.mapper';
 @Injectable()
 export class DataSetService {
   public readonly url = `<dealerApi>/dealers/<dealerId>/dataSets`;
+  public readonly hooksUrl = `<dealerApi>/dealers/<dealerId>/hooks`;
 
   constructor(private _http: HttpClient) {
   }
@@ -77,7 +78,7 @@ export class DataSetService {
   }
 
   public getCustomerSync(): Observable<any> {
-    return this._http.get(`/dealers/<dealerId>/hooks/customerSync`, {});
+    return this._http.get(`${this.hooksUrl}/customerSync`, {});
   }
 
   public createCustomerSync(dataSetId, body): Observable<any> {
@@ -85,11 +86,11 @@ export class DataSetService {
   }
 
   public deleteCustomerSync(): Observable<any> {
-    return this._http.delete(`/dealers/<dealerId>/hooks/customerSync`);
+    return this._http.delete(`${this.hooksUrl}/customerSync`);
   }
 
   public getVendorSync(): Observable<any> {
-    return this._http.get(`/dealers/<dealerId>/hooks/vendorSync`, {});
+    return this._http.get(`${this.hooksUrl}/vendorSync`, {});
   }
 
   public createVendorSync(dataSetId, body): Observable<any> {
@@ -97,6 +98,6 @@ export class DataSetService {
   }
 
   public deleteVendorSync(): Observable<any> {
-    return this._http.delete(`/dealers/<dealerId>/hooks/vendorSync`);
+    return this._http.delete(`${this.hooksUrl}/vendorSync`);
   }
 }

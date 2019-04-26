@@ -18,9 +18,6 @@ export class RoleService {
   }
 
   public addReport(roleId, reportId): Observable<any> {
-    return this._http.put(
-      `${this.reportsUrl}/${reportId}/roles/${roleId}`,
-      {}
-    );
+    return this._http.put(`${this.reportsUrl}/${reportId}/roles/${roleId}`, {});
   }
 }
