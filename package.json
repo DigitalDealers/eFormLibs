@@ -21,9 +21,7 @@
     "lib:interceptors:build": "ng-packagr -p libs/interceptors",
     "lib:interceptors:publish": "npm publish dist/interceptors --access=public",
     "lib:safety-api:build": "ng-packagr -p libs/safety-api",
-    "lib:safety-api:publish": "npm publish dist/safety-api --access=public",
-    "build:form-player": "ng-packagr -p libs/form-player",
-    "publish:form-player": "npm publish dist/form-player --access=public"
+    "lib:safety-api:publish": "npm publish dist/safety-api --access=public"
   },
   "dependencies": {
     "@agm/core": "^1.0.0-beta.5",
