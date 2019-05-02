@@ -48,7 +48,7 @@ export class GeoFirestoreQuery {
   /**
    * @param _collectionRef A Firestore Collection reference where the GeoFirestore data will be stored.
    * @param _queryCriteria The criteria which specifies the query's center and radius.
-   * @param exParams
+   * @param exParams any
    */
   constructor(
     private _collectionRef: firebase.firestore.CollectionReference,
@@ -192,7 +192,7 @@ export class GeoFirestoreQuery {
    * Updates the criteria for this query.
    *
    * @param newQueryCriteria The criteria which specifies the query's center and radius.
-   * @param exParams
+   * @param exParams any
    */
   public updateCriteria(newQueryCriteria: QueryCriteria, exParams: any[]): void {
     // Validate and save the new query criteria
@@ -345,7 +345,7 @@ export class GeoFirestoreQuery {
    *
    * @param eventType The event type whose callbacks to fire. One of 'key_entered', 'key_exited', or 'key_moved'.
    * @param key The key of the location for which to fire the callbacks.
-   * @param data
+   * @param data any
    * @param location The location as [latitude, longitude] pair
    * @param distanceFromCenter The distance from the center or null.
    */
@@ -575,7 +575,7 @@ export class GeoFirestoreQuery {
    * any necessary cleanup.
    *
    * @param key The key of the GeoFirestore location.
-   * @param data
+   * @param data any
    * @param location The location as [latitude, longitude] pair.
    */
   private _updateLocation(key: string, data: any, location?: number[]): void {

@@ -42,6 +42,7 @@ export interface SafetyField<T = SafetyFieldResponse> {
 }
 
 export interface SafetyForm {
+  canBeDeleted: boolean;
   category?: string;
   dealerId: number;
   description: string;

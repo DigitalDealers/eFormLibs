@@ -81,7 +81,7 @@ export class GeoFirestore {
    *
    * @param keyOrLocations The key representing the location to add or a mapping of key - location pairs which
    * represent the locations to add.
-   * @param payload
+   * @param payload any
    * @param location The [latitude, longitude] pair to add.
    * @returns A promise that is fulfilled when the write is complete.
    */
@@ -134,7 +134,7 @@ export class GeoFirestore {
    * Returns a new GeoQuery instance with the provided queryCriteria.
    *
    * @param queryCriteria The criteria which specifies the GeoQuery's center and radius.
-   * @param exParams
+   * @param exParams any
    * @return A new GeoFirestoreQuery object.
    */
   public query(queryCriteria: QueryCriteria, exParams: any[]): GeoFirestoreQuery {

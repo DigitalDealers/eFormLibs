@@ -1,4 +1,4 @@
-import { firestore } from 'firebase/app'
+import { firestore } from 'firebase/app';
 
 export function prepareItem<T = any>(data: firestore.DocumentSnapshot): T {
   const doc = data.data();
