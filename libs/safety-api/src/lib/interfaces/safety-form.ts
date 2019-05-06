@@ -5,6 +5,8 @@ export type ControlState = 'hidden' |
   'readonly' |
   'required';
 
+export type TextSectionFileType = 'image' | 'video';
+
 export interface SafetyFieldResponse extends SafetyControl {
   showTimePicker?: boolean;
   title?: string;
@@ -22,9 +24,17 @@ export interface SafetyField<T = SafetyFieldResponse> {
   dataSetId?: number;
   dropdownLabel?: string;
   dropdownValue?: string;
+  /**
+   * @deprecated image property use file instead
+   */
   image?: {
     name: string;
     url: string;
+  };
+  file?: {
+    name: string;
+    url: string;
+    type: TextSectionFileType;
   };
   locale?: string;
   logic?: boolean;
