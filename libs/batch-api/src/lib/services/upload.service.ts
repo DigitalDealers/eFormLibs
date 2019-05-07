@@ -18,17 +18,26 @@ export class UploadService {
   constructor(private http: HttpClient) {
   }
 
-  public getAssetKey(): Observable<string> {
-    return this.http.get<{ token: string; }>(`${this.baseUrl}/getAppAssetKey`)
+  public getAssetKey(appId: number): Observable<string> {
+    return this.http
+      .get<{ token: string; }>(
+        `${this.baseUrl}/getAppAssetKey`,
+        { params: { appType: (appId || '').toString() } }
+      )
       .pipe(map(({ token }) => token));
   }
 
-  public uploadFiles(files: (File | Blob)[], filename?: string): Observable<UploadResponse[]> {
+  public uploadFiles(appId: number, files: (File | Blob)[], filename?: string): Observable<UploadResponse[]> {
     return forkJoin(files.map<Observable<UploadResponse>>(file => {
       const fd = new FormData();
-      const preparedFilename = this.prepareFilename((file as File).name || filename || '');
+      const preparedFilename = this.prepareFilename(filename || (file as File).name || '');
       fd.append('file', file, preparedFilename);
-      return this.http.post<UploadAPIResponse>(`${this.baseUrl}/uploadAppAsset`, fd)
+      return this.http
+        .post<UploadAPIResponse>(
+          `${this.baseUrl}/uploadAppAsset`,
+          fd,
+          { params: { appType: (appId || '').toString() } }
+        )
         .pipe(map(res => ({
           name: preparedFilename,
           url: res.url
