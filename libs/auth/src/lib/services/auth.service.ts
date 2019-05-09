@@ -13,6 +13,7 @@ import { catchError, mergeMap, switchMap } from 'rxjs/operators';
 export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
   private refreshFirebaseSub: Subscription;
   private jwtHelper = new JwtHelperService();
+  private needUpsertUser: boolean;
 
   constructor(
     private _localStorageService: LocalStorageService,
@@ -55,7 +56,8 @@ export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
     }
   }
 
-  public getFirebaseToken(): Observable<any> {
+  public getFirebaseToken(needUpsertUser = false): Observable<any> {
+    this.needUpsertUser = needUpsertUser;
     return this._api.getFirebaseToken()
       .pipe(
         catchError(err => throwError(`An error occurred fetching Firebase token: ${ err.message }`)),
@@ -82,7 +84,7 @@ export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
           try {
             const profile = this.jwtHelper.decodeToken(token);
             this._localStorageService.set('dealerId', profile['https://digital-dealers.com/dealerid']);
-            return this.upsertUser(profile);
+            return this.needUpsertUser ? this.upsertUser(profile) : of(null);
           } catch (e) {
             throw new Error(`Can't log into Firebase: invalid token`);
           }
@@ -133,7 +135,7 @@ export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
     );
 
     this.refreshFirebaseSub = expiresIn$
-      .pipe(switchMap(() => this.getFirebaseToken()))
+      .pipe(switchMap(() => this.getFirebaseToken(this.needUpsertUser)))
       .subscribe({ error: err => console.error(err) });
   }
 

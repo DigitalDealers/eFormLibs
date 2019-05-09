@@ -1,6 +1,6 @@
 {
   "name": "@digitaldealers/auth",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "dependencies": {
     "@auth0/angular-jwt": "^2.1.0",
     "@digitaldealers/firebase-api": "^0.1.0"
