@@ -1,4 +1,5 @@
-import * as firebase from 'firebase';
+import { DataSnapshot } from '@angular/fire/database/interfaces';
+import { QueryDocumentSnapshot } from '@angular/fire/firestore';
 
 import { GeoFireObj } from './interfaces/geo-fire-obj';
 
@@ -430,7 +431,7 @@ export function decodeGeoFireObject(geoFireObj: any): number[] {
  * @param snapshot Firebase snapshot.
  * @returns The Firebase snapshot's key.
  */
-export function geoFireGetKey(snapshot: firebase.database.DataSnapshot): string {
+export function geoFireGetKey(snapshot: DataSnapshot): string {
   let key: string;
   if (typeof snapshot.key === 'string' || snapshot.key === null) {
     key = snapshot.key;
@@ -444,7 +445,7 @@ export function geoFireGetKey(snapshot: firebase.database.DataSnapshot): string 
  * @param snapshot Firestore snapshot.
  * @returns The Firestore snapshot's id.
  */
-export function geoFirestoreGetKey(snapshot: firebase.firestore.DocumentSnapshot): string {
+export function geoFirestoreGetKey(snapshot: QueryDocumentSnapshot<any>): string {
   let id: string;
   if (typeof snapshot.id === 'string' || snapshot.id === null) {
     id = snapshot.id;

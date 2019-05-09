@@ -48,7 +48,7 @@ export class FormService {
         })
       );
     }
-    return combineLatest(...reqs).pipe(
+    return combineLatest(reqs).pipe(
       map((res: any) => {
         const list = {};
         for (let i = 0; i < res.length; i += 1) {

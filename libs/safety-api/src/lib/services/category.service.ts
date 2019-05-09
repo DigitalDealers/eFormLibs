@@ -54,7 +54,7 @@ export class CategoryService {
       })
       .snapshotChanges();
 
-    return combineLatest(ref1, ref2).pipe(
+    return combineLatest([ref1, ref2]).pipe(
       map(res => [...res[0], ...res[1]]),
       map(CategoryService.prepareDictionary)
     );

@@ -1,4 +1,10 @@
-import * as firebase from 'firebase';
+import {
+  CollectionReference,
+  DocumentChange,
+  DocumentSnapshot,
+  Query,
+  QueryDocumentSnapshot
+} from '@angular/fire/firestore';
 
 import { GeoCallbackRegistration } from './callback-registration';
 import { geoDistance } from './geo-distance';
@@ -51,7 +57,7 @@ export class GeoFirestoreQuery {
    * @param exParams any
    */
   constructor(
-    private _collectionRef: firebase.firestore.CollectionReference,
+    private _collectionRef: CollectionReference,
     private _queryCriteria: QueryCriteria,
     exParams: any[]
   ) {
@@ -264,7 +270,7 @@ export class GeoFirestoreQuery {
    *
    * @param locationDataSnapshot A snapshot of the data stored for this location.
    */
-  private _childAddedCallback(locationDataSnapshot: firebase.firestore.DocumentSnapshot): void {
+  private _childAddedCallback(locationDataSnapshot: QueryDocumentSnapshot<any>): void {
     const data = locationDataSnapshot.data();
     this._updateLocation(geoFirestoreGetKey(locationDataSnapshot), data, decodeGeoFireObject(data));
   }
@@ -274,7 +280,7 @@ export class GeoFirestoreQuery {
    *
    * @param locationDataSnapshot A snapshot of the data stored for this location.
    */
-  private _childChangedCallback(locationDataSnapshot: firebase.firestore.DocumentSnapshot): void {
+  private _childChangedCallback(locationDataSnapshot: QueryDocumentSnapshot<any>): void {
     const data = locationDataSnapshot.data();
     this._updateLocation(geoFirestoreGetKey(locationDataSnapshot), data, decodeGeoFireObject(data));
   }
@@ -284,13 +290,13 @@ export class GeoFirestoreQuery {
    *
    * @param locationDataSnapshot A snapshot of the data stored for this location.
    */
-  private _childRemovedCallback(locationDataSnapshot: firebase.firestore.DocumentSnapshot): void {
+  private _childRemovedCallback(locationDataSnapshot: QueryDocumentSnapshot<any>): void {
     const key: string = geoFirestoreGetKey(locationDataSnapshot);
     if (key in this._locationsTracked) {
       this._collectionRef
         .doc(key)
         .get()
-        .then((snapshot: firebase.firestore.DocumentSnapshot) => {
+        .then((snapshot: DocumentSnapshot<any>) => {
           const data = !snapshot.exists ? null : <GeoFireObj>snapshot.data();
           const location: number[] = !snapshot.exists ? null : decodeGeoFireObject(data);
           const geohash: string = location ? encodeGeohash(location) : null;
@@ -464,7 +470,7 @@ export class GeoFirestoreQuery {
       // decode the geohash query string
       const query: string[] = this._stringToQuery(toQueryStr);
 
-      let firestoreQuery: firebase.firestore.Query = this._collectionRef;
+      let firestoreQuery: Query = this._collectionRef;
       for (let i = 0; i < _extParameters.length; i++) {
         firestoreQuery = firestoreQuery.where(
           _extParameters[i].name,
@@ -481,7 +487,7 @@ export class GeoFirestoreQuery {
       // For every new matching geohash, determine if we should fire the 'key_entered' event
       const childCallback = firestoreQuery.onSnapshot((snapshot: any) => {
         snapshot.docChanges.forEach(
-          (change: firebase.firestore.DocumentChange) => {
+          (change: DocumentChange<any>) => {
             if (change.type === 'added') {
               this._childAddedCallback(change.doc);
             }

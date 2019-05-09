@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, CollectionReference, Query } from '@angular/fire/firestore';
 import { GeoFirestore } from '@digitaldealers/geostore';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { isSameDay } from 'date-fns';
@@ -341,14 +341,8 @@ export class FireStoreService {
   getWorkerAssignments(worker, day, month, year) {
     return this.afs
       .collection<Assigment>('assignments', ref => {
-        let query:
-          | firebase.firestore.CollectionReference
-          | firebase.firestore.Query = ref;
-        query = query.where(
-          'dealerId',
-          '==',
-          this._localStorageService.get('dealerId')
-        );
+        let query: CollectionReference | Query = ref;
+        query = query.where('dealerId', '==', this._localStorageService.get('dealerId'));
         query = query.where('day', '==', day);
         query = query.where('month', '==', month);
         query = query.where('year', '==', year);

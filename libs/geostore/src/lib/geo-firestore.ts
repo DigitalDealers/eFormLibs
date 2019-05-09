@@ -10,7 +10,7 @@
  * License: MIT
  */
 
-import * as firebase from 'firebase';
+import { CollectionReference, DocumentSnapshot } from '@angular/fire/firestore';
 
 import { GeoFireObj } from './interfaces/geo-fire-obj';
 import { QueryCriteria } from './interfaces/query-criteria';
@@ -24,7 +24,7 @@ export class GeoFirestore {
   /**
    * @param _collectionRef A Firestore Collection reference where the GeoFirestore data will be stored.
    */
-  constructor(private _collectionRef: firebase.firestore.CollectionReference) {
+  constructor(private _collectionRef: CollectionReference) {
     if (Object.prototype.toString.call(this._collectionRef) !== '[object Object]') {
       throw new Error('collectionRef must be an instance of a Firestore Collection');
     }
@@ -43,7 +43,7 @@ export class GeoFirestore {
     return this._collectionRef
       .doc(key)
       .get()
-      .then((documentSnapshot: firebase.firestore.DocumentSnapshot) => {
+      .then((documentSnapshot: DocumentSnapshot<any>) => {
         if (!documentSnapshot.exists) {
           return null;
         } else {
@@ -58,7 +58,7 @@ export class GeoFirestore {
    *
    * @returns The Firestore Collection used to create this GeoFirestore instance.
    */
-  public ref(): firebase.firestore.CollectionReference {
+  public ref(): CollectionReference {
     return this._collectionRef;
   }
 
@@ -114,7 +114,7 @@ export class GeoFirestore {
       throw new Error('keyOrLocations must be a string or a mapping of key - location pairs.');
     }
 
-    const batch: firebase.firestore.WriteBatch = this._collectionRef.firestore.batch();
+    const batch = this._collectionRef.firestore.batch();
     Object.keys(keyOrLocations).forEach(key => {
       validateKey(key);
       const ref = this._collectionRef.doc(key);
