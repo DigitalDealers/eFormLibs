@@ -1,23 +1,21 @@
 import { DataSetSearchResponse } from '../interfaces/data-set-search-response.interface';
 
 export class SearchMapper {
-  public static prepareDataList(res): DataSetSearchResponse {
+  public static prepareDataList<T = any>(res): DataSetSearchResponse<T> {
     const {
+      hasMoreData,
       headerColumns,
       headerGridColumns,
       headerRows,
-      lineItemColumns,
-      hasMoreData
+      lineItemColumns
     } = res;
 
     return {
+      hasMoreData: hasMoreData,
       headerColumns: SearchMapper.prepareHeaderColumns(headerColumns),
-      headerGridColumns: SearchMapper.prepareHeaderGridColumns(
-        headerGridColumns
-      ),
+      headerGridColumns: SearchMapper.prepareHeaderGridColumns(headerGridColumns),
       headerRows: SearchMapper.prepareHeaderRows(headerRows),
-      lineItemColumns: SearchMapper.prepareLineItemColumns(lineItemColumns),
-      hasMoreData: hasMoreData
+      lineItemColumns: SearchMapper.prepareLineItemColumns(lineItemColumns)
     };
   }
 

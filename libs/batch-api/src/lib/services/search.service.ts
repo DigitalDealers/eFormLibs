@@ -13,9 +13,9 @@ export class SearchService {
   constructor(private http: HttpClient) {
   }
 
-  public getSearchEntities(id: number, params = new HttpParams()): Observable<DataSetSearchResponse> {
+  public getSearchEntities<T = any>(id: number, params = new HttpParams()): Observable<DataSetSearchResponse<T>> {
     return this.http
       .get(`${this.batchUrl}/dataSet/${id}/search`, { params })
-      .pipe(map(res => SearchMapper.prepareDataList(res)));
+      .pipe(map(res => SearchMapper.prepareDataList<T>(res)));
   }
 }

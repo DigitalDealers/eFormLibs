@@ -12,7 +12,8 @@ import { TokenInterceptor } from './token.interceptor';
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: TokenInterceptor, multi: true
+      useClass: TokenInterceptor,
+      multi: true
     },
     {
       provide: HTTP_INTERCEPTORS,
