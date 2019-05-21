@@ -42,6 +42,7 @@ export interface SafetyField<T = SafetyFieldResponse> {
   mappingName?: string;
   multi?: boolean;
   order: number;
+  qrScanner?: boolean;
   question: string;
   relatedForms?: any[];
   response: T;
