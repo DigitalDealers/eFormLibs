@@ -1,9 +1,9 @@
 {
   "name": "@digitaldealers/auth",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "dependencies": {
     "@auth0/angular-jwt": "^2.1.0",
-    "@digitaldealers/firebase-api": "^0.1.0"
+    "@digitaldealers/firebase-api": "^0.1.2"
   },
   "peerDependencies": {
     "@angular/core": "^7.0.0",

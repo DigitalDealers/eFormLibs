@@ -1,6 +1,6 @@
 {
   "name": "@digitaldealers/firebase-api",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "dependencies": {
     "@digitaldealers/geostore": "^0.1.1",
     "date-fns": "^1.30.0",

@@ -28,7 +28,7 @@ export class FireStoreService {
   }
 
   public getFirebaseToken(): Observable<{ token: string }> {
-    const url = `<authApi>/dealers/getAppToken?appType=<applicationId>`;
+    const url = `<authApi>/dealers/getAppToken?appType=<applicationId>&lc=true`;
     return this._http.get<{ token: string }>(url);
   }
 

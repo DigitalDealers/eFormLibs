@@ -32,7 +32,7 @@
     "@angular/platform-browser-dynamic": "^7.2.15",
     "@angular/router": "^7.2.15",
     "@auth0/angular-jwt": "^2.1.0",
-    "@digitaldealers/firebase-api": "^0.1.0",
+    "@digitaldealers/firebase-api": "^0.1.2",
     "@digitaldealers/geostore": "^0.1.1",
     "@digitaldealers/interceptors": "^0.1.1",
     "angular-2-local-storage": "^3.0.2",
