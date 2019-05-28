@@ -43,6 +43,7 @@ export class MyFormService {
       return fromPromise(collection.doc(myFormId).update(data)).pipe(map(() => myFormId));
     } else {
       data.createdBy = this._afAuth.auth.currentUser.uid;
+      data.createdOn = Date.now();
       data.assignedTo = null;
       data.assignedOn = null;
       return fromPromise(collection.add(data)).pipe(map(res => res.id));
