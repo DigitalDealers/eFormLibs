@@ -9,4 +9,5 @@ export * from './lib/interfaces/discount-tax-information.interface';
 export * from './lib/interfaces/module-options.interface';
 export * from './lib/interfaces/part-information.interface';
 export * from './lib/interfaces/part-store.interface';
+export * from './lib/interfaces/search-params.interface';
 export * from './lib/interfaces/upload-response.interface';
