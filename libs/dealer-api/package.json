@@ -1,9 +1,9 @@
 {
   "name": "@digitaldealers/dealer-api",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "peerDependencies": {
-    "@angular/common": "^7.0.0",
-    "@angular/core": "^7.0.0",
+    "@angular/common": "^7.0.0 || ^8.0.0",
+    "@angular/core": "^7.0.0 || ^8.0.0",
     "@digitaldealers/interceptors": "^0.1.0",
     "rxjs": "^6.0.0"
   },
