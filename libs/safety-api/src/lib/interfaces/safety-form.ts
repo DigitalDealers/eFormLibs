@@ -37,7 +37,6 @@ export interface SafetyField<T = SafetyFieldResponse> {
     type: TextSectionFileType;
   };
   locale?: string;
-  logic?: boolean;
   manual?: boolean;
   mappingName?: string;
   multi?: boolean;
