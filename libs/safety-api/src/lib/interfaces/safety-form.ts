@@ -18,6 +18,11 @@ export interface LogicSection {
   value: string;
 }
 
+export interface RelatedForm {
+  formId: string;
+  title: string;
+}
+
 export interface SafetyField<T = SafetyFieldResponse> {
   children?: SafetyField[];
   controlName: string;
@@ -43,7 +48,7 @@ export interface SafetyField<T = SafetyFieldResponse> {
   order: number;
   qrScanner?: boolean;
   question: string;
-  relatedForms?: any[];
+  relatedForms?: RelatedForm[];
   response: T;
   sections?: LogicSection[];
   showTimePicker?: boolean;

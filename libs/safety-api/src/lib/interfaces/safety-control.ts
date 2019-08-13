@@ -19,6 +19,7 @@ export interface SafetyControl {
   dealerId?: number | null;
   icon?: string;
   id?: string;
+  title?: string;
   type: ControlType;
 }
 
