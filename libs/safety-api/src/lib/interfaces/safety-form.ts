@@ -20,6 +20,7 @@ export interface LogicSection {
 
 export interface RelatedForm {
   formId: string;
+  id?: string;
   title: string;
 }
 
