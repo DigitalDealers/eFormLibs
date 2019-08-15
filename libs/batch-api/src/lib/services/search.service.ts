@@ -9,20 +9,20 @@ import { SearchMapper } from '../mappers/search.mapper';
 
 @Injectable()
 export class SearchService {
-  private readonly batchUrl = '<batchApi>/dealers/<dealerId>';
+  private readonly baseUrl = '<batchApi>/dealers/search';
 
   constructor(private http: HttpClient) {
   }
 
   public getSearchEntities<T = any>(id: number, params = new HttpParams()): Observable<DataSetSearchResponse<T>> {
     return this.http
-      .get(`${this.batchUrl}/dataSet/${id}/search`, { params })
+      .get(`<batchApi>/dealers/<dealerId>/dataSet/${id}/search`, { params })
       .pipe(map(res => SearchMapper.prepareDataList<T>(res)));
   }
 
   public liteSearch<T = any>(datasetId: number, params: SearchParams = {}): Observable<T[]> {
     return this.http
-      .get<T[]>(`<batchApi>/dealers/search/${datasetId}`, {
+      .get<T[]>(`${this.baseUrl}/${datasetId}`, {
         params: {
           ...params,
           lite: 'true'
@@ -32,11 +32,16 @@ export class SearchService {
 
   public searchByKey<T = any>(datasetId: number, key: string, params: SearchParams = {}): Observable<T[]> {
     return this.http
-      .post<T[]>(`<batchApi>/dealers/search/${datasetId}`, [key, ''], {
+      .post<T[]>(`${this.baseUrl}/${datasetId}`, [key, ''], {
         params: {
           ...params,
           lite: 'true'
         }
       });
+  }
+
+  public getSearchToken(): Observable<string> {
+    return this.http.get<{ key: string }>(`${this.baseUrl}/apikey`)
+      .pipe(map(res => res.key));
   }
 }

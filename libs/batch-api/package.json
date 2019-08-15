@@ -1,6 +1,6 @@
 {
   "name": "@digitaldealers/batch-api",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "dependencies": {
     "uuid": "^3.3.2"
   },
