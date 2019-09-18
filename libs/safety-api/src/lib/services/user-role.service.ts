@@ -19,7 +19,7 @@ export class UserRoleService {
   ) {
   }
 
-  public getOne(id) {
+  public getOne(id): Observable<SafetyUserRole | null> {
     const doc = this._db.collection<SafetyUserRole>(this.collectionName).doc(id);
     return doc.get().pipe(map(item => prepareItem<SafetyUserRole>(item)));
   }

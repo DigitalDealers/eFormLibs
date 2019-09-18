@@ -111,7 +111,7 @@ export class MyFormService {
     );
   }
 
-  public getOne(id): Observable<SafetyMyForm> {
+  public getOne(id): Observable<SafetyMyForm | null> {
     const doc = this._db.collection<SafetyMyForm>(this.collectionName).doc(id);
     return doc.get().pipe(map(item => prepareItem<SafetyMyForm>(item)));
   }

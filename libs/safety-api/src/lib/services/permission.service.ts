@@ -19,7 +19,7 @@ export class PermissionService {
   ) {
   }
 
-  public getOne(id) {
+  public getOne(id): Observable<SafetyPermission | null> {
     const doc = this._db.collection<SafetyPermission>(this.collectionName).doc(id);
     return doc.get().pipe(map(item => prepareItem<SafetyPermission>(item)));
   }
