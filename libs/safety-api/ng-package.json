@@ -2,6 +2,7 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/safety-api",
   "whitelistedNonPeerDependencies": [
+    "@digitaldealers/typings",
     "date-fns"
   ],
   "lib": {

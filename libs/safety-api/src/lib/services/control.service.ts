@@ -1,16 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentChangeAction, DocumentReference } from '@angular/fire/firestore';
+import { ControlListType, DictionarySafetyControls, MappedSafetyControls, SafetyControl } from '@digitaldealers/typings';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { combineLatest, Observable } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { map } from 'rxjs/operators';
-
-import {
-  ControlListType,
-  DictionarySafetyControls,
-  MappedSafetyControls,
-  SafetyControl
-} from '../interfaces/safety-control';
 
 type DataMapper = (data: DocumentChangeAction<SafetyControl>[]) => DictionarySafetyControls | MappedSafetyControls;
 

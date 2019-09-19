@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentChangeAction } from '@angular/fire/firestore';
+import { SafetyCategory } from '@digitaldealers/typings';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { combineLatest, from, Observable } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { map } from 'rxjs/operators';
-
-import { SafetyCategory } from '../interfaces/safety-category';
 
 @Injectable()
 export class CategoryService {

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
+import { SafetyUserRole } from '@digitaldealers/typings';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { prepareItem } from '../helpers/prepare-item';
 import { prepareList } from '../helpers/prepare-list';
-import { SafetyUserRole } from '../interfaces/safety-user-role';
 
 // @dynamic
 @Injectable()

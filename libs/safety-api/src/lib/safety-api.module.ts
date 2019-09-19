@@ -20,7 +20,6 @@ import { UserService } from './services/user.service';
     AngularFirestoreModule
   ],
   providers: [
-    { provide: FirestoreSettingsToken, useValue: {} },
     CategoryService,
     ControlService,
     FormService,
@@ -29,7 +28,8 @@ import { UserService } from './services/user.service';
     RoleService,
     SafetyApiService,
     UserRoleService,
-    UserService
+    UserService,
+    { provide: FirestoreSettingsToken, useValue: {} }
   ]
 })
 export class DidiSafetyApiModule {

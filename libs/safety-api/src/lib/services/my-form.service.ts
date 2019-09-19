@@ -3,13 +3,13 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
+import { SafetyMyForm } from '@digitaldealers/typings';
 import { format } from 'date-fns';
 import { Observable, of } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { map, switchMap } from 'rxjs/operators';
 
 import { prepareItem } from '../helpers/prepare-item';
-import { SafetyMyForm } from '../interfaces/safety-my-form';
 
 export interface MyFormListOptions {
   limit?: number;

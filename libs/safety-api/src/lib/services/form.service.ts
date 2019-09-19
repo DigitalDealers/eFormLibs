@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
+import { SafetyForm } from '@digitaldealers/typings';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { combineLatest, Observable } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
@@ -7,7 +8,6 @@ import { map } from 'rxjs/operators';
 
 import { prepareItem } from '../helpers/prepare-item';
 import { prepareList } from '../helpers/prepare-list';
-import { SafetyForm } from '../interfaces/safety-form';
 
 export interface FormListOptions {
   role?: string;
