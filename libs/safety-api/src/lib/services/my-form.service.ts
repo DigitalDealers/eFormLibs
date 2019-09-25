@@ -17,6 +17,11 @@ export interface MyFormListOptions {
   where?: [];
 }
 
+export interface MyFormExportParams {
+  assetKey?: string;
+  timezoneOffset?: number;
+}
+
 // @dynamic
 @Injectable()
 export class MyFormService {
@@ -176,13 +181,14 @@ export class MyFormService {
     return fromPromise(document.delete());
   }
 
-  public export(url: string, formId: string, assetKey: string): Observable<{ filename: string; file: Blob; }> {
+  public export(url: string, formId: string, params: MyFormExportParams = {}): Observable<{ filename: string; file: Blob; }> {
     return this.http
       .get(`${url}/${formId}`, {
         responseType: 'blob',
         observe: 'response',
         params: {
-          assetKey
+          ...params,
+          timezoneOffset: params.timezoneOffset ? params.timezoneOffset.toString() : null
         }
       })
       .pipe(

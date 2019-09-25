@@ -1,6 +1,6 @@
 {
   "name": "@digitaldealers/safety-api",
-  "version": "0.2.00",
+  "version": "0.2.1",
   "dependencies": {
     "@digitaldealers/typings": "^0.1.23",
     "date-fns": "^1.30.0"
