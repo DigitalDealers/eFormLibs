@@ -22,8 +22,8 @@
     "lib:interceptors:publish": "npm publish dist/interceptors --access=public",
     "lib:safety-api:build": "ng-packagr -p libs/safety-api",
     "lib:safety-api:publish": "npm publish dist/safety-api --access=public",
-    "lib:custom-saturn-datepicker:build": "ng-packagr -p libs/datepicker && cp libs/datepicker/src/bundle.css libs/datepicker/src/_theming.scss libs/dist",
-    "lib:custom-saturn-datepicker:publish": "npm publish dist/datepicker --access=public"
+    "lib:datepicker:build": "ng-packagr -p libs/datepicker && cp libs/datepicker/src/bundle.css libs/datepicker/src/_theming.scss dist/datepicker",
+    "lib:datepicker:publish": "npm publish dist/datepicker --access=public"
   },
   "dependencies": {
     "@angular/common": "^8.2.9",
