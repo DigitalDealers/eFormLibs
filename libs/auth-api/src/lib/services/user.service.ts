@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UserProfile } from '../interfaces/user-profile.interface';
 import { UserMapper } from '../mappers/user.mapper';
 
 @Injectable()
@@ -35,10 +36,10 @@ export class UserService {
     return this._http.get(`<authApi>/dealers/<dealerId>/userById/${id}`);
   }
 
-  public getByToken(params: HttpParams = new HttpParams()): Observable<any> {
+  public getByToken(params: { [param: string]: string | string[]; } = null): Observable<UserProfile> {
     return this._http
-      .get('<authApi>/users/getByToken', { params })
-      .pipe(map((res: any) => {
+      .get<UserProfile>('<authApi>/users/getByToken', { params })
+      .pipe(map(res => {
         res.user = UserMapper.prepareData(res.user);
         return res;
       }));

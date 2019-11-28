@@ -1,20 +1,11 @@
+import { UserProfileUser } from '../interfaces/user-profile.interface';
+
 export class UserMapper {
-  public static prepareData(data) {
-    let name = '';
+  public static prepareData(data: UserProfileUser): UserProfileUser {
     const { fName, lName, email } = data;
-
-    if (fName) {
-      name = `${fName} `;
-    }
-
-    if (lName) {
-      name += `${lName}`;
-    }
-
-    data['userFName'] = name;
-    name += ` (${email})`;
-    data['extraName'] = name;
-
+    const name = [fName, lName].filter(Boolean).join(' ');
+    data.userFName = name;
+    data.extraName = `${name} (${email})`;
     return data;
   }
 

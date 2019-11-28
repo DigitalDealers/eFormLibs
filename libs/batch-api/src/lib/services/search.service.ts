@@ -40,8 +40,8 @@ export class SearchService {
       });
   }
 
-  public getSearchToken(): Observable<string> {
-    return this.http.get<{ key: string }>(`${this.baseUrl}/apikey`)
+  public getSearchToken(params: { [param: string]: string | string[]; } = null): Observable<string> {
+    return this.http.get<{ key: string }>(`${this.baseUrl}/apikey`, { params })
       .pipe(map(res => res.key));
   }
 }
