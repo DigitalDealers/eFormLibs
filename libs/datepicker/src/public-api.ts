@@ -8,3 +8,4 @@
 
 export * from './lib/datetime/index';
 export * from './lib/datepicker/index';
+export * from './constants';
