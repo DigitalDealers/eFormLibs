@@ -149,7 +149,13 @@ export class SatMonthView<D> implements AfterContentInit {
   /** Function used to filter which dates are selectable. */
   @Input() dateFilter: (date: D) => boolean;
 
-  @Input() dateEvents: DateEvent[];
+  @Input()
+  get dateEvents(): DateEvent[] { return this._dateEvents; }
+  set dateEvents(value: DateEvent[]) {
+    this._dateEvents = value;
+    this._createWeekCells();
+  }
+  private _dateEvents: DateEvent[];
 
   /** Function that can be used to add custom CSS classes to dates. */
   @Input() dateClass: (date: D) => SatCalendarCellCssClasses;
@@ -361,8 +367,8 @@ export class SatMonthView<D> implements AfterContentInit {
       const ariaLabel = this._dateAdapter.format(date, this._dateFormats.display.dateA11yLabel);
       const cellClasses = this.dateClass ? this.dateClass(date) : undefined;
 
-      if (this.dateEvents) {
-        const event = this.dateEvents.find(
+      if (this._dateEvents) {
+        const event = this._dateEvents.find(
           (dateEvent) => dateEvent.dateValue === (i + 1) && dateEvent.monthValue === this._dateAdapter.getMonth(this.activeDate)
         );
 
