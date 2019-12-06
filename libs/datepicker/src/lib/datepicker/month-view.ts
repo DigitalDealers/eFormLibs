@@ -47,6 +47,7 @@ export class DateEvent {
   constructor(
     public dateValue: number,
     public monthValue: number,
+    public yearValue: number,
     public component: ComponentType<any>,
     public data: any
   ) { }
@@ -369,7 +370,8 @@ export class SatMonthView<D> implements AfterContentInit {
 
       if (this._dateEvents) {
         const event = this._dateEvents.find(
-          (dateEvent) => dateEvent.dateValue === (i + 1) && dateEvent.monthValue === this._dateAdapter.getMonth(this.activeDate)
+          (dateEvent) => dateEvent.dateValue === (i + 1) && dateEvent.monthValue === this._dateAdapter.getMonth(this.activeDate) &&
+          dateEvent.yearValue === this._dateAdapter.getYear(this.activeDate)
         );
 
         if (!event) {
