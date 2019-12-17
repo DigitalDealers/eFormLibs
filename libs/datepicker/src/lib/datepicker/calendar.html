@@ -17,7 +17,8 @@
       [beginDateSelected]="beginDateSelected"
       [dateEvents]="dateEvents"
       (selectedChange)="_dateSelected($event)"
-      (_userSelection)="_userSelected()">
+      (_userSelection)="_userSelected()"
+      (cellOverChange)="onCellOverChange($event)">
   </sat-month-view>
 
   <sat-year-view

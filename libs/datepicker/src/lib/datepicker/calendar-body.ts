@@ -111,6 +111,8 @@ export class SatCalendarBody implements OnChanges {
   /** Emits when a new value is selected. */
   @Output() readonly selectedValueChange: EventEmitter<number> = new EventEmitter<number>();
 
+  @Output() readonly cellOverChange: EventEmitter<number> = new EventEmitter<number>();
+
   /** The number of blank cells to put at the beginning for the first row. */
   _firstRowOffset: number;
 
@@ -133,6 +135,7 @@ export class SatCalendarBody implements OnChanges {
 
   _mouseOverCell(cell: SatCalendarCell): void {
     this._cellOver = cell.value;
+    this.cellOverChange.emit(this._cellOver);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -153,6 +156,7 @@ export class SatCalendarBody implements OnChanges {
 
     if (changes.activeCell) {
       this._cellOver = this.activeCell + 1;
+      this.cellOverChange.emit(this._cellOver);
     }
   }
 

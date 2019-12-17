@@ -328,6 +328,8 @@ export class SatCalendar<D> implements AfterContentInit, AfterViewChecked, OnDes
   /** Emits when any date is selected. */
   @Output() readonly _userSelection: EventEmitter<void> = new EventEmitter<void>();
 
+  @Output() readonly cellOverChange: EventEmitter<number> = new EventEmitter<number>();
+
   /** Reference to the current month view component. */
   @ViewChild(SatMonthView, {static: false}) monthView: SatMonthView<D>;
 
@@ -474,6 +476,10 @@ export class SatCalendar<D> implements AfterContentInit, AfterViewChecked, OnDes
   _goToDateInView(date: D, view: 'month' | 'year' | 'multi-year'): void {
     this.activeDate = date;
     this.currentView = view;
+  }
+
+  onCellOverChange(date: number): void {
+    this.cellOverChange.emit(date);
   }
 
   /**
