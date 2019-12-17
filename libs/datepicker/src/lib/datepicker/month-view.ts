@@ -170,6 +170,8 @@ export class SatMonthView<D> implements AfterContentInit {
   /** Emits when any date is activated. */
   @Output() readonly activeDateChange: EventEmitter<D> = new EventEmitter<D>();
 
+  @Output() readonly cellOverChange: EventEmitter<number> = new EventEmitter<number>();
+
   /** The body of calendar table */
   @ViewChild(SatCalendarBody, {static: false}) _matCalendarBody: SatCalendarBody;
 
@@ -336,6 +338,10 @@ export class SatMonthView<D> implements AfterContentInit {
   /** Focuses the active cell after the microtask queue is empty. */
   _focusActiveCell() {
     this._matCalendarBody._focusActiveCell();
+  }
+
+  onCellOverChange(date: number): void {
+    this.cellOverChange.emit(date);
   }
 
   /** Initializes the weekdays. */
