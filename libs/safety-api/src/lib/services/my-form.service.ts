@@ -93,8 +93,10 @@ export class MyFormService {
     return list.map(el => {
       const element = el.payload.doc.data() as SafetyMyForm;
       element.id = el.payload.doc.id;
+
+      // todo deprecated, remove when prod migrated on algolia
       if (element.modifiedOn) {
-        element.shortModifiedOn = format(new Date(element.modifiedOn), 'DD MMM');
+        (element as any).shortModifiedOn = format(new Date(element.modifiedOn), 'DD MMM');
       }
       return element;
     });
