@@ -11,6 +11,7 @@ export class UserService {
   private readonly usersUrl = '<authApi>/dealers/<dealerId>/users';
   private readonly customersUrl = '<authApi>/dealers/<dealerId>/customers';
   private readonly vendorsUrl = '<authApi>/dealers/<dealerId>/vendors';
+  private readonly updatePhoneUrl = '<authApi>/dealers/users/updatephone';
 
   constructor(private _http: HttpClient) {
   }
@@ -69,6 +70,12 @@ export class UserService {
 
   public update(id, body) {
     return this._http.put(`${this.usersUrl}/${id}`, body);
+  }
+
+  public updatePhone(phone: string) {
+    return this._http.put(this.updatePhoneUrl, {
+      phone
+    });
   }
 
   public deleteUserFromCustomer(customerId, userId) {
