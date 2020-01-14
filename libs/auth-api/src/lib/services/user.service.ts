@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 
 import { UserProfile } from '../interfaces/user-profile.interface';
 import { UserMapper } from '../mappers/user.mapper';
+import { UpdatePhoneInterface } from '../interfaces/update-phone.interface';
 
 @Injectable()
 export class UserService {
@@ -72,10 +73,17 @@ export class UserService {
     return this._http.put(`${this.usersUrl}/${id}`, body);
   }
 
-  public updatePhone(phone: string) {
-    return this._http.put(this.updatePhoneUrl, {
+  public updatePhone(phone: string, firstName?: string, lastName?: string) {
+    const update: UpdatePhoneInterface = {
       phone
-    });
+    };
+    if (firstName) {
+      update.given_name = firstName;
+    }
+    if (lastName) {
+      update.family_name = lastName;
+    }
+    return this._http.put(this.updatePhoneUrl, update);
   }
 
   public deleteUserFromCustomer(customerId, userId) {
