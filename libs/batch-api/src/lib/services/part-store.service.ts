@@ -1,19 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-
-import { CatPart } from '../interfaces/cat-part.interface';
-import { CustomerInformation } from '../interfaces/customer-information.interface';
-import { DiscountTaxInformation } from '../interfaces/discount-tax-information.interface';
-import { PartInformation } from '../interfaces/part-information.interface';
 import {
+  CatPart,
   CatPartParams,
   CommonResponse,
+  CustomerInformation,
   CustomerParams,
+  DiscountTaxInformation,
   DiscountTaxParams,
+  PartInformation,
   PartsParams
-} from '../interfaces/part-store.interface';
+} from '@digitaldealers/typings';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class PartStoreService {
@@ -24,7 +23,7 @@ export class PartStoreService {
 
   public getCustomerInformation(params: CustomerParams): Observable<CustomerInformation> {
     return this.http.post<CommonResponse<CustomerInformation>>(
-      `${ this.batchUrl }/getCustomerInformation`,
+      `${this.batchUrl}/getCustomerInformation`,
       params,
       { observe: 'body' }
     ).pipe(map(res => res.return));
@@ -32,7 +31,7 @@ export class PartStoreService {
 
   public getPartsInformation(params: PartsParams): Observable<PartInformation[]> {
     return this.http.post<PartInformation[]>(
-      `${ this.batchUrl }/getPartsAvailInformation`,
+      `${this.batchUrl}/getPartsAvailInformation`,
       params,
       { observe: 'body' }
     );
@@ -40,7 +39,7 @@ export class PartStoreService {
 
   public getDiscountTaxInformation(params: DiscountTaxParams): Observable<DiscountTaxInformation> {
     return this.http.post<CommonResponse<DiscountTaxInformation>>(
-      `${ this.batchUrl }/getDocDiscTaxInfo`,
+      `${this.batchUrl}/getDocDiscTaxInfo`,
       params,
       { observe: 'body' }
     ).pipe(map(res => res.return));
@@ -48,7 +47,7 @@ export class PartStoreService {
 
   public getCATonHand(params: CatPartParams[]): Observable<CatPart[]> {
     return this.http.post<CatPart[]>(
-      `${ this.batchUrl }/getCATonHand`,
+      `${this.batchUrl}/getCATonHand`,
       { parts: params },
       { observe: 'body' }
     );

@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { UploadResponse } from '@digitaldealers/typings';
 import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import uuidv4 from 'uuid/v4';
 
 import { ModuleOptions } from '../interfaces/module-options.interface';
-import { UploadResponse } from '../interfaces/upload-response.interface';
 import { OPTIONS } from '../options';
 
 interface UploadAPIResponse {
