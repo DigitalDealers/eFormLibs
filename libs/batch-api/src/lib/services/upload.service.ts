@@ -16,48 +16,51 @@ interface UploadAPIResponse {
 @Injectable()
 export class UploadService {
   private readonly baseUrl = '<batchApi>/dealers';
+  private appType: string;
 
   constructor(
     private http: HttpClient,
     @Inject(OPTIONS) private options: ModuleOptions
   ) {
+    this.appType = (this.options.appType || '').toString();
+  }
+
+  private static prepareFilename(filename: string): string {
+    const fileExt = filename.split('.').pop().toLowerCase();
+    return `${uuidv4()}.${fileExt}`;
   }
 
   public getAssetKey(): Observable<string> {
     return this.http
       .get<{ token: string; }>(
         `${this.baseUrl}/getAppAssetKey`,
-        { params: { appType: (this.options.appType || '').toString() } }
+        { params: { appType: this.appType } }
       )
       .pipe(map(({ token }) => token));
   }
 
   public uploadFiles(files: (File | Blob)[], filename?: string): Observable<UploadResponse[]> {
-    return forkJoin(files.map<Observable<UploadResponse>>(file => {
+    return forkJoin(files.map(file => {
       const fd = new FormData();
-      const filenameOrigin = filename || (file as File).name || '';
-      const fileSize = (file as File).size;
-      const fileType = (file as File).type;
-      const preparedFilename = this.prepareFilename(filenameOrigin);
+      const filenameOriginal = filename || (file as File).name || '';
+      const fileSize = (file as File).size || null;
+      const fileType = (file as File).type || '';
+      const preparedFilename = UploadService.prepareFilename(filenameOriginal);
       fd.append('file', file, preparedFilename);
+
       return this.http
         .post<UploadAPIResponse>(
           `${this.baseUrl}/uploadAppAsset`,
           fd,
-          { params: { appType: (this.options.appType || '').toString() } }
+          { params: { appType: this.appType } }
         )
         .pipe(map(res => ({
-          filename: filenameOrigin,
+          filename: filenameOriginal,
           name: preparedFilename,
-          url: res.url,
           size: fileSize,
-          type: fileType
+          type: fileType,
+          url: res.url
         })));
     }));
-  }
-
-  private prepareFilename(filename: string): string {
-    const fileExt = filename.split('.').pop().toLowerCase();
-    return `${uuidv4()}.${fileExt}`;
   }
 }

@@ -1,4 +1,7 @@
 export interface UploadResponse {
-  url: string;
+  filename: string;
   name: string;
+  size: number;
+  type: string;
+  url: string;
 }
