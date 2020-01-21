@@ -183,26 +183,17 @@ export class MyFormService {
     return fromPromise(document.delete());
   }
 
-  public export(url: string, formId: string, params: MyFormExportParams = {}): Observable<{ filename: string; file: Blob; }> {
+  public export(
+    url: string,
+    formId: string,
+    params: MyFormExportParams = {}
+  ): Observable<{ filename: string; link: string; }> {
     return this.http
-      .get(`${url}/${formId}`, {
-        responseType: 'blob',
-        observe: 'response',
+      .get<{ filename: string; link: string; }>(`${url}/${formId}`, {
         params: {
           ...params,
           timezoneOffset: params.timezoneOffset ? params.timezoneOffset.toString() : null
         }
-      })
-      .pipe(
-        map(res => ({
-          filename: this.getFileName(res.headers.get('content-disposition')),
-          file: res.body
-        }))
-      );
-  }
-
-  private getFileName(header: string): string {
-    const parts = (header || '').split('filename=');
-    return parts[1] ? parts[1].replace(/"/g, '') : '';
+      });
   }
 }
