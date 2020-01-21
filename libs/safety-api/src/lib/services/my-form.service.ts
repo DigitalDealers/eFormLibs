@@ -5,7 +5,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { SafetyMyForm } from '@digitaldealers/typings';
 import { format } from 'date-fns';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -22,6 +22,12 @@ export interface MyFormExportParams {
   timezoneOffset?: number;
 }
 
+export interface ExportPdfResponse {
+  file?: Blob;
+  filename: string;
+  link?: string;
+}
+
 // @dynamic
 @Injectable()
 export class MyFormService {
@@ -33,6 +39,11 @@ export class MyFormService {
     private _afStorage: AngularFireStorage,
     private http: HttpClient
   ) {
+  }
+
+  private static getFileName(header: string): string {
+    const parts = (header || '').split('filename=');
+    return parts[1] ? parts[1].replace(/"/g, '') : '';
   }
 
   public save(data: SafetyMyForm): Observable<string> {
@@ -187,13 +198,45 @@ export class MyFormService {
     url: string,
     formId: string,
     params: MyFormExportParams = {}
-  ): Observable<{ filename: string; link: string; }> {
+  ): Observable<ExportPdfResponse> {
     return this.http
-      .get<{ filename: string; link: string; }>(`${url}/${formId}`, {
+      .get(`${url}/${formId}`, {
+        responseType: 'blob',
+        observe: 'response',
         params: {
           ...params,
           timezoneOffset: params.timezoneOffset ? params.timezoneOffset.toString() : null
         }
-      });
+      })
+      .pipe(
+        switchMap(res => {
+          const contentDisposition = res.headers.get('content-disposition');
+
+          if (contentDisposition) {
+            return of({
+              filename: MyFormService.getFileName(contentDisposition),
+              file: res.body
+            });
+          }
+
+          return this.blobToJson<ExportPdfResponse>(res.body);
+        })
+      );
+  }
+
+  private blobToJson<T = object>(blob: Blob): Observable<T> {
+    const subject = new Subject<T>();
+    const fr = new FileReader();
+    fr.addEventListener('load', () => {
+      try {
+        subject.next(JSON.parse(fr.result as string));
+      } catch (e) {
+        console.error(`Can't parse response`, e);
+        subject.next(null);
+      }
+      subject.complete();
+    });
+    fr.readAsText(blob);
+    return subject.asObservable();
   }
 }
