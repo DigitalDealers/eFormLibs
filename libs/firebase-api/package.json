@@ -3,7 +3,7 @@
   "version": "0.1.4",
   "dependencies": {
     "@digitaldealers/geostore": "^0.1.1",
-    "date-fns": "^1.30.0",
+    "date-fns": "^2.11.0",
     "lodash-es": "^4.17.0"
   },
   "peerDependencies": {
