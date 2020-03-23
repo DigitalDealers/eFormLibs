@@ -19,7 +19,8 @@ export class ControlService {
     const res = {
       singleChoice: [],
       multipleChoice: [],
-      other: []
+      other: [],
+      select: []
     };
 
     for (let i = 0; i < data.length; i += 1) {
@@ -31,6 +32,13 @@ export class ControlService {
           break;
         case 'multiple-choice':
           res.multipleChoice.push(doc);
+          break;
+        case 'select':
+          if (doc.dealerId) {
+            res.select.push(doc);
+          } else {
+            res.other.push(doc);
+          }
           break;
         default:
           res.other.push(doc);
