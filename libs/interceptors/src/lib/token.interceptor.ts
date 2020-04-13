@@ -12,7 +12,7 @@ export class TokenInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const token = this._localStorageService.get('token');
-    if (token) {
+    if (token && (request.url || '').indexOf('assets/') === -1) {
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`
