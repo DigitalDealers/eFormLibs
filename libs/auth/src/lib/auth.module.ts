@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { AngularFirestoreModule, FirestoreSettingsToken } from '@angular/fire/firestore';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { FirebaseApiModule } from '@digitaldealers/firebase-api';
 
 import { Config } from './interfaces/config';
@@ -16,7 +16,6 @@ import { Guard } from './services/guard.service';
     FirebaseApiModule
   ],
   providers: [
-    { provide: FirestoreSettingsToken, useValue: {} },
     AclService,
     AuthService,
     Guard

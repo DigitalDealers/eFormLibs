@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { AngularFirestoreModule, FirestoreSettingsToken } from '@angular/fire/firestore';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 
 import { SafetyApiService } from './safety-api.service';
@@ -28,8 +28,7 @@ import { UserService } from './services/user.service';
     RoleService,
     SafetyApiService,
     UserRoleService,
-    UserService,
-    { provide: FirestoreSettingsToken, useValue: {} }
+    UserService
   ]
 })
 export class DidiSafetyApiModule {

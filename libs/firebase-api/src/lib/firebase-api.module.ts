@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { AngularFirestoreModule, FirestoreSettingsToken } from '@angular/fire/firestore';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 import { FireStoreService } from './firestore.service';
 
@@ -8,7 +8,6 @@ import { FireStoreService } from './firestore.service';
     AngularFirestoreModule
   ],
   providers: [
-    { provide: FirestoreSettingsToken, useValue: {} },
     FireStoreService
   ]
 })
