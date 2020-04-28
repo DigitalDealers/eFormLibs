@@ -1,9 +1,9 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { CanActivate, CanActivateChild } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Assigment, FireStoreService, User } from '@digitaldealers/firebase-api';
+import { FireStoreService, User } from '@digitaldealers/firebase-api';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable, of, Subscription, throwError, timer } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
@@ -60,7 +60,7 @@ export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
     this.needUpsertUser = needUpsertUser;
     return this._api.getFirebaseToken()
       .pipe(
-        catchError(err => throwError(`An error occurred fetching Firebase token: ${ err.message }`)),
+        catchError(err => throwError(`An error occurred fetching Firebase token: ${err.message}`)),
         switchMap(({ token }) => this._firebaseAuth(token))
       );
   }
@@ -75,9 +75,9 @@ export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
   }
 
   private _firebaseAuth(fbToken: string): Observable<any> {
-    return fromPromise(this.afAuth.auth.signInWithCustomToken(fbToken))
+    return fromPromise(this.afAuth.signInWithCustomToken(fbToken))
       .pipe(
-        catchError(err => throwError(`${ err.code } Can't log into Firebase: ${ err.message }`)),
+        catchError(err => throwError(`${err.code} Can't log into Firebase: ${err.message}`)),
         switchMap(() => {
           this.scheduleFirebaseRenewal();
           const token = this.getToken();
@@ -93,11 +93,15 @@ export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
   }
 
   private upsertUser(profile): Observable<any> {
-    const currentUserId = this.afAuth.auth.currentUser.uid;
-    const doc = this.afs.collection<Assigment>('users').doc(currentUserId);
-
-    return doc.get()
+    let currentUserId: string;
+    let doc: AngularFirestoreDocument<User>;
+    return this.afAuth.user
       .pipe(
+        switchMap(currentUser => {
+          currentUserId = currentUser.uid;
+          doc = this.afs.collection<User>('users').doc(currentUserId);
+          return doc.get();
+        }),
         switchMap(docSnapshot => {
           if (!docSnapshot.exists) {
             const usrToSave: User = {

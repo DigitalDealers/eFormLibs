@@ -32,13 +32,15 @@ export interface ExportPdfResponse {
 @Injectable()
 export class MyFormService {
   private readonly collectionName = 'my-forms';
+  private uid: string;
 
   constructor(
     private _db: AngularFirestore,
-    private _afAuth: AngularFireAuth,
+    private afAuth: AngularFireAuth,
     private _afStorage: AngularFireStorage,
     private http: HttpClient
   ) {
+    this.afAuth.user.subscribe(currentUser => this.uid = currentUser.uid);
   }
 
   private static getFileName(header: string): string {
@@ -53,12 +55,12 @@ export class MyFormService {
 
     data.status = data.status || 'submitted';
     data.modifiedOn = Date.now();
-    data.modifiedBy = this._afAuth.auth.currentUser.uid;
+    data.modifiedBy = this.uid;
 
     if (myFormId) {
       return fromPromise(collection.doc(myFormId).update(data)).pipe(map(() => myFormId));
     } else {
-      data.createdBy = this._afAuth.auth.currentUser.uid;
+      data.createdBy = this.uid;
       data.createdOn = Date.now();
       data.assignedTo = null;
       data.assignedOn = null;
@@ -76,25 +78,18 @@ export class MyFormService {
 
   private _getList(key, options) {
     const { where = [] } = options || {};
-    return this._afAuth.authState.pipe(
-      switchMap(user => {
-        if (user) {
-          return this._db
-            .collection<SafetyMyForm>(this.collectionName, ref => {
-              let filteredRef = ref.where(key, '==', user.uid);
-              if (where && where.length) {
-                for (let i = 0; i < where.length; i += 1) {
-                  filteredRef = filteredRef.where(where[i][0], where[i][1], where[i][2]);
-                }
-              }
-              return filteredRef.orderBy('modifiedOn', 'desc');
-            })
-            .snapshotChanges()
-            .pipe(map(list => this.prepareList(list)));
+    return this._db
+      .collection<SafetyMyForm>(this.collectionName, ref => {
+        let filteredRef = ref.where(key, '==', this.uid);
+        if (where && where.length) {
+          for (let i = 0; i < where.length; i += 1) {
+            filteredRef = filteredRef.where(where[i][0], where[i][1], where[i][2]);
+          }
         }
-        return of(null);
+        return filteredRef.orderBy('modifiedOn', 'desc');
       })
-    );
+      .snapshotChanges()
+      .pipe(map(list => this.prepareList(list)));
   }
 
   private prepareList(list) {
@@ -114,19 +109,12 @@ export class MyFormService {
   }
 
   public assignedToMeCount(): Observable<any> {
-    return this._afAuth.authState.pipe(
-      switchMap(user => {
-        if (user) {
-          return this._db
-            .collection<SafetyMyForm>(this.collectionName, ref => {
-              return ref.where('assignedTo', '==', user.uid);
-            })
-            .snapshotChanges()
-            .pipe(map(res => res.length));
-        }
-        return of(null);
+    return this._db
+      .collection<SafetyMyForm>(this.collectionName, ref => {
+        return ref.where('assignedTo', '==', this.uid);
       })
-    );
+      .snapshotChanges()
+      .pipe(map(res => res.length));
   }
 
   public getOne(id): Observable<SafetyMyForm | null> {
@@ -174,19 +162,12 @@ export class MyFormService {
   }
 
   public getCount(): Observable<number> {
-    return this._afAuth.authState.pipe(
-      switchMap(user => {
-        if (user) {
-          return this._db
-            .collection<SafetyMyForm>(this.collectionName, ref =>
-              ref.where('createdBy', '==', user.uid)
-            )
-            .snapshotChanges()
-            .pipe(map(res => res.length));
-        }
-        return of(0);
-      })
-    );
+    return this._db
+      .collection<SafetyMyForm>(this.collectionName, ref =>
+        ref.where('createdBy', '==', this.uid)
+      )
+      .snapshotChanges()
+      .pipe(map(res => res.length));
   }
 
   public delete(id: string): Observable<void> {
