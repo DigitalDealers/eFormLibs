@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { UploadResponse } from '@digitaldealers/typings';
 import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 import { ModuleOptions } from '../interfaces/module-options.interface';
 import { OPTIONS } from '../options';
