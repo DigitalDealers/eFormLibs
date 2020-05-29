@@ -2,7 +2,7 @@
   "name": "@digitaldealers/geostore",
   "version": "0.1.1",
   "peerDependencies": {
-    "@angular/fire": "^5.1.3"
+    "@angular/fire": "^5.4.2"
   },
   "repository": {
     "type": "git",

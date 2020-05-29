@@ -1,14 +1,14 @@
 export interface User {
-  uid?: string;
-  email: string;
-  displayName: string;
-  language: string;
   dealerId: number;
-  timezone: number;
-  worker: string;
-  photoURL: string;
-  phoneNumber: string;
-  type: string;
+  displayName: string;
+  email: string;
   jobTitle: string;
+  language: string;
+  phoneNumber: string;
+  photoURL: string;
+  timezone: number;
+  type: string;
+  uid?: string;
+  worker: string;
   workGroup: string;
 }

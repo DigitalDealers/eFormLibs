@@ -14,14 +14,14 @@ import { Jobcard } from './interfaces/jobcard';
 
 @Injectable()
 export class FireStoreService {
-  private paramsGeoQuery = [];
-  private paramsTimeQuery = [];
+  private paramsGeoQuery: any[] = [];
+  private paramsTimeQuery: any[] = [];
   private geoQuery: any = null;
-  private geoQuerySub$ = new BehaviorSubject(null);
+  private geoQuerySub$ = new BehaviorSubject<any>(null);
   geoQueryWorker: any = null;
 
   constructor(
-    private _http: HttpClient,
+    private http: HttpClient,
     private afs: AngularFirestore,
     private _localStorageService: LocalStorageService
   ) {
@@ -29,10 +29,10 @@ export class FireStoreService {
 
   public getFirebaseToken(): Observable<{ token: string }> {
     const url = `<authApi>/dealers/getAppToken?appType=<applicationId>&lc=true`;
-    return this._http.get<{ token: string }>(url);
+    return this.http.get<{ token: string }>(url);
   }
 
-  getGeoWorkerAndAssigmnets(mapCenter, status, date, startTime, endTime) {
+  getGeoWorkerAndAssigmnets(mapCenter: any, status: any, date: any, startTime: any, endTime: any) {
     this.getGeoAssigments(mapCenter, status, startTime, endTime);
     if (!isSameDay(new Date(), date)) {
       if (this.geoQueryWorker) {
@@ -46,7 +46,7 @@ export class FireStoreService {
     return this.geoQuerySub$;
   }
 
-  getGeoWorkers(mapCenter) {
+  getGeoWorkers(mapCenter: any) {
     const params = [];
     params.push({
       name: 'dealerId',
@@ -70,7 +70,7 @@ export class FireStoreService {
         this.geoQuerySub$.next({ event: 'ready_worker', value: null });
       });
 
-      this.geoQueryWorker.on('key_entered', (key, location, _distance, data) => {
+      this.geoQueryWorker.on('key_entered', (key: any, location: any, _distance: any, data: any) => {
         this.geoQuerySub$.next({
           event: 'key_entered_worker',
           key: key,
@@ -79,7 +79,7 @@ export class FireStoreService {
         });
       });
 
-      this.geoQueryWorker.on('key_exited', (key, location, _distance, data) => {
+      this.geoQueryWorker.on('key_exited', (key: any, location: any, _distance: any, data: any) => {
         this.geoQuerySub$.next({
           event: 'key_exited_worker',
           key: key,
@@ -88,7 +88,7 @@ export class FireStoreService {
         });
       });
 
-      this.geoQueryWorker.on('key_moved', (key, location, _distance, data) => {
+      this.geoQueryWorker.on('key_moved', (key: any, location: any, _distance: any, data: any) => {
         this.geoQuerySub$.next({
           event: 'key_moved_worker',
           key: key,
@@ -111,7 +111,7 @@ export class FireStoreService {
     return this.geoQuerySub$;
   }
 
-  getGeoAssigments(mapCenter, status, startTime, endTime) {
+  getGeoAssigments(mapCenter: any, status: any, startTime: any, endTime: any) {
     const params = [];
     params.push({
       name: 'dealerId',
@@ -150,15 +150,15 @@ export class FireStoreService {
         this.geoQuerySub$.next({ event: 'ready', value: null });
       });
 
-      this.geoQuery.on('key_entered', (key, location, _distance, data) => {
+      this.geoQuery.on('key_entered', (key: any, location: any, _distance: any, data: any) => {
         this.handleAssignmentGeoQuery('key_entered', key, location, data);
       });
 
-      this.geoQuery.on('key_exited', (key, location, _distance, data) => {
+      this.geoQuery.on('key_exited', (key: any, location: any, _distance: any, data: any) => {
         this.handleAssignmentGeoQuery('key_exited', key, location, data);
       });
 
-      this.geoQuery.on('key_moved', (key, location, _distance, data) => {
+      this.geoQuery.on('key_moved', (key: any, location: any, _distance: any, data: any) => {
         this.handleAssignmentGeoQuery('key_moved', key, location, data);
       });
     } else {
@@ -176,7 +176,7 @@ export class FireStoreService {
     return this.geoQuerySub$;
   }
 
-  handleAssignmentGeoQuery(event, key, location, data) {
+  handleAssignmentGeoQuery(event: any, key: any, location: any, data: any) {
     if (
       data.timestamp >= this.paramsTimeQuery[0] &&
       data.timestamp <= this.paramsTimeQuery[1]
@@ -185,7 +185,7 @@ export class FireStoreService {
     }
   }
 
-  getAssignmentsByInterval(start, end) {
+  getAssignmentsByInterval(start: any, end: any) {
     return this.afs
       .collection('assignments', ref => {
         return ref
@@ -208,7 +208,7 @@ export class FireStoreService {
       );
   }
 
-  getDocsByAssignment(id) {
+  getDocsByAssignment(id: any) {
     return this.afs
       .collection('images', ref => {
         return ref.where('assignmentId', '==', id);
@@ -226,7 +226,7 @@ export class FireStoreService {
       );
   }
 
-  getTimeSheetByInterval(start, end) {
+  getTimeSheetByInterval(start: any, end: any) {
     return this.afs
       .collection('jobcards', ref => {
         return ref
@@ -266,22 +266,22 @@ export class FireStoreService {
     );
   }
 
-  updateTimeJobBatch(events, expenses, allowances) {
+  updateTimeJobBatch(events: any, expenses: any, allowances: any) {
     const batch = this.afs.firestore.batch();
 
-    events.map(event => {
+    events.map((event: any) => {
       delete event['isNotesOpen'];
       const assignmentDoc = this.afs.doc(`jobcards/${event.id}`);
       batch.update(assignmentDoc.ref, event);
     });
 
-    expenses.map(event => {
+    expenses.map((event: any) => {
       delete event['isNotesOpen'];
       const assignmentDoc = this.afs.doc(`jobcards/${event.id}`);
       batch.update(assignmentDoc.ref, event);
     });
 
-    allowances.map(event => {
+    allowances.map((event: any) => {
       delete event['isNotesOpen'];
       const assignmentDoc = this.afs.doc(`jobcards/${event.id}`);
       batch.update(assignmentDoc.ref, event);
@@ -338,7 +338,7 @@ export class FireStoreService {
       .valueChanges();
   }
 
-  getWorkerAssignments(worker, day, month, year) {
+  getWorkerAssignments(worker: any, day: any, month: any, year: any) {
     return this.afs
       .collection<Assigment>('assignments', ref => {
         let query: CollectionReference | Query = ref;

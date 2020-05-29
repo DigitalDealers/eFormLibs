@@ -25,7 +25,7 @@ export class Guard implements CanActivate {
     return this._auth.isAuthenticated();
   }
 
-  private _checkAccess(key) {
+  private _checkAccess(key: any) {
     return this._acl.isAllow(key) || false;
   }
 }

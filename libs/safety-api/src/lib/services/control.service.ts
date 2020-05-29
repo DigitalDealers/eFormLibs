@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 
 type DataMapper = (data: DocumentChangeAction<SafetyControl>[]) => DictionarySafetyControls | MappedSafetyControls;
 
+// deprecated in forms v2
 @Injectable()
 export class ControlService {
   private readonly collectionName = 'controls';

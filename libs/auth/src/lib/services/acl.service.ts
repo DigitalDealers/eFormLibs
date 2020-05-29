@@ -30,13 +30,13 @@ export class AclService {
     this._aclConfig = this._config.aclConfig;
   }
 
-  getCustomerNumber(key) {
+  getCustomerNumber(key: any) {
     if (this.isAllow(key)) {
       return this._auth.getCustomerNumber();
     }
   }
 
-  isAllow(key) {
+  isAllow(key: any) {
     if (!this._auth.isAuthenticated()) {
       this._router.navigate(['/']);
       return false;
