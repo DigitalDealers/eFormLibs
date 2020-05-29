@@ -6,7 +6,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { FireStoreService, User as FirebaseUser } from '@digitaldealers/firebase-api';
 import { User as AppUser } from '@digitaldealers/typings';
 import { LocalStorageService } from 'angular-2-local-storage';
-import { EMPTY, from, Observable, of, Subscription, throwError, timer } from 'rxjs';
+import { from, Observable, of, Subscription, throwError, timer } from 'rxjs';
 import { catchError, mergeMap, switchMap, tap } from 'rxjs/operators';
 
 @Injectable()
@@ -92,7 +92,7 @@ export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
             const token = this.getToken();
             const profile = this.jwtHelper.decodeToken(token) as AppUser;
             this.localStorageService.set('dealerId', profile['https://digital-dealers.com/dealerid']);
-            return this.needUpsertUser ? this.upsertUser(profile) : EMPTY;
+            return this.needUpsertUser ? this.upsertUser(profile) : of(void 0);
           } catch (e) {
             console.error(e);
             throw new Error(`Can't log in to Firebase: invalid token`);
@@ -116,7 +116,7 @@ export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
         }),
         switchMap(docSnapshot => {
           if (!docSnapshot || docSnapshot.exists) {
-            return EMPTY;
+            return of(void 0);
           }
 
           const usrToSave: FirebaseUser = {
