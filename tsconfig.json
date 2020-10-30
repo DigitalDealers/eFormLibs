@@ -21,5 +21,8 @@
       "node_modules/@types"
     ]
   },
-  "exclude": ["./libs/datepicker"]
+  "exclude": [
+    "./libs/datepicker",
+    "./libs/datetime-picker"
+  ]
 }

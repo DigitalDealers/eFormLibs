@@ -24,23 +24,23 @@ export class SearchService {
     return this.http
       .get<T[]>(`${this.baseUrl}/${datasetId}`, {
         params: {
-          ...params,
+          ...(params as { [param: string]: string | string[] }),
           lite: 'true'
         }
       });
   }
 
-  public searchByKey<T = any>(datasetId: number, key: string, params: SearchParams = {}): Observable<T[]> {
+  public searchByKey<T = any>(datasetId: number, key: string | string[], params: SearchParams = {}): Observable<T[]> {
     return this.http
-      .post<T[]>(`${this.baseUrl}/${datasetId}`, [key, ''], {
+      .post<T[]>(`${this.baseUrl}/${datasetId}`, ([] as string[]).concat(key, ''), {
         params: {
-          ...params,
+          ...(params as { [param: string]: string | string[] }),
           lite: 'true'
         }
       });
   }
 
-  public getSearchToken(params: { [param: string]: string | string[]; } = null): Observable<string> {
+  public getSearchToken(params: { [param: string]: string | string[]; } = {}): Observable<string> {
     return this.http.get<{ key: string }>(`${this.baseUrl}/apikey`, { params })
       .pipe(map(res => res.key));
   }

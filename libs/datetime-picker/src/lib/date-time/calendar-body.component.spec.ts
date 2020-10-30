@@ -25,7 +25,7 @@ describe('OwlCalendarBodyComponent', () => {
         let rowEls: NodeListOf<Element>;
         let cellEls: NodeListOf<Element>;
 
-        let refreshElementLists = () => {
+        const refreshElementLists = () => {
             rowEls = calendarBodyNativeElement.querySelectorAll('tr');
             cellEls = calendarBodyNativeElement.querySelectorAll('.owl-dt-calendar-cell');
         };
@@ -34,7 +34,7 @@ describe('OwlCalendarBodyComponent', () => {
             fixture = TestBed.createComponent(StandardCalendarBodyComponent);
             fixture.detectChanges();
 
-            let calendarBodyDebugElement = fixture.debugElement.query(By.directive(OwlCalendarBodyComponent));
+            const calendarBodyDebugElement = fixture.debugElement.query(By.directive(OwlCalendarBodyComponent));
             calendarBodyNativeElement = calendarBodyDebugElement.nativeElement;
             testComponent = fixture.componentInstance;
 
@@ -47,21 +47,21 @@ describe('OwlCalendarBodyComponent', () => {
         });
 
         it('should highlight today', () => {
-            let todayCell = calendarBodyNativeElement.querySelector('.owl-dt-calendar-cell-today')!;
+            const todayCell = calendarBodyNativeElement.querySelector('.owl-dt-calendar-cell-today');
             expect(todayCell).not.toBeNull();
-            expect(todayCell.innerHTML.trim()).toBe('3');
+            expect((todayCell as HTMLElement).innerHTML.trim()).toBe('3');
         });
 
         it('should highlight selected', () => {
-            let selectedCell = calendarBodyNativeElement.querySelector('.owl-dt-calendar-cell-selected')!;
+            const selectedCell = calendarBodyNativeElement.querySelector('.owl-dt-calendar-cell-selected');
             expect(selectedCell).not.toBeNull();
-            expect(selectedCell.innerHTML.trim()).toBe('4');
+            expect((selectedCell as HTMLElement).innerHTML.trim()).toBe('4');
         });
 
         it('cell should be selected on click', () => {
             spyOn(testComponent, 'handleSelect');
             expect(testComponent.handleSelect).not.toHaveBeenCalled();
-            let todayElement =
+            const todayElement =
                 calendarBodyNativeElement.querySelector('.owl-dt-calendar-cell-today') as HTMLElement;
             todayElement.click();
             fixture.detectChanges();
