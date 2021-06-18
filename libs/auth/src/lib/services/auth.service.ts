@@ -80,7 +80,7 @@ export class AuthService implements CanActivate, CanActivateChild, OnDestroy {
   }
 
   private firebaseAuth(firebaseToken: string): Observable<void> {
-    return from(this.afAuth.auth.signInWithCustomToken(firebaseToken))
+    return from(this.afAuth.signInWithCustomToken(firebaseToken))
       .pipe(
         catchError(err => {
           console.error(err);

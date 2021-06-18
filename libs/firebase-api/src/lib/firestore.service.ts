@@ -198,7 +198,7 @@ export class FireStoreService {
         map(changes => {
           return changes.map(a => {
             const data = a.payload.doc.data() as Assigment;
-            data.id = a.payload.doc.id;
+            data.id = (a.payload.doc as any).id;
             data.address = data.address
               .replace(/(\r\n\t|\n|\r\t)/gm, ' ')
               .replace('%1', '');
@@ -218,7 +218,7 @@ export class FireStoreService {
         map(changes => {
           return changes.map(a => {
             const data: any = a.payload.doc.data();
-            data.id = a.payload.doc.id;
+            data.id = (a.payload.doc as any).id;
             data.src = 'data:image/jpeg;base64, ' + data.image;
             return data;
           });
@@ -241,7 +241,7 @@ export class FireStoreService {
         map(changes => {
           return changes.map(a => {
             const data = a.payload.doc.data() as Jobcard;
-            data.id = a.payload.doc.id;
+            data.id = (a.payload.doc as any).id;
             return data;
           });
         })
@@ -388,7 +388,7 @@ export class FireStoreService {
       () => {
         console.warn('Record has been added');
       },
-      error => {
+      (error: any) => {
         console.error('Error: ' + error);
       }
     );

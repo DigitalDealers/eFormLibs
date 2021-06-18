@@ -340,7 +340,7 @@ export class GeoFirestoreQuery {
     this._geohashCleanupScheduled = false;
 
     // Cancel any outstanding scheduled cleanup
-    if (this._cleanUpCurrentGeohashesQueriedTimeout !== null) {
+    if (this._cleanUpCurrentGeohashesQueriedTimeout) {
       clearTimeout(this._cleanUpCurrentGeohashesQueriedTimeout);
       this._cleanUpCurrentGeohashesQueriedTimeout = null;
     }
@@ -360,7 +360,7 @@ export class GeoFirestoreQuery {
     key: string,
     data: any,
     location?: number[],
-    distanceFromCenter?: number
+    distanceFromCenter?: number | null
   ): void {
     this._callbacks[eventType].forEach(callback => {
       if (!location) {
@@ -488,13 +488,13 @@ export class GeoFirestoreQuery {
       const childCallback = firestoreQuery.onSnapshot((snapshot: any) => {
         snapshot.docChanges.forEach(
           (change: DocumentChange<any>) => {
-            if (change.type === 'added') {
+            if ((change as any).type === 'added') {
               this._childAddedCallback(change.doc);
             }
-            if (change.type === 'modified') {
+            if ((change as any).type === 'modified') {
               this._childChangedCallback(change.doc);
             }
-            if (change.type === 'removed') {
+            if ((change as any).type === 'removed') {
               this._childRemovedCallback(change.doc);
             }
           }
@@ -548,7 +548,7 @@ export class GeoFirestoreQuery {
     const locationDict = this._locationsTracked[key];
     delete this._locationsTracked[key];
     if (typeof locationDict !== 'undefined' && locationDict.isInQuery) {
-      const distanceFromCenter: number = currentLocation ? geoDistance(currentLocation, this._center) : null;
+      const distanceFromCenter = currentLocation ? geoDistance(currentLocation, this._center) : null;
       this._fireCallbacksForKey(
         'key_exited',
         key,

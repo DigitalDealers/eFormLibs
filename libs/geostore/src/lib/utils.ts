@@ -446,11 +446,7 @@ export function geoFireGetKey(snapshot: DataSnapshot): string {
  * @returns The Firestore snapshot's id.
  */
 export function geoFirestoreGetKey(snapshot: QueryDocumentSnapshot<any>): string {
-  let id: string;
-  if (typeof snapshot.id === 'string' || snapshot.id === null) {
-    id = snapshot.id;
-  }
-  return id;
+  return (snapshot as any).id || '';
 }
 
 function mathLog2(x: number): number {

@@ -1,16 +1,16 @@
 {
   "name": "@digitaldealers/firebase-api",
-  "version": "0.2.1",
+  "version": "0.3.1",
   "dependencies": {
-    "@digitaldealers/geostore": "^0.1.1",
+    "@digitaldealers/geostore": "^0.2.0",
     "date-fns": "^2.14.0",
     "lodash-es": "^4.17.15"
   },
   "peerDependencies": {
-    "@angular/common": "^9.0.0",
-    "@angular/core": "^9.0.0",
-    "@angular/fire": "^5.4.2",
-    "@digitaldealers/interceptors": "^0.1.0",
+    "@angular/common": "^9.0.0 || ^10.0.0 || ^11.0.0",
+    "@angular/core": "^9.0.0 || ^10.0.0 || ^11.0.0",
+    "@angular/fire": "^6.1.5",
+    "@digitaldealers/interceptors": "^0.2.0",
     "angular-2-local-storage": "^3.0.0",
     "firebase": "^7.0.0",
     "rxjs": "^6.5.0"
