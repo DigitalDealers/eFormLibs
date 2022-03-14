@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentReference, DocumentSnapshot } from '@angular/fire/firestore';
 import { SafetyUser } from '@digitaldealers/typings';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable } from 'rxjs';
@@ -19,13 +19,13 @@ export class UserService {
   ) {
   }
 
-  public getOne(id): Observable<SafetyUser | null> {
+  public getOne(id: string): Observable<SafetyUser | null> {
     const doc = this._db.collection<SafetyUser>(this.collectionName).doc(id);
-    return doc.get().pipe(map(item => prepareItem<SafetyUser>(item)));
+    return doc.get().pipe(map(item => prepareItem<SafetyUser>(item as DocumentSnapshot<SafetyUser>)));
   }
 
-  public getRef(id): DocumentReference {
-    return this._db.doc(`${this.collectionName}/${id}`).ref;
+  public getRef(id: string): DocumentReference<SafetyUser> {
+    return this._db.doc<SafetyUser>(`${this.collectionName}/${id}`).ref;
   }
 
   public getList(): Observable<SafetyUser[]> {
@@ -37,18 +37,18 @@ export class UserService {
       .pipe(map(list => prepareList<SafetyUser>(list)));
   }
 
-  public save(data) {
+  public save(data: SafetyUser) {
     const collection = this._db.collection<SafetyUser>(this.collectionName);
     collection.add(data);
   }
 
-  public update(id, data) {
+  public update(id: string, data: Partial<SafetyUser>) {
     delete data.id;
     const document = this._db.collection<SafetyUser>(this.collectionName).doc(id);
     return document.update(data);
   }
 
-  public delete(id) {
+  public delete(id: string) {
     const document = this._db.collection<SafetyUser>(this.collectionName).doc(id);
     return document.delete();
   }

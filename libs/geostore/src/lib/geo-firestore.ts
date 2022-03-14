@@ -24,7 +24,7 @@ export class GeoFirestore {
   /**
    * @param _collectionRef A Firestore Collection reference where the GeoFirestore data will be stored.
    */
-  constructor(private _collectionRef: CollectionReference) {
+  constructor(private _collectionRef: CollectionReference<GeoFireObj>) {
     if (Object.prototype.toString.call(this._collectionRef) !== '[object Object]') {
       throw new Error('collectionRef must be an instance of a Firestore Collection');
     }
@@ -38,12 +38,12 @@ export class GeoFirestore {
    * @param key The key of the location to retrieve.
    * @returns A promise that is fulfilled with the location of the given key.
    */
-  public get(key: string): Promise<number[]> {
+  public get(key: string): Promise<number[] | null> {
     validateKey(key);
     return this._collectionRef
       .doc(key)
       .get()
-      .then((documentSnapshot: DocumentSnapshot<any>) => {
+      .then(documentSnapshot => {
         if (!documentSnapshot.exists) {
           return null;
         } else {

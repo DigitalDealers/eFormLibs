@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentChangeAction, DocumentSnapshot } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { SafetyMyForm } from '@digitaldealers/typings';
 import { format } from 'date-fns';
@@ -32,7 +32,7 @@ export interface ExportPdfResponse {
 @Injectable()
 export class MyFormService {
   private readonly collectionName = 'my-forms';
-  private uid: string;
+  private uid = '';
 
   constructor(
     private _db: AngularFirestore,
@@ -40,7 +40,7 @@ export class MyFormService {
     private _afStorage: AngularFireStorage,
     private http: HttpClient
   ) {
-    this.afAuth.user.subscribe(currentUser => this.uid = currentUser.uid);
+    this.afAuth.user.subscribe(currentUser => this.uid = currentUser?.uid || '');
   }
 
   private static getFileName(header: string): string {
@@ -72,11 +72,11 @@ export class MyFormService {
     return this._getList('createdBy', options);
   }
 
-  public assignedToMeList(options): Observable<SafetyMyForm[]> {
+  public assignedToMeList(options: MyFormListOptions): Observable<SafetyMyForm[]> {
     return this._getList('assignedTo', options);
   }
 
-  private _getList(key, options) {
+  private _getList(key: string, options: MyFormListOptions) {
     const { where = [] } = options || {};
     return this._db
       .collection<SafetyMyForm>(this.collectionName, ref => {
@@ -92,10 +92,7 @@ export class MyFormService {
       .pipe(map(list => this.prepareList(list)));
   }
 
-  private prepareList(list) {
-    if (!list) {
-      return list;
-    }
+  private prepareList(list: DocumentChangeAction<SafetyMyForm>[]): SafetyMyForm[] {
     return list.map(el => {
       const element = el.payload.doc.data() as SafetyMyForm;
       element.id = el.payload.doc.id;
@@ -117,25 +114,25 @@ export class MyFormService {
       .pipe(map(res => res.length));
   }
 
-  public getOne(id): Observable<SafetyMyForm | null> {
+  public getOne(id: string): Observable<SafetyMyForm | null> {
     const doc = this._db.collection<SafetyMyForm>(this.collectionName).doc(id);
-    return doc.get().pipe(map(item => prepareItem<SafetyMyForm>(item)));
+    return doc.get().pipe(map(item => prepareItem<SafetyMyForm>(item as DocumentSnapshot<SafetyMyForm>)));
   }
 
-  public async uploadFiles(files) {
+  public async uploadFiles(files: (File | string)[]) {
     const tasks = [];
-    const response = {};
+    const response: { [key: string]: { name: string; url: string; } } = {};
     for (let i = 0; i < files.length; i += 1) {
       const randomId = Math.random()
         .toString(36)
         .substring(2);
       response[randomId] = {
-        name: files[i].name || randomId,
+        name: (files[i] as File).name || randomId,
         url: ''
       };
       const ref = this._afStorage.ref(randomId);
       if (typeof files[i] === 'string') {
-        tasks.push(ref.putString(files[i]));
+        tasks.push(ref.putString(files[i] as string));
       } else {
         tasks.push(ref.put(files[i]));
       }
@@ -179,14 +176,14 @@ export class MyFormService {
     url: string,
     formId: string,
     params: MyFormExportParams = {}
-  ): Observable<ExportPdfResponse> {
+  ): Observable<ExportPdfResponse | null> {
     return this.http
       .get(`${url}/${formId}`, {
         responseType: 'blob',
         observe: 'response',
         params: {
           ...params,
-          timezoneOffset: params.timezoneOffset ? params.timezoneOffset.toString() : null
+          timezoneOffset: params.timezoneOffset ? params.timezoneOffset.toString() : ''
         }
       })
       .pipe(
@@ -196,7 +193,7 @@ export class MyFormService {
           if (contentDisposition) {
             return of({
               filename: MyFormService.getFileName(contentDisposition),
-              file: res.body
+              file: res.body as Blob
             });
           }
 
@@ -205,8 +202,12 @@ export class MyFormService {
       );
   }
 
-  private blobToJson<T = object>(blob: Blob): Observable<T> {
-    const subject = new Subject<T>();
+  private blobToJson<T = unknown>(blob: Blob | null): Observable<T | null> {
+    if (!blob) {
+      return of(null);
+    }
+
+    const subject = new Subject<T | null>();
     const fr = new FileReader();
     fr.addEventListener('load', () => {
       try {

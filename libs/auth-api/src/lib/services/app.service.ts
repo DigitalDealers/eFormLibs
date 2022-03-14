@@ -9,23 +9,24 @@ import { AppMapper } from '../mappers/app.mapper';
 export class AppService {
   private readonly url = `<authApi>/dealers/<dealerId>/apps`;
 
-  constructor(private _http: HttpClient) {}
+  constructor(private _http: HttpClient) {
+  }
 
-  public create(body): Observable<any> {
+  public create(body: any): Observable<any> {
     return this._http.post(this.url, body).pipe(map(AppMapper.prepareData));
   }
 
-  public deleteItem(id): Observable<any> {
+  public deleteItem(id: string): Observable<any> {
     return this._http.delete(`${this.url}/${id}`);
   }
 
-  public getOne(id): Observable<any> {
+  public getOne(id: string): Observable<any> {
     return this._http
       .get(`${this.url}/${id}`)
       .pipe(map(AppMapper.prepareData));
   }
 
-  public update(id, data): Observable<any> {
+  public update(id: string, data: any): Observable<any> {
     return this._http
       .put(`${this.url}/${id}`, data)
       .pipe(map(AppMapper.prepareData));

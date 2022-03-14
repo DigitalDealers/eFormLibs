@@ -10,11 +10,11 @@ export class DealerService {
   constructor(private _http: HttpClient) {
   }
 
-  public update(body): Observable<any> {
+  public update(body: any): Observable<any> {
     return this._http.put(`${this.url}/${this.dealerId}`, body);
   }
 
-  public provision(body): Observable<any> {
+  public provision(body: any): Observable<any> {
     return this._http.post(`${this.url}/provision`, body);
   }
 
@@ -46,7 +46,7 @@ export class DealerService {
     return this._http.get(`${this.url}/${this.dealerId}/homePage`, { params });
   }
 
-  public updateHomePageByRole(roleId, body): Observable<any> {
+  public updateHomePageByRole(roleId: string, body: any): Observable<any> {
     return this._http.put(`${this.url}/${this.dealerId}/homePage/${roleId}`, body);
   }
 }

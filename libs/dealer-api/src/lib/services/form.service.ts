@@ -25,51 +25,51 @@ export class FormService {
       .pipe(map(FormMapper.prepareDataList));
   }
 
-  public getListByRole(roleName, params = new HttpParams()): Observable<any> {
+  public getListByRole(roleName: string, params = new HttpParams()): Observable<any> {
     return this._http
       .get(`${this.url}/roles/${roleName}`, { params })
       .pipe(map(FormMapper.prepareDataList));
   }
 
-  public removeFromRole(roleName, id): Observable<any> {
+  public removeFromRole(roleName: string, id: string): Observable<any> {
     return this._http.delete(`${this.url}/${id}/roles/${roleName}`);
   }
 
-  public assingToRole(id, roleName): Observable<any> {
+  public assingToRole(id: string, roleName: string): Observable<any> {
     return this._http.put(`${this.url}/${id}/roles/${roleName}`, {});
   }
 
-  public create(body): Observable<any> {
+  public create(body: any): Observable<any> {
     return this._http.post(this.url, body).pipe(map(FormMapper.prepareData));
   }
 
-  public update(id, body): Observable<any> {
+  public update(id: string, body: any): Observable<any> {
     return this._http
       .put(`${this.url}/${id}`, body)
       .pipe(map(FormMapper.prepareData));
   }
 
-  public deleteItem(id): Observable<any> {
+  public deleteItem(id: string): Observable<any> {
     return this._http.delete(`${this.url}/${id}`);
   }
 
-  public getOne(id, params = new HttpParams()): Observable<any> {
+  public getOne(id: string, params = new HttpParams()): Observable<any> {
     return this._http.get(`${this.url}/${id}`, { params });
   }
 
-  public getListDataSets(id, params = new HttpParams()): Observable<any> {
+  public getListDataSets(id: string, params = new HttpParams()): Observable<any> {
     return this._http.get(`${this.url}/${id}/dataSets`, { params });
   }
 
-  public addToDataSet(id, dataSetId): Observable<any> {
+  public addToDataSet(id: string, dataSetId: string): Observable<any> {
     return this._http.put(`${this.url}/${id}/dataSet/${dataSetId}`, {});
   }
 
-  public removeFromDataSet(id, dataSetId): Observable<any> {
+  public removeFromDataSet(id: string, dataSetId: string): Observable<any> {
     return this._http.delete(`${this.url}/${id}/dataSet/${dataSetId}`, {});
   }
 
-  public getOneByName(name, params = new HttpParams()): Observable<any> {
+  public getOneByName(name: string, params = new HttpParams()): Observable<any> {
     return this._http.get(`${this.url}/byName/${name}`, { params });
   }
 
@@ -77,19 +77,19 @@ export class FormService {
     return this._http.get(`${this.interUrl}`);
   }
 
-  public addUserFilter(data): Observable<any> {
+  public addUserFilter(data: any): Observable<any> {
     return this._http
       .post(this.interUrl, data)
       .pipe(map(FormMapper.prepareData));
   }
 
-  public updateUserFilter(id, body): Observable<any> {
+  public updateUserFilter(id: string, body: any): Observable<any> {
     return this._http
       .put(`${this.interUrl}/${id}`, body)
       .pipe(map(FormMapper.prepareData));
   }
 
-  public deleteFilter(id): Observable<any> {
+  public deleteFilter(id: string): Observable<any> {
     return this._http.delete(`${this.interUrl}/${id}`, {});
   }
 }

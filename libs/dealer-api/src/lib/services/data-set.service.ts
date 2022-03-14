@@ -13,19 +13,19 @@ export class DataSetService {
   constructor(private _http: HttpClient) {
   }
 
-  public create(body): Observable<any> {
+  public create(body: any): Observable<any> {
     return this._http.post(this.url, body).pipe(map(DataSetMapper.prepareData));
   }
 
-  public deleteItem(id): Observable<any> {
+  public deleteItem(id: string): Observable<any> {
     return this._http.delete(`${this.url}/${id}`, {});
   }
 
-  public getOne(id, params = new HttpParams()): Observable<any> {
+  public getOne(id: string, params = new HttpParams()): Observable<any> {
     return this._http.get(`${this.url}/${id}`, { params }).pipe(map(DataSetMapper.prepareData));
   }
 
-  public update(id, body): Observable<any> {
+  public update(id: string, body: any): Observable<any> {
     return this._http.put(`${this.url}/${id}`, body).pipe(map(DataSetMapper.prepareData));
   }
 
@@ -33,19 +33,19 @@ export class DataSetService {
     return this._http.get(this.url, { params }).pipe(map(DataSetMapper.prepareListData));
   }
 
-  public getDataSetHistory(id, params = new HttpParams()): Observable<any> {
+  public getDataSetHistory(id: string, params = new HttpParams()): Observable<any> {
     return this._http.get(`${this.url}/${id}/history`, { params }).pipe(map(DataSetMapper.prepareData));
   }
 
-  public removeFromRole(roleName, id): Observable<any> {
+  public removeFromRole(roleName: string, id: string): Observable<any> {
     return this._http.delete(`${this.url}/${id}/roles/${roleName}`);
   }
 
-  public assingToRole(id, roleName): Observable<any> {
+  public assingToRole(id: string, roleName: string): Observable<any> {
     return this._http.put(`${this.url}/${id}/roles/${roleName}`, {});
   }
 
-  public getListByRole(roleName, params = new HttpParams()): Observable<any> {
+  public getListByRole(roleName: string, params = new HttpParams()): Observable<any> {
     return this._http.get(`${this.url}/roles/${roleName}`, { params }).pipe(map(DataSetMapper.prepareListData));
   }
 
@@ -53,27 +53,27 @@ export class DataSetService {
     return this._http.get(`${this.url}/alerts/my`);
   }
 
-  public setAlerts(alertId, data): Observable<any> {
+  public setAlerts(alertId: string, data: any): Observable<any> {
     return this._http.post(`${this.url}/alerts/${alertId}`, data);
   }
 
-  public getAlert(dataSetId, alertId): Observable<any> {
+  public getAlert(dataSetId: string, alertId: string): Observable<any> {
     return this._http.get(`${this.url}/${dataSetId}/alerts/${alertId}`);
   }
 
-  public deleteAlert(dataSetId, alertId): Observable<any> {
+  public deleteAlert(dataSetId: string, alertId: string): Observable<any> {
     return this._http.delete(`${this.url}/${dataSetId}/alerts/${alertId}`);
   }
 
-  public updateAlert(alertId, data): Observable<any> {
+  public updateAlert(alertId: string, data: any): Observable<any> {
     return this._http.put(`${this.url}/${data.dataSetId}/alerts/${alertId}`, data);
   }
 
-  public addAlert(_alertId, data): Observable<any> {
+  public addAlert(_alertId: string, data: any): Observable<any> {
     return this._http.post(`${this.url}/${data.dataSetId}/alerts`, data);
   }
 
-  public trigger(dataSetId): Observable<any> {
+  public trigger(dataSetId: string): Observable<any> {
     return this._http.post(`${this.url}/${dataSetId}/trigger`, {});
   }
 
@@ -81,7 +81,7 @@ export class DataSetService {
     return this._http.get(`${this.hooksUrl}/customerSync`, {});
   }
 
-  public createCustomerSync(dataSetId, body): Observable<any> {
+  public createCustomerSync(dataSetId: string, body: any): Observable<any> {
     return this._http.post(`${this.url}/${dataSetId}/hooks/customerSync`, body);
   }
 
@@ -93,7 +93,7 @@ export class DataSetService {
     return this._http.get(`${this.hooksUrl}/vendorSync`, {});
   }
 
-  public createVendorSync(dataSetId, body): Observable<any> {
+  public createVendorSync(dataSetId: string, body: any): Observable<any> {
     return this._http.post(`${this.url}/${dataSetId}/hooks/vendorSync`, body);
   }
 

@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 
 export class InteractionMapper {
-  public static formatDate(data) {
+  public static formatDate(data: any) {
     const datePipe = new DatePipe('en-US');
     const { createdOn, modifiedOn } = data;
     data.createdOn = datePipe.transform(createdOn, 'dd/MM/yyyy');
@@ -9,13 +9,13 @@ export class InteractionMapper {
     return data;
   }
 
-  public static prepareDataList(res) {
+  public static prepareDataList(res: any) {
     const { total, data } = res;
     let submitted = 0;
     let inProgress = 0;
     let completed = 0;
     let canceled = 0;
-    const result = data.map(item => {
+    const result = data.map((item: any) => {
       switch (item.status) {
         case 'Submitted':
           submitted++;

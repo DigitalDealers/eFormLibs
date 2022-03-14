@@ -1,9 +1,9 @@
 export class BotMapper {
-  public static prepareData(data) {
+  public static prepareData(data: any) {
     return data;
   }
 
-  public static prepareDataList(res) {
+  public static prepareDataList(res: any) {
     const result = [];
     const { total, data } = res;
 

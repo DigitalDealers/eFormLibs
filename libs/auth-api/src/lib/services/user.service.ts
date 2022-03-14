@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UpdatePhoneInterface } from '../interfaces/update-phone.interface';
 import { UserProfile } from '../interfaces/user-profile.interface';
 import { UserMapper } from '../mappers/user.mapper';
-import { UpdatePhoneInterface } from '../interfaces/update-phone.interface';
 
 @Injectable()
 export class UserService {
@@ -17,7 +17,7 @@ export class UserService {
   constructor(private _http: HttpClient) {
   }
 
-  public create(body): Observable<any> {
+  public create(body: any): Observable<any> {
     const { entityId } = body;
     let query = '';
     if (entityId) {
@@ -26,19 +26,19 @@ export class UserService {
     return this._http.post(`${this.usersUrl}${query}`, body);
   }
 
-  public inviteCustomerUser(userId, body): Observable<any> {
+  public inviteCustomerUser(userId: string, body: any): Observable<any> {
     return this._http.post(`${this.usersUrl}/${userId}/invite`, body);
   }
 
-  public deleteItem(id): Observable<any> {
+  public deleteItem(id: string): Observable<any> {
     return this._http.delete(`${this.usersUrl}/${id}`);
   }
 
-  public getOne(id): Observable<any> {
+  public getOne(id: string): Observable<any> {
     return this._http.get(`<authApi>/dealers/<dealerId>/userById/${id}`);
   }
 
-  public getByToken(params: { [param: string]: string | string[]; } = null): Observable<UserProfile> {
+  public getByToken(params: { [param: string]: string | string[]; } = {}): Observable<UserProfile> {
     return this._http
       .get<UserProfile>('<authApi>/users/getByToken', { params })
       .pipe(map(res => {
@@ -47,19 +47,19 @@ export class UserService {
       }));
   }
 
-  public getCustomerUsers(customerId, params: HttpParams) {
+  public getCustomerUsers(customerId: string, params: HttpParams) {
     return this._http.get(`${this.customersUrl}/${customerId}/users`, { params });
   }
 
-  public getCustomersByUser(userId, params: HttpParams) {
+  public getCustomersByUser(userId: string, params: HttpParams) {
     return this._http.get(`${this.usersUrl}/${userId}/customers`, { params });
   }
 
-  public getVendorsByUser(userId, params: HttpParams) {
+  public getVendorsByUser(userId: string, params: HttpParams) {
     return this._http.get(`${this.usersUrl}/${userId}/vendors`, { params });
   }
 
-  public getRoleUsers(roleId, params) {
+  public getRoleUsers(roleId: string, params: { [param: string]: string | string[]; }) {
     return this._http.get(`${this.usersUrl}/roles/${roleId}`, { params });
   }
 
@@ -69,7 +69,7 @@ export class UserService {
       .pipe(map(res => UserMapper.prepareDataList(res)));
   }
 
-  public update(id, body) {
+  public update(id: string, body: any) {
     return this._http.put(`${this.usersUrl}/${id}`, body);
   }
 
@@ -86,19 +86,19 @@ export class UserService {
     return this._http.put(this.updatePhoneUrl, update);
   }
 
-  public deleteUserFromCustomer(customerId, userId) {
+  public deleteUserFromCustomer(customerId: string, userId: string) {
     return this._http.delete(`${this.customersUrl}/${customerId}/users/${userId}`);
   }
 
-  public inviteVendorUser(userId, body) {
+  public inviteVendorUser(userId: string, body: any) {
     return this._http.post(`${this.usersUrl}/${userId}/invite`, body);
   }
 
-  public getVendorUsers(vendorId, params) {
+  public getVendorUsers(vendorId: string, params: { [param: string]: string | string[]; }) {
     return this._http.get(`${this.vendorsUrl}/${vendorId}/users`, { params });
   }
 
-  public deleteUserFromVendor(vendorId, userId) {
+  public deleteUserFromVendor(vendorId: string, userId: string) {
     return this._http.delete(`${this.vendorsUrl}/${vendorId}/users/${userId}`);
   }
 }

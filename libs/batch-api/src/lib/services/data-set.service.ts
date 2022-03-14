@@ -10,13 +10,13 @@ export class DataSetService {
   constructor(private _http: HttpClient) {
   }
 
-  public getColumns(body): Observable<any> {
+  public getColumns(body: any): Observable<any> {
     return this._http
-      .post(`${this.url}/dataSets/columns`, body)
-      .pipe(map((res: any) => res.map(name => ({ name }))));
+      .post<{ name: string }[]>(`${this.url}/dataSets/columns`, body)
+      .pipe(map(res => res.map(name => ({ name }))));
   }
 
-  public generateReport(id, params = new HttpParams()): Observable<any> {
+  public generateReport(id: string, params = new HttpParams()): Observable<any> {
     return this._http.get(
       `${this.url}/DataSet/${id}/report`,
       { responseType: 'blob', params }

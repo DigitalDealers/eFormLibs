@@ -9,7 +9,7 @@ export class UserMapper {
     return data;
   }
 
-  public static prepareDataList(res) {
+  public static prepareDataList(res: any) {
     const result = [];
     const { total, data } = res;
 

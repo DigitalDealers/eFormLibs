@@ -5,19 +5,18 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class PaginationInterceptor implements HttpInterceptor {
-  public intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    return next.handle(request).pipe(map(this._mapHandler));
-  }
-
-  private _mapHandler = (event: any) => {
-    const { headers, body } = event;
-    if (event instanceof HttpResponse && headers.has('X-Total-Count')) {
-      const total = +headers.get('X-Total-Count');
-      event = event.clone({ body: { total, data: body } });
+  private static mapHandler(event: HttpEvent<unknown>) {
+    if (event instanceof HttpResponse && event.headers.has('X-Total-Count')) {
+      const total = +(event.headers.get('X-Total-Count') || '0');
+      event = event.clone({ body: { total, data: event.body } });
     }
     return event;
+  }
+
+  public intercept(
+    request: HttpRequest<unknown>,
+    next: HttpHandler
+  ): Observable<HttpEvent<unknown>> {
+    return next.handle(request).pipe(map(PaginationInterceptor.mapHandler));
   }
 }

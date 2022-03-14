@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, CollectionReference, Query } from '@angular/fire/firestore';
-import { GeoFirestore } from '@digitaldealers/geostore';
+import { GeoFireObj, GeoFirestore } from '@digitaldealers/geostore';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { isSameDay } from 'date-fns';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import { isEqual } from 'lodash-es';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -54,7 +54,7 @@ export class FireStoreService {
     });
     params.push({ name: 'type', value: 'worker' });
 
-    const collectionRef = this.afs.collection('users').ref;
+    const collectionRef = this.afs.collection<GeoFireObj>('users').ref;
     const geoFirestore = new GeoFirestore(collectionRef);
 
     if (!this.geoQueryWorker) {
@@ -134,7 +134,7 @@ export class FireStoreService {
     this.paramsTimeQuery = [startTime, endTime];
     this.paramsGeoQuery = params;
 
-    const collectionRef = this.afs.collection('assignments').ref;
+    const collectionRef = this.afs.collection<GeoFireObj>('assignments').ref;
     const geoFirestore = new GeoFirestore(collectionRef);
 
     if (!this.geoQuery) {
@@ -354,7 +354,7 @@ export class FireStoreService {
   }
 
   addAssigment(item: Assigment) {
-    const collectionRef = this.afs.collection('assignments').ref;
+    const collectionRef = this.afs.collection<GeoFireObj>('assignments').ref;
     const geoFirestore = new GeoFirestore(collectionRef);
     const loc = item.location as firebase.firestore.GeoPoint;
     item.dealerId = this._localStorageService.get('dealerId');

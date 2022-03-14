@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentReference, DocumentSnapshot } from '@angular/fire/firestore';
 import { SafetyForm } from '@digitaldealers/typings';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { combineLatest, Observable } from 'rxjs';
@@ -29,17 +29,17 @@ export class FormService {
 
   public getOne(id: string): Observable<SafetyForm | null> {
     const doc = this._db.collection<SafetyForm>(this.collectionName).doc(id);
-    return doc.get().pipe(map(item => prepareItem<SafetyForm>(item)));
+    return doc.get().pipe(map(item => prepareItem<SafetyForm>(item as DocumentSnapshot<SafetyForm>)));
   }
 
-  public getRef(id): DocumentReference {
-    return this._db.doc(`${this.collectionName}/${id}`).ref;
+  public getRef<T = unknown>(id: string): DocumentReference<T> {
+    return this._db.doc<T>(`${this.collectionName}/${id}`).ref;
   }
 
   public getListBulk(options: FormListOptions = {}): Observable<SafetyForm[]> {
     const { where = [] } = options;
-    const roles: [string] = this._storage.get('roles');
-    const reqs = [];
+    const roles = this._storage.get<string[]>('roles');
+    const reqs: Observable<SafetyForm[]>[] = [];
     for (let i = 0; i < roles.length; i += 1) {
       reqs.push(
         this.getList({
@@ -49,11 +49,11 @@ export class FormService {
       );
     }
     return combineLatest(reqs).pipe(
-      map((res: any) => {
-        const list = {};
+      map(res => {
+        const list: { [id: string]: SafetyForm } = {};
         for (let i = 0; i < res.length; i += 1) {
           for (let y = 0; y < res[i].length; y += 1) {
-            const key = res[i][y].id;
+            const key = res[i][y].id as string;
             list[key] = res[i][y];
           }
         }

@@ -1,5 +1,5 @@
 export class FormMapper {
-  public static prepareData(data) {
+  public static prepareData(data: any) {
     const { formType } = data;
     if (formType) {
       let shortName = '';
@@ -7,12 +7,12 @@ export class FormMapper {
       for (const item of name) {
         shortName += item.charAt(0).toUpperCase();
       }
-      data['shortName'] = shortName;
+      data.shortName = shortName;
     }
     return data;
   }
 
-  public static prepareDataList(res) {
+  public static prepareDataList(res: any) {
     const result = [];
     const { total, data } = res;
 

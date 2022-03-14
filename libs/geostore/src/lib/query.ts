@@ -1,31 +1,18 @@
-import {
-  CollectionReference,
-  DocumentChange,
-  DocumentSnapshot,
-  Query,
-  QueryDocumentSnapshot
-} from '@angular/fire/firestore';
+import { CollectionReference, DocumentChange, Query, QueryDocumentSnapshot } from '@angular/fire/firestore';
 
 import { GeoCallbackRegistration } from './callback-registration';
 import { geoDistance } from './geo-distance';
 import { GeoFireObj } from './interfaces/geo-fire-obj';
 import { GeoFirestoreQueryState } from './interfaces/geo-firestore-query-state';
 import { QueryCriteria } from './interfaces/query-criteria';
-import {
-  decodeGeoFireObject,
-  encodeGeohash,
-  geoFirestoreGetKey,
-  geohashQueries,
-  validateCriteria,
-  validateLocation
-} from './utils';
+import { decodeGeoFireObject, encodeGeohash, geoFirestoreGetKey, geohashQueries, validateCriteria, validateLocation } from './utils';
 
 /**
  * Creates a GeoFirestoreQuery instance.
  */
 export class GeoFirestoreQuery {
   // Event callbacks
-  private _callbacks: any = {
+  private _callbacks: { [key: string]: Function[] } = {
     ready: [],
     key_entered: [],
     key_exited: [],
@@ -49,7 +36,7 @@ export class GeoFirestoreQuery {
   // move outside of the query's bounding box.
   private _geohashCleanupScheduled = false;
   private _cleanUpCurrentGeohashesQueriedInterval: any;
-  private _cleanUpCurrentGeohashesQueriedTimeout = null;
+  private _cleanUpCurrentGeohashesQueriedTimeout: number | null = null;
 
   /**
    * @param _collectionRef A Firestore Collection reference where the GeoFirestore data will be stored.
@@ -57,7 +44,7 @@ export class GeoFirestoreQuery {
    * @param exParams any
    */
   constructor(
-    private _collectionRef: CollectionReference,
+    private _collectionRef: CollectionReference<GeoFireObj>,
     private _queryCriteria: QueryCriteria,
     exParams: any[]
   ) {
@@ -67,15 +54,15 @@ export class GeoFirestoreQuery {
     }
 
     this._cleanUpCurrentGeohashesQueriedInterval = setInterval(() => {
-      if (this._geohashCleanupScheduled === false) {
+      if (!this._geohashCleanupScheduled) {
         this._cleanUpCurrentGeohashesQueried();
       }
     }, 10000);
 
     // Validate and save the query criteria
     validateCriteria(_queryCriteria, true);
-    this._center = _queryCriteria.center;
-    this._radius = _queryCriteria.radius;
+    this._center = _queryCriteria.center || [];
+    this._radius = _queryCriteria.radius || 0;
 
     // Listen for new geohashes being added around this query and fire the appropriate events
     this._listenForNewGeohashes(exParams);
@@ -152,7 +139,7 @@ export class GeoFirestoreQuery {
    */
   public on(eventType: string, callback: Function): GeoCallbackRegistration {
     // Validate the inputs
-    if (['ready', 'key_entered', 'key_exited', 'key_moved'].indexOf(eventType) === -1 ) {
+    if (['ready', 'key_entered', 'key_exited', 'key_moved'].indexOf(eventType) === -1) {
       throw new Error(`event type must be 'ready', 'key_entered', 'key_exited', or 'key_moved'`);
     }
 
@@ -296,10 +283,10 @@ export class GeoFirestoreQuery {
       this._collectionRef
         .doc(key)
         .get()
-        .then((snapshot: DocumentSnapshot<any>) => {
+        .then(snapshot => {
           const data = !snapshot.exists ? null : <GeoFireObj>snapshot.data();
-          const location: number[] = !snapshot.exists ? null : decodeGeoFireObject(data);
-          const geohash: string = location ? encodeGeohash(location) : null;
+          const location: number[] | undefined = !snapshot.exists ? undefined : decodeGeoFireObject(data);
+          const geohash: string = location ? encodeGeohash(location) : '';
           // Only notify observers if key is not part of any other geohash query or this actually might not be
           // a key exited event, but a key moved or entered event. These events will be triggered by updates
           // to a different query
@@ -450,11 +437,11 @@ export class GeoFirestoreQuery {
     // If we are not already cleaning up the current geohashes queried and we have more than 25 of them,
     // kick off a timeout to clean them up so we don't create an infinite number of unneeded queries.
     if (
-      this._geohashCleanupScheduled === false &&
+      !this._geohashCleanupScheduled &&
       Object.keys(this._currentGeohashesQueried).length > 25
     ) {
       this._geohashCleanupScheduled = true;
-      this._cleanUpCurrentGeohashesQueriedTimeout = setTimeout(
+      this._cleanUpCurrentGeohashesQueriedTimeout = window.setTimeout(
         this._cleanUpCurrentGeohashesQueried,
         10
       );
@@ -584,7 +571,7 @@ export class GeoFirestoreQuery {
    * @param data any
    * @param location The location as [latitude, longitude] pair.
    */
-  private _updateLocation(key: string, data: any, location?: number[]): void {
+  private _updateLocation(key: string, data: any, location: number[] = []): void {
     validateLocation(location);
     // Get the key and location
     let distanceFromCenter: number, isInQuery;

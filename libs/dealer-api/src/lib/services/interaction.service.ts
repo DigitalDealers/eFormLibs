@@ -19,7 +19,7 @@ export class InteractionService {
   }
 
   public getListByFormType(
-    formTypeId,
+    formTypeId: string,
     params = new HttpParams()
   ): Observable<any> {
     params = params.set('formTypeId', formTypeId);
@@ -28,41 +28,41 @@ export class InteractionService {
       .pipe(map(InteractionMapper.prepareDataList));
   }
 
-  public create(body): Observable<any> {
+  public create(body: any): Observable<any> {
     return this._http
       .post(this.url, body)
       .pipe(map(InteractionMapper.formatDate));
   }
 
-  public update(id, body): Observable<any> {
+  public update(id: string, body: any): Observable<any> {
     return this._http
       .put(`${this.url}/${id}`, body)
       .pipe(map(InteractionMapper.formatDate));
   }
 
-  public deleteItem(id): Observable<any> {
+  public deleteItem(id: string): Observable<any> {
     return this._http.delete(`${this.url}/${id}`);
   }
 
-  public getOne(id, params = new HttpParams()): Observable<any> {
+  public getOne(id: string, params = new HttpParams()): Observable<any> {
     return this._http
       .get(`${this.url}/${id}`, { params })
       .pipe(map(InteractionMapper.formatDate));
   }
 
-  public getListOfHistory(id): Observable<any> {
+  public getListOfHistory(id: string): Observable<any> {
     return this._http.get(`${this.url}/${id}/history/all`);
   }
 
-  public createHistory(id, body): Observable<any> {
+  public createHistory(id: string, body: any): Observable<any> {
     return this._http.post(`${this.url}/${id}/history`, body);
   }
 
-  public getHistoryById(id, historyId): Observable<any> {
+  public getHistoryById(id: string, historyId: string): Observable<any> {
     return this._http.get(`${this.url}/${id}/history/${historyId}`);
   }
 
-  public deleteHistory(id, historyId): Observable<any> {
+  public deleteHistory(id: string, historyId: string): Observable<any> {
     return this._http.delete(`${this.url}/${id}/history/${historyId}`);
   }
 
@@ -70,7 +70,7 @@ export class InteractionService {
     return this._http.get(`${this.url}/total`, { params });
   }
 
-  public getAssetsSAS(id): Observable<any> {
+  public getAssetsSAS(id: string): Observable<any> {
     return this._http.get(`${this.url}/${id}/sas`);
   }
 }

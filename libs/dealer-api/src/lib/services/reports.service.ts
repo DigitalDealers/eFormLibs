@@ -13,7 +13,7 @@ export class ReportsService {
   }
 
   public getList(params = new HttpParams()): Observable<any> {
-    if (params instanceof HttpParams && params.has('dealerId')) {
+    if (params?.has('dealerId')) {
       params = params.delete('dealerId');
     }
 
@@ -22,37 +22,37 @@ export class ReportsService {
       .pipe(map(res => ReportMapper.prepareDataList(res)));
   }
 
-  public create(data): Observable<any> {
+  public create(data: any): Observable<any> {
     return this._http
       .post(this.url, data)
       .pipe(map(res => ReportMapper.prepareData(res)));
   }
 
-  public getOne(id, params = new HttpParams()): Observable<any> {
+  public getOne(id: string, params = new HttpParams()): Observable<any> {
     return this._http
       .get(`${this.url}/${id}`, { params })
       .pipe(map(res => ReportMapper.prepareData(res)));
   }
 
-  public upload(body): Observable<any> {
+  public upload(body: any): Observable<any> {
     return this._http.post(`${this.url}/upload`, body);
   }
 
-  public update(id, body): Observable<any> {
+  public update(id: string, body: any): Observable<any> {
     return this._http
       .put(`${this.url}/${id}`, body)
       .pipe(map(res => ReportMapper.prepareData(res)));
   }
 
-  public deleteItem(id): Observable<any> {
+  public deleteItem(id: string): Observable<any> {
     return this._http.delete(`${this.url}/${id}`);
   }
 
-  public getByTile(body): Observable<any> {
+  public getByTile(body: any): Observable<any> {
     return this._http.post(`${this.url}/getByTile`, body);
   }
 
-  public getEmbedded(id): Observable<any> {
+  public getEmbedded(id: string): Observable<any> {
     return this._http.get(`${this.url}/${id}/getembedded`);
   }
 
@@ -61,21 +61,21 @@ export class ReportsService {
   }
 
   public getEmbeddedDashboardById(
-    id,
+    id: string,
     params = new HttpParams()
   ): Observable<any> {
     return this._http.get(`${this.url}/dashboards/${id}`, { params });
   }
 
-  public assingReportToRole(id, reportId, body): Observable<any> {
+  public assingReportToRole(id: string, reportId: string, body: any): Observable<any> {
     return this._http.put(`${this.url}/${reportId}/roles/${id}`, body);
   }
 
-  public removeReportFromRole(roleName, reportId): Observable<any> {
+  public removeReportFromRole(roleName: string, reportId: string): Observable<any> {
     return this._http.delete(`${this.url}/${reportId}/roles/${roleName}`);
   }
 
-  public getListByRole(roleName, params = new HttpParams()): Observable<any> {
+  public getListByRole(roleName: string, params = new HttpParams()): Observable<any> {
     return this._http
       .get(`${this.url}/roles/${roleName}`, { params })
       .pipe(map(res => ReportMapper.prepareDataList(res)));

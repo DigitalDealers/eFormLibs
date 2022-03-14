@@ -17,7 +17,7 @@ export class ControlService {
   }
 
   static prepareList(data: DocumentChangeAction<SafetyControl>[]): MappedSafetyControls {
-    const res = {
+    const res: MappedSafetyControls = {
       singleChoice: [],
       multipleChoice: [],
       other: [],
@@ -50,7 +50,7 @@ export class ControlService {
   }
 
   public static prepareDictionary(data: DocumentChangeAction<SafetyControl>[]): DictionarySafetyControls {
-    const res = {};
+    const res: DictionarySafetyControls = {};
     for (let i = 0; i < data.length; i += 1) {
       const doc = data[i].payload.doc.data() as SafetyControl;
       doc.id = data[i].payload.doc.id;

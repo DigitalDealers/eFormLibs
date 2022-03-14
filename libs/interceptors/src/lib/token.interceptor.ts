@@ -5,12 +5,13 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private _localStorageService: LocalStorageService) {}
+  constructor(private _localStorageService: LocalStorageService) {
+  }
 
   public intercept(
-    request: HttpRequest<any>,
+    request: HttpRequest<unknown>,
     next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  ): Observable<HttpEvent<unknown>> {
     const token = this._localStorageService.get('token');
     if (token && (request.url || '').indexOf('assets/') === -1) {
       request = request.clone({

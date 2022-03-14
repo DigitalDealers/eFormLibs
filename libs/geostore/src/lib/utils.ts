@@ -40,7 +40,7 @@ export const g_EPSILON = 1e-12;
  * @param key The key to be verified.
  */
 export function validateKey(key: string): void {
-  let error: string;
+  let error: string | undefined;
 
   if (typeof key !== 'string') {
     error = 'key must be a string';
@@ -66,7 +66,7 @@ export function validateKey(key: string): void {
  * @param location The [latitude, longitude] pair to be verified.
  */
 export function validateLocation(location: number[]): void {
-  let error: string;
+  let error: string | undefined;
 
   if (!Array.isArray(location)) {
     error = 'location must be an array';
@@ -431,8 +431,8 @@ export function decodeGeoFireObject(geoFireObj: any): number[] {
  * @param snapshot Firebase snapshot.
  * @returns The Firebase snapshot's key.
  */
-export function geoFireGetKey(snapshot: DataSnapshot): string {
-  let key: string;
+export function geoFireGetKey(snapshot: DataSnapshot): string | null {
+  let key: string | null = null;
   if (typeof snapshot.key === 'string' || snapshot.key === null) {
     key = snapshot.key;
   }

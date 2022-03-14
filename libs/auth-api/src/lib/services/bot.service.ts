@@ -9,25 +9,26 @@ import { BotMapper } from '../mappers/bot.mapper';
 export class BotService {
   private readonly url = `<authApi>/dealers/<dealerId>/bots`;
 
-  constructor(private _http: HttpClient) {}
+  constructor(private _http: HttpClient) {
+  }
 
-  public create(body): Observable<any> {
+  public create(body: any): Observable<any> {
     return this._http
       .post(this.url, body)
       .pipe(map(res => BotMapper.prepareData(res)));
   }
 
-  public deleteItem(id): Observable<any> {
+  public deleteItem(id: string): Observable<any> {
     return this._http.delete(`${this.url}/${id}`);
   }
 
-  public getOne(id): Observable<any> {
+  public getOne(id: string): Observable<any> {
     return this._http
       .get(`${this.url}/${id}`)
       .pipe(map(res => BotMapper.prepareData(res)));
   }
 
-  public update(id, data): Observable<any> {
+  public update(id: string, data: any): Observable<any> {
     return this._http
       .put(`${this.url}/${id}`, data)
       .pipe(map(res => BotMapper.prepareData(res)));

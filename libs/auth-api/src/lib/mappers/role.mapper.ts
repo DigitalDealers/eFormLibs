@@ -1,5 +1,5 @@
 export class RoleMapper {
-  public static prepareData(data) {
+  public static prepareData(data: any) {
     const { isDefault } = data;
 
     data.type = isDefault ? 'Default Role' : 'Custom Role';
@@ -7,7 +7,7 @@ export class RoleMapper {
     return data;
   }
 
-  public static prepareDataList(res) {
+  public static prepareDataList(res: any) {
     const result = [];
     const { total, data } = res;
 

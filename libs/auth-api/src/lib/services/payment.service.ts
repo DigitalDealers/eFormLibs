@@ -13,27 +13,27 @@ export class PaymentService {
     return this._http.get(`${this.url}/pgateway`, { params });
   }
 
-  public create(body): Observable<any> {
+  public create(body: any): Observable<any> {
     return this._http.post(`${this.url}/pgateway`, body);
   }
 
-  public deleteItem(id): Observable<any> {
+  public deleteItem(id: string): Observable<any> {
     return this._http.delete(`${this.url}/pgateway/${id}`);
   }
 
-  public getOne(id, params = new HttpParams()): Observable<any> {
+  public getOne(id: string, params = new HttpParams()): Observable<any> {
     return this._http.get(`${this.url}/pgateway/${id}`, { params });
   }
 
-  public update(id, body): Observable<any> {
+  public update(id: string, body: any): Observable<any> {
     return this._http.put(`${this.url}/pgateway/${id}`, body);
   }
 
-  public getSecret(id): Observable<any> {
+  public getSecret(id: string): Observable<any> {
     return this._http.get(`${this.url}/pgateway/${id}/creds`, {});
   }
 
-  public getFingerPrint(body): Observable<any> {
+  public getFingerPrint(body: any): Observable<any> {
     return this._http.post(`${this.url}/securePay/fingerPrint`, body);
   }
 }

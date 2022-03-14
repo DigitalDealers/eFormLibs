@@ -15,7 +15,7 @@ export class DashboardService {
   }
 
   public getDashboardsByRoleId(
-    roleId,
+    roleId: string,
     params = new HttpParams()
   ): Observable<any> {
     return this._http
@@ -25,7 +25,7 @@ export class DashboardService {
       .pipe(map(res => res));
   }
 
-  public getOne(id, params = new HttpParams()): Observable<any> {
+  public getOne(id: string, params = new HttpParams()): Observable<any> {
     return this._http
       .get(`${this.url}/${id}`, { params })
       .pipe(map(res => res));
@@ -38,7 +38,7 @@ export class DashboardService {
   }
 
   public getListByUserType(
-    userType,
+    userType: string,
     params = new HttpParams()
   ): Observable<any> {
     return this._http
@@ -46,39 +46,39 @@ export class DashboardService {
       .pipe(map(res => res));
   }
 
-  public create(body): Observable<any> {
+  public create(body: any): Observable<any> {
     return this._http.post(this.url, body).pipe(map(res => res));
   }
 
-  public update(body): Observable<any> {
+  public update(body: any): Observable<any> {
     return this._http
       .put(`${this.url}/${body.id}`, body)
       .pipe(map(res => res));
   }
 
-  public deleteItem(id): Observable<any> {
+  public deleteItem(id: string): Observable<any> {
     return this._http.delete(`${this.url}/${id}`);
   }
 
-  public getTiles(id, params = new HttpParams()): Observable<any> {
+  public getTiles(id: string, params = new HttpParams()): Observable<any> {
     return this._http
       .get(`${this.url}/${id}/tiles`, { params })
       .pipe(map(res => res));
   }
 
-  public addTile(id, body): Observable<any> {
+  public addTile(id: string, body: any): Observable<any> {
     return this._http
       .post(`${this.url}/${id}/tiles`, body)
       .pipe(map(res => res));
   }
 
-  public updateTile(id, tileId, body): Observable<any> {
+  public updateTile(id: string, tileId: string, body: any): Observable<any> {
     return this._http
       .put(`${this.url}/${id}/tiles/${tileId}`, body)
       .pipe(map(res => res));
   }
 
-  public deleteTile(id, tileId): Observable<any> {
+  public deleteTile(id: string, tileId: string): Observable<any> {
     return this._http.delete(`${this.url}/${id}/tiles/${tileId}`);
   }
 }

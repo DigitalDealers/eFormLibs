@@ -1,6 +1,10 @@
 import { OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
+/**
+ * @deprecated Use unsubscribe service
+ * Overriding ngOnDestroy doesn't work
+ */
 export class BaseComponent implements OnDestroy {
   private subscriptions = new Subscription();
 

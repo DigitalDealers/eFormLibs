@@ -1,5 +1,5 @@
 export class ReportMapper {
-  public static prepareData(data) {
+  public static prepareData(data: any) {
     const { reportName, isDashboard } = data;
     if (reportName) {
       let shortName = '';
@@ -7,14 +7,14 @@ export class ReportMapper {
       for (const item of name) {
         shortName += item.charAt(0).toUpperCase();
       }
-      data['shortName'] = shortName;
+      data.shortName = shortName;
     }
-    data['dashboard'] = !!isDashboard ? 'Yes' : 'No';
+    data.dashboard = !!isDashboard ? 'Yes' : 'No';
 
     return data;
   }
 
-  public static prepareDataList(res) {
+  public static prepareDataList(res: any) {
     const result = [];
     const { total, data } = res;
 

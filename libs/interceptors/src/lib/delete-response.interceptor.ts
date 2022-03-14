@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class DeleteResponseInterceptor implements HttpInterceptor {
-  constructor() {}
+  constructor() {
+  }
 
   public intercept(
-    request: HttpRequest<any>,
+    request: HttpRequest<unknown>,
     next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  ): Observable<HttpEvent<unknown>> {
     if (request.method === 'DELETE') {
       request = request.clone({
         responseType: 'text'

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentReference, DocumentSnapshot } from '@angular/fire/firestore';
 import { SafetyRole } from '@digitaldealers/typings';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable } from 'rxjs';
@@ -19,13 +19,13 @@ export class RoleService {
   ) {
   }
 
-  public getOne(id): Observable<SafetyRole | null> {
+  public getOne(id: string): Observable<SafetyRole | null> {
     const doc = this._db.collection<SafetyRole>(this.collectionName).doc(id);
-    return doc.get().pipe(map(item => prepareItem<SafetyRole>(item)));
+    return doc.get().pipe(map(item => prepareItem<SafetyRole>(item as DocumentSnapshot<SafetyRole>)));
   }
 
-  public getRef(id): DocumentReference {
-    return this._db.doc(`${this.collectionName}/${id}`).ref;
+  public getRef(id: string): DocumentReference<SafetyRole> {
+    return this._db.doc<SafetyRole>(`${this.collectionName}/${id}`).ref;
   }
 
   public getList(options = { limit: 10, offset: 0 }): Observable<SafetyRole[]> {
@@ -41,18 +41,18 @@ export class RoleService {
       .pipe(map(list => prepareList<SafetyRole>(list)));
   }
 
-  public save(data) {
+  public save(data: SafetyRole) {
     const collection = this._db.collection<SafetyRole>(this.collectionName);
     collection.add(data);
   }
 
-  public update(id, data) {
+  public update(id: string, data: SafetyRole) {
     delete data.id;
     const document = this._db.collection<SafetyRole>(this.collectionName).doc(id);
     return document.update(data);
   }
 
-  public delete(id) {
+  public delete(id: string) {
     const document = this._db.collection<SafetyRole>(this.collectionName).doc(id);
     return document.delete();
   }

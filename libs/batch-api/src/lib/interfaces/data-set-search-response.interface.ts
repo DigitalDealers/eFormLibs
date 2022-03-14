@@ -1,4 +1,4 @@
-export interface DataSetSearchResponse<T = any> {
+export interface DataSetSearchResponse<T = unknown> {
   hasMoreData: boolean;
   headerColumns: string[];
   headerGridColumns: string[];
@@ -6,7 +6,7 @@ export interface DataSetSearchResponse<T = any> {
   lineItemColumns: any[];
 }
 
-export interface HeaderRow<T = any> {
-  items: { [columnName: string]: any; }[];
+export interface HeaderRow<T = unknown> {
+  items: { [columnName: string]: unknown; }[];
   values: T;
 }

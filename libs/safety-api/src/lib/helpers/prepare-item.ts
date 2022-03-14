@@ -1,11 +1,12 @@
-import { firestore } from 'firebase/app';
+import { DocumentSnapshot } from '@angular/fire/firestore';
 
-export function prepareItem<T = any>(data: firestore.DocumentSnapshot): T | null {
+export function prepareItem<T = unknown>(data: DocumentSnapshot<T>): (T & { id: string }) | null {
   if (!data.exists) {
     return null;
   }
 
-  const doc = data.data();
-  doc.id = data.id;
-  return doc as T;
+  return {
+    ...data.data(),
+    id: data.id
+  };
 }

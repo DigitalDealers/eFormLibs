@@ -1,8 +1,8 @@
 export class DataSetMapper {
-  public static prepareData(data) {
+  public static prepareData(data: any) {
     if (data.linkedDataSource) {
-      data['dataSourceName'] = data.linkedDataSource.dataSourceName;
-      data['isSqlType'] = data['dataSourceName'] !== 'VisionLink';
+      data.dataSourceName = data.linkedDataSource.dataSourceName;
+      data.isSqlType = data.dataSourceName !== 'VisionLink';
     }
 
     if (data.incrementalKeys) {
@@ -14,7 +14,7 @@ export class DataSetMapper {
     return data;
   }
 
-  public static prepareListData(res) {
+  public static prepareListData(res: any) {
     const { total, data } = res;
     for (const index in data) {
       if (data.hasOwnProperty(index)) {

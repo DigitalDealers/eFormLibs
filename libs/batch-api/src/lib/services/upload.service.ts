@@ -26,7 +26,7 @@ export class UploadService {
   }
 
   private static prepareFilename(filename: string): string {
-    const fileExt = filename.split('.').pop().toLowerCase();
+    const fileExt = (filename.split('.').pop() || '').toLowerCase();
     return `${uuidv4()}.${fileExt}`;
   }
 
@@ -43,7 +43,7 @@ export class UploadService {
     return forkJoin(files.map(file => {
       const fd = new FormData();
       const filenameOriginal = filename || (file as File).name || '';
-      const fileSize = (file as File).size || null;
+      const fileSize = (file as File).size || 0;
       const fileType = (file as File).type || '';
       const preparedFilename = UploadService.prepareFilename(filenameOriginal);
       fd.append('file', file, preparedFilename);

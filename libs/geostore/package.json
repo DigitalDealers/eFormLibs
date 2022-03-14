@@ -1,6 +1,6 @@
 {
   "name": "@digitaldealers/geostore",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "peerDependencies": {
     "@angular/fire": "^6.1.5"
   },

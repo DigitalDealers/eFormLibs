@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentReference, DocumentSnapshot } from '@angular/fire/firestore';
 import { SafetyUserRole } from '@digitaldealers/typings';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable } from 'rxjs';
@@ -19,17 +19,17 @@ export class UserRoleService {
   ) {
   }
 
-  public getOne(id): Observable<SafetyUserRole | null> {
+  public getOne(id: string): Observable<SafetyUserRole | null> {
     const doc = this._db.collection<SafetyUserRole>(this.collectionName).doc(id);
-    return doc.get().pipe(map(item => prepareItem<SafetyUserRole>(item)));
+    return doc.get().pipe(map(item => prepareItem<SafetyUserRole>(item as DocumentSnapshot<SafetyUserRole>)));
   }
 
-  public getRef(id): DocumentReference {
-    return this._db.doc(`${this.collectionName}/${id}`).ref;
+  public getRef(id: string): DocumentReference<SafetyUserRole> {
+    return this._db.doc<SafetyUserRole>(`${this.collectionName}/${id}`).ref;
   }
 
   public getList(
-    id,
+    id: string,
     options = { limit: 10, offset: 0 }
   ): Observable<SafetyUserRole[]> {
     return this._db
@@ -46,24 +46,24 @@ export class UserRoleService {
       .pipe(map(list => prepareList<SafetyUserRole>(list)));
   }
 
-  public save(data) {
+  public save(data: SafetyUserRole) {
     data['dealerId'] = this._storage.get('dealerId');
     const collection = this._db.collection<SafetyUserRole>(this.collectionName);
     collection.add(data);
   }
 
-  public update(id, data) {
+  public update(id: string, data: SafetyUserRole) {
     delete data.id;
     const document = this._db.collection<SafetyUserRole>(this.collectionName).doc(id);
     return document.update(data);
   }
 
-  public delete(id) {
+  public delete(id: string) {
     const document = this._db.collection<SafetyUserRole>(this.collectionName).doc(id);
     return document.delete();
   }
 
-  public getCount(id) {
+  public getCount(id: string) {
     return this._db
       .collection<SafetyUserRole>(this.collectionName, ref =>
         ref.where('roleId', '==', id)
