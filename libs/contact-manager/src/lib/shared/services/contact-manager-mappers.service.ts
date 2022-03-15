@@ -1,10 +1,10 @@
-import { ContactManagerSearchResult } from '../interfaces/contact-manager-search-result.interface';
+import { ContactManagerCustomer, ContactManagerSearchResult } from '../interfaces/contact-manager-search-result.interface';
 
 // @dynamic
 export class ContactManagerMappersService {
   static mapContactManagerSearchResult(items: ContactManagerSearchResult[]) {
-    return items.map((item: ContactManagerSearchResult) => {
-      if (item.items && item.items.length) {
+    return items.map(item => {
+      if (item.items?.length) {
         return {
           ...item,
           PortalUserId: ContactManagerMappersService.getPortalUserIdFromObject(item),
@@ -19,13 +19,13 @@ export class ContactManagerMappersService {
     });
   }
 
-  private static getAccountNumberFromObject(obj: Object) {
-    const key = Object.keys(obj).find((currentKey: string) => !!currentKey.match(/^account\s?number$/i));
-    return obj[key || 'Account Number'];
+  private static getAccountNumberFromObject(obj: ContactManagerSearchResult | ContactManagerCustomer): string {
+    const key = Object.keys(obj).find(currentKey => !!currentKey.match(/^account\s?number$/i));
+    return obj[(key || 'Account Number') as keyof (ContactManagerSearchResult | ContactManagerCustomer)] as string;
   }
 
-  private static getPortalUserIdFromObject(obj: Object) {
-    const key = Object.keys(obj).find((currentKey: string) => !!currentKey.match(/^portaluserid$/i));
-    return obj[key || 'PortalUserId'];
+  private static getPortalUserIdFromObject(obj: ContactManagerSearchResult): string | undefined {
+    const key = Object.keys(obj).find(currentKey => !!currentKey.match(/^portaluserid$/i));
+    return obj[(key || 'PortalUserId') as keyof ContactManagerSearchResult] as string | undefined;
   }
 }

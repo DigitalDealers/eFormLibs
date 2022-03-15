@@ -1,13 +1,12 @@
-import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
-import { map } from 'rxjs/operators';
-import { HttpBackendClientService } from './http-backend-client.service';
 import { ConfigService } from './config.service';
+import { HttpBackendClientService } from './http-backend-client.service';
 
 @Injectable()
 export class EntitiesService {
-
   private readonly headers = {
     'Authorization': `Bearer ${this.config.getAccessToken()}`
   };
@@ -21,17 +20,17 @@ export class EntitiesService {
     return keysToUpdate;
   }
 
-  constructor(private httpClient: HttpBackendClientService,
-              private config: ConfigService) {
+  constructor(
+    private httpClient: HttpBackendClientService,
+    private config: ConfigService
+  ) {
   }
 
-  public getAssociatedContacts(code: string, dataSetId: number, params: HttpParams) {
+  public getAssociatedContacts<T = unknown>(code: string, dataSetId: number, params: HttpParams): Observable<T> {
     const keysToUpdate = EntitiesService.prepareKeys(code);
-    return this.httpClient.post(`${this.config.batchApiUrl}/dealers/search/${dataSetId}`, keysToUpdate, {
+    return this.httpClient.post<T>(`${this.config.batchApiUrl}/dealers/search/${dataSetId}`, keysToUpdate, {
       headers: this.headers,
       params
-    }).pipe(
-      map((res) => res)
-    );
+    });
   }
 }

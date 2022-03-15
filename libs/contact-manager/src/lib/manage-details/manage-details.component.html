@@ -5,7 +5,7 @@
 <div class="details-label">
   User Details
 </div>
-<form [formGroup]="userDetailsForm" class="user-details-form">
+<form *ngIf="userDetailsForm" [formGroup]="userDetailsForm" class="user-details-form">
   <div class="controls-row">
     <mat-form-field appearance="outline">
       <mat-label>First Name</mat-label>
@@ -45,16 +45,17 @@
              matInput
              formControlName="email"
              autocomplete="off">
-      <div class="form-control-error" *ngIf="userDetailsForm.get('email').dirty && !userDetailsForm.get('email').valid">
+      <div class="form-control-error"
+           *ngIf="getControl(userDetailsForm, 'email').dirty && !getControl(userDetailsForm, 'email').valid">
         <ul>
-          <li *ngIf="userDetailsForm.get('email').hasError('required')">
+          <li *ngIf="getControl(userDetailsForm, 'email').hasError('required')">
             Field is required
           </li>
-          <li *ngIf="userDetailsForm.get('email').hasError('email') && userDetailsForm.get('email').value">
+          <li *ngIf="getControl(userDetailsForm, 'email').hasError('email') && getControl(userDetailsForm, 'email').value">
             Email is not valid
           </li>
-          <li *ngIf="userDetailsForm.get('email').hasError('duplicate')">Email is already in use</li>
-          <li *ngIf="userDetailsForm.get('email').pending">
+          <li *ngIf="getControl(userDetailsForm, 'email').hasError('duplicate')">Email is already in use</li>
+          <li *ngIf="getControl(userDetailsForm, 'email').pending">
             <mat-progress-spinner class="user-form-field-pending-spinner form-field-spinner"
                                   color="warn"
                                   mode="indeterminate"
@@ -79,8 +80,7 @@
       <mat-icon>keyboard_arrow_down</mat-icon>
       <mat-autocomplete #autoLe="matAutocomplete" (optionSelected)="selectLe($event)">
         <div class="didi-mat-autocomplete-list-wrapper" perfectScrollbar>
-          <mat-option *ngFor="let le of filteredLegalEntities$ | async; let i = index;"
-                      [value]="le">
+          <mat-option *ngFor="let le of filteredLegalEntities$ | async" [value]="le">
             {{ le }}
           </mat-option>
         </div>
@@ -89,11 +89,11 @@
 
     <mat-form-field appearance="outline"
                     class="autocomplete-field roles-autocomplete-field chips-autocomplete-field"
-                    [class.has-items]="roleForm?.get('roles')?.value?.length"
+                    [class.has-items]="getControl(roleForm, 'roles').value?.length"
                     [formGroup]="roleForm">
       <mat-label>Roles</mat-label>
-      <mat-chip-list class="chip-list" #chipList (click)="rolesInput.focus()">
-        <mat-chip *ngFor="let role of roleForm.get('roles').value"
+      <mat-chip-list class="chip-list" #chipList (click)="rolesInput?.focus()">
+        <mat-chip *ngFor="let role of getControl(roleForm, 'roles').value"
                   [selectable]="true"
                   [removable]="true"
                   (removed)="removeRole(role)">
@@ -105,25 +105,23 @@
                #rolesInput
                title="Roles"
                matInput
-               [formControl]="roleForm.get('role')"
+               [formControl]="getControl(roleForm, 'role')"
                [matAutocomplete]="autoRoles"
                [matChipInputFor]="chipList"
                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                (click)="showAllRoles()"
                (matChipInputTokenEnd)="addRole($event)">
       </mat-chip-list>
-      <div class="right-icon" (click)="rolesInput.focus()">
+      <div class="right-icon" (click)="rolesInput?.focus()">
         <mat-icon>keyboard_arrow_down</mat-icon>
       </div>
       <mat-autocomplete #autoRoles="matAutocomplete"
-                        (optionSelected)="rolesInput.blur()"
-                        (opened)="openRoles()"
-                        (closed)="closeRoles()"
+                        (optionSelected)="rolesInput?.blur()"
                         [displayWith]="rolesDisplayWithFn">
         <div class="didi-mat-autocomplete-list-wrapper"
              perfectScrollbar
              #rolesPs="ngxPerfectScrollbar">
-          <mat-option *ngFor="let role of filteredRoles$ | async; let i = index;"
+          <mat-option *ngFor="let role of filteredRoles$ | async"
                       [value]="role"
                       (click)="selectRole(role)">
             {{ role.role }}
@@ -146,7 +144,7 @@
 
   <div class="controls-row"
        [class.controls-row-disabled]="addingCustomerToThePortal === i"
-       *ngFor="let customerForm of customerForms.controls; let i = index;">
+       *ngFor="let customerForm of getCustomerForms(); let i = index;">
     <div class="customer-loading"
          [@fadeBoth]="'in'"
          *ngIf="addingCustomerToThePortal === i">
@@ -212,9 +210,8 @@
   <button mat-raised-button
           [disabled]="userDetailsForm?.invalid
              || roleForm?.invalid
-             || customerForms.invalid
-             || !customerForms.length
-             || loading
+             || customerForms?.invalid
+             || !customerForms?.length
              || dataLoading
              || viewProfileLoading
              || userDetailsForm?.pending"
@@ -268,7 +265,7 @@
 
   <div class="process-changes-inner" [@fadeBoth]="''" *ngIf="confirmDelete">
     <p class="confirm-text">
-      Do you want to delete {{userDetailsForm?.get('fName').value}} {{userDetailsForm?.get('lName').value}}?
+      Do you want to delete {{getControl(userDetailsForm, 'fName').value}} {{getControl(userDetailsForm, 'lName').value}}?
     </p>
     <div class="confirm-delete-buttons">
       <button mat-raised-button

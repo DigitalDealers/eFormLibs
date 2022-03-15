@@ -1,8 +1,8 @@
 import { HttpParams } from '@angular/common/http';
-import { ChangeDetectorRef, Component, Inject, OnInit, Self, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, NgZone, OnInit, Self, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PerfectScrollbarDirective } from 'ngx-perfect-scrollbar';
-import { of, Subscription } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { finalize, map, tap } from 'rxjs/operators';
 
 import { ContactManagerDetailsComponent } from '../contact-manager-details/contact-manager-details.component';
@@ -32,16 +32,16 @@ interface AssociatedContactsData {
   providers: [UnsubscribeService]
 })
 export class AssociatedContactsComponent implements OnInit {
-  @ViewChild('ps', { static: true }) ps: PerfectScrollbarDirective;
-  associatedContactsLoading: boolean;
-  associatedContacts: ContactManagerSearchResult[] = [];
-  contactManagerValue: ContactManager;
-  customerName: string;
-  hasNextData: boolean;
-  loadingSub: Subscription;
-  currentCustomer: PortalUser;
-  customerLoading: boolean;
-  params = new HttpParams()
+  @ViewChild('ps', { static: true }) private readonly ps?: PerfectScrollbarDirective;
+
+  public associatedContactsLoading = false;
+  public associatedContacts: ContactManagerSearchResult[] = [];
+  public contactManagerValue: ContactManager;
+
+  private hasNextData = false;
+  private currentCustomer?: PortalUser | null;
+  private customerLoading = false;
+  private params = new HttpParams()
     .set('limit', '20')
     .set('offset', '0')
     .set('lite', 'true');
@@ -50,13 +50,13 @@ export class AssociatedContactsComponent implements OnInit {
     @Self() private unsub: UnsubscribeService,
     private entitiesService: EntitiesService,
     private cd: ChangeDetectorRef,
+    private zone: NgZone,
     private contactManagerDialog: ContactManagerDialogService,
     private contactManagerService: ContactManagerService,
     private dialogRef: MatDialogRef<void>,
     @Inject(MAT_DIALOG_DATA) public data: AssociatedContactsData
   ) {
     this.contactManagerValue = data.contactManagerValue;
-    this.customerName = data.customerName;
   }
 
   ngOnInit() {
@@ -64,22 +64,19 @@ export class AssociatedContactsComponent implements OnInit {
     this.unsub.subs = this.loadCustomer().subscribe();
   }
 
-  loadNext() {
+  public loadNext() {
     if (this.associatedContactsLoading || !this.hasNextData) {
       return;
     }
-    this.loadAssociatedContacts(false);
+    this.zone.run(() => this.loadAssociatedContacts(false));
   }
 
   loadAssociatedContacts(reset: boolean = true) {
-    if (this.loadingSub) {
-      this.loadingSub.unsubscribe();
-    }
     this.associatedContactsLoading = true;
     if (reset) {
       this.setParams({ offset: 0 });
       this.hasNextData = true;
-      this.ps.scrollToTop();
+      this.ps?.scrollToTop();
     } else {
       const currentOffset = Number(this.params.get('offset'));
       this.setParams({
@@ -87,15 +84,19 @@ export class AssociatedContactsComponent implements OnInit {
       });
     }
     this.detectScrollChanges();
-    this.unsub.subs = this.entitiesService.getAssociatedContacts(this.data.accountNumber, this.data.dataSetId, this.params)
+    this.unsub.subs = this.entitiesService.getAssociatedContacts<ContactManagerSearchResult[]>(
+      this.data.accountNumber,
+      this.data.dataSetId,
+      this.params
+    )
       .pipe(
-        map((res: ContactManagerSearchResult[]) => res
-          .filter((contact: ContactManagerSearchResult) => contact.PortalUserId !== this.data.userId)),
+        map(res => res.filter((contact: ContactManagerSearchResult) => contact.PortalUserId !== this.data.userId)),
         finalize(() => {
           this.associatedContactsLoading = false;
+          this.cd.markForCheck();
         })
       )
-      .subscribe((res: ContactManagerSearchResult[]) => {
+      .subscribe(res => {
         if (!res.length) {
           this.hasNextData = false;
         }
@@ -104,7 +105,7 @@ export class AssociatedContactsComponent implements OnInit {
         } else {
           this.associatedContacts = [...this.associatedContacts, ...res];
         }
-        setTimeout(() => this.detectScrollChanges());
+        this.detectScrollChanges();
       });
   }
 
@@ -115,14 +116,14 @@ export class AssociatedContactsComponent implements OnInit {
     this.customerLoading = true;
     this.loadCustomer()
       .pipe(
-        tap((customers: PortalUser[]) => {
+        tap(customers => {
           this.contactManagerDialog.openDialog({
             componentRef: ContactManagerDetailsComponent,
             data: {
               contactManager: {
-                [this.contactManagerValue.legalEntity]: customers[0] ? customers[0].legalEntity : null
+                [this.contactManagerValue.legalEntity]: customers[0]?.legalEntity || null
               },
-              customer: customers[0],
+              customer: customers[0] || null,
               contactManagerValue: this.contactManagerValue,
               initialMode: ManageMode.addToPortal,
               addNew: true
@@ -136,12 +137,12 @@ export class AssociatedContactsComponent implements OnInit {
   }
 
   private setParams(params: { [key: string]: string | number }) {
-    const newParams = {};
-    this.params.keys().forEach((key: string) => {
-      if (params[key] !== null && params[key] !== undefined) {
-        newParams[key] = params[key].toString();
+    const newParams: { [key: string]: string | number } = {};
+    this.params.keys().forEach(key => {
+      if (key in params) {
+        newParams[key] = params[key].toString?.();
       } else {
-        newParams[key] = this.params.get(key);
+        newParams[key] = this.params.get(key) || '';
       }
     });
     this.params = new HttpParams({ fromObject: newParams });
@@ -149,18 +150,17 @@ export class AssociatedContactsComponent implements OnInit {
 
   private detectScrollChanges() {
     this.cd.markForCheck();
-    this.cd.detectChanges();
-    this.ps.update();
+    this.ps?.update();
   }
 
-  private loadCustomer() {
+  private loadCustomer(): Observable<(PortalUser | null)[]> {
     if (this.currentCustomer || this.currentCustomer === null) {
       return of([this.currentCustomer]);
     }
     return this.contactManagerService
       .getCustomersByUser(this.data.userId, new HttpParams().set('limit', '1').set('offset', '0'))
       .pipe(
-        tap((customers: PortalUser[]) => {
+        tap(customers => {
           this.currentCustomer = customers[0] || null;
         })
       );

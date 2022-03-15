@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Inject, OnInit, Self } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { filter, finalize, mergeMap, tap } from 'rxjs/operators';
 
 import { ContactManagerDetailsComponent } from '../contact-manager-details/contact-manager-details.component';
@@ -9,7 +9,7 @@ import { ContactManagerService } from '../contact-manager.service';
 import { contactManagerDefaultSettings } from '../shared/contact-manager-default-settings.constant';
 import { animations } from '../shared/fade.animation';
 import { ContactGaEvent } from '../shared/interfaces/contact-ga-event.interface';
-import { ContactManagerSearchResult } from '../shared/interfaces/contact-manager-search-result.interface';
+import { ContactManagerSearchResult, ContactNameKey } from '../shared/interfaces/contact-manager-search-result.interface';
 import { ContactManagerSettings } from '../shared/interfaces/contact-manager-settings.interface';
 import { ContactManager } from '../shared/interfaces/contact-manager.interface';
 import { PortalUser } from '../shared/interfaces/portal-user.interface';
@@ -33,29 +33,29 @@ interface InviteUserData {
   providers: [UnsubscribeService]
 })
 export class InviteContactManagerComponent implements OnInit {
-  fullName: string;
-  email: string;
-  inviting: boolean;
-  invited: boolean;
-  noCustomer: boolean;
-  confirmInvite = true;
-  moduleTitle: string;
+  public fullName: string;
+  public email: string;
+  public inviting = false;
+  public invited = false;
+  public noCustomer = false;
+  public confirmInvite = true;
+
+  private moduleTitle = '';
 
   constructor(
     @Self() private unsub: UnsubscribeService,
     private contactManager: ContactManagerService,
-    private dialog: MatDialog,
-    private dialogRef: MatDialogRef<void>,
+    private dialogRef: MatDialogRef<unknown>,
     private cd: ChangeDetectorRef,
     private contactManagerDialog: ContactManagerDialogService,
     private widgetObserverService: WidgetObserverService,
     private googleAnalyticsEventsService: GoogleAnalyticsEventsService,
     private config: ConfigService,
     private widgetObserver: WidgetObserverService,
-    @Inject(MAT_DIALOG_DATA) public data: InviteUserData
+    @Inject(MAT_DIALOG_DATA) private data: InviteUserData
   ) {
-    this.fullName = this.data.contactManager[this.data.contactManagerValue.contactName];
-    this.email = this.data.contactManager[this.data.contactManagerValue.email];
+    this.fullName = this.data.contactManager[this.data.contactManagerValue.contactName as ContactNameKey];
+    this.email = this.data.contactManager[this.data.contactManagerValue.email as keyof ContactManagerSearchResult] as string;
     if (!this.data.customer) {
       this.noCustomer = true;
       this.confirmInvite = false;
@@ -66,12 +66,12 @@ export class InviteContactManagerComponent implements OnInit {
     this.cd.reattach();
     this.unsub.subs = this.widgetObserverService.widgetBehaviour$
       .pipe(
-        filter((data: WidgetEmitData) => data
+        filter(data => data
           && data.value
           && data.context === WidgetObserverService.contexts.SET_CONTACT_MANAGER_SETTINGS)
       )
-      .subscribe((data: WidgetEmitData) => {
-        const settings: ContactManagerSettings = data.value;
+      .subscribe(data => {
+        const settings: ContactManagerSettings = (data as WidgetEmitData).value;
         this.moduleTitle = settings.moduleTitle;
       });
   }
@@ -100,14 +100,14 @@ export class InviteContactManagerComponent implements OnInit {
         tap(() => {
           const fullNameKey = Object.keys(this.config.tokenData || {}).find((key: string) => key.includes('fullName'));
           const dealerIdKey = Object.keys(this.config.tokenData || {}).find((key: string) => !!key.match(/dealerId/i));
-          let userName = fullNameKey && this.config.tokenData[fullNameKey] || null;
-          let dealerId = dealerIdKey && this.config.tokenData[dealerIdKey] || null;
+          const userName = fullNameKey && this.config.tokenData[fullNameKey] || null;
+          const dealerId = dealerIdKey && this.config.tokenData[dealerIdKey] || null;
           this.googleAnalyticsEventsService.emitGtagEvent$.next({
             ...GoogleAnalyticsEventsService.getInviteEvent(),
             dealerId,
             eventCategory: this.moduleTitle || contactManagerDefaultSettings.moduleTitle,
             userName,
-            invitedUser: this.data.contactManager[this.data.contactManagerValue.contactName]
+            invitedUser: this.data.contactManager[this.data.contactManagerValue.contactName as ContactNameKey]
           } as ContactGaEvent);
         }),
         finalize(() => this.inviting = false)

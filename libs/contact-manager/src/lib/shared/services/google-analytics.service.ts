@@ -1,16 +1,22 @@
+import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
-import { DOCUMENT, } from '@angular/common';
 import { fromEvent, ReplaySubject } from 'rxjs';
 import { first, mergeMap } from 'rxjs/operators';
 
 import { ContactGaEvent } from '../interfaces/contact-ga-event.interface';
 
-declare let gtag: Function;
+declare global {
+  interface Window {
+    gtag: Function;
+    dataLayer: unknown[];
+  }
+}
+declare const gtag: Function;
 
 @Injectable()
 export class GoogleAnalyticsEventsService {
-  emitGtagEvent$: ReplaySubject<ContactGaEvent> = new ReplaySubject<ContactGaEvent>();
-  private initialized: boolean;
+  emitGtagEvent$ = new ReplaySubject<ContactGaEvent>();
+  private initialized = false;
 
   static getInviteEvent(): Partial<ContactGaEvent> {
     return {
@@ -21,9 +27,10 @@ export class GoogleAnalyticsEventsService {
   }
 
   private static getFormattedDate() {
-    function  addZero(value: number) {
+    function addZero(value: number) {
       return ('0' + value).slice(-2);
     }
+
     const date = new Date();
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
@@ -44,9 +51,9 @@ export class GoogleAnalyticsEventsService {
     }
     this.initialized = true;
     const key = 'UA-122889796-1';
-    window['dataLayer'] = window['dataLayer'] || [];
-    window['gtag'] = function () {
-      window['dataLayer'].push(arguments);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () {
+      window.dataLayer.push(arguments);
     };
     gtag('js', new Date());
     gtag('config', key, {
@@ -55,7 +62,7 @@ export class GoogleAnalyticsEventsService {
         'dimension2': 'invite_date',
         'dimension3': 'user_name',
         'dimension4': 'invited_user',
-        'dimension5': 'dealer_id',
+        'dimension5': 'dealer_id'
       }
     });
     const script = this.document.createElement('script') as HTMLScriptElement;
@@ -75,9 +82,8 @@ export class GoogleAnalyticsEventsService {
         invite_date: gtagEvent.inviteDate,
         user_name: gtagEvent.userName,
         invited_user: gtagEvent.invitedUser,
-        dealer_id: gtagEvent.dealerId,
+        dealer_id: gtagEvent.dealerId
       });
     });
   }
 }
-

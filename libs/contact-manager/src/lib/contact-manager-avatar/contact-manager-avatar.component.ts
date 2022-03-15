@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 import { UserAvatarService } from '../shared/services/user-avatar.service';
 
@@ -9,16 +9,15 @@ import { UserAvatarService } from '../shared/services/user-avatar.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContactManagerAvatarComponent implements OnChanges {
-  @Input() customerName: string;
-  @Input() isActive: boolean;
-  @Input() inactive: boolean;
-  @Output() picture: EventEmitter<string> = new EventEmitter<string>();
-  dataUrl: string;
+  @Input() customerName?: string;
+  @Input() isActive?: boolean;
+  @Input() inactive?: boolean;
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes && changes.customerName && changes.customerName.currentValue
-      && changes.customerName.currentValue !== changes.customerName.previousValue) {
-      this.dataUrl = UserAvatarService.generateAvatarFromName(changes.customerName.currentValue);
+  public dataUrl?: string;
+
+  ngOnChanges({ customerName }: SimpleChanges) {
+    if (customerName?.currentValue && customerName.currentValue !== customerName?.previousValue) {
+      this.dataUrl = UserAvatarService.generateAvatarFromName(customerName.currentValue);
     }
   }
 }

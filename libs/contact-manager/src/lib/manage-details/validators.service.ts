@@ -1,13 +1,13 @@
-import { FormControl } from '@angular/forms';
 import { HttpParams } from '@angular/common/http';
-import { catchError, map } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
 import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { ContactManagerService } from '../contact-manager.service';
 
 export function emailValidator(control: FormControl) {
-  const isValidEmail = (control.value || '')
-    .match(/[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/);
+  const emailRe = /[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+  const isValidEmail = (control.value || '').match(emailRe);
   return isValidEmail ? null : { email: true };
 }
 

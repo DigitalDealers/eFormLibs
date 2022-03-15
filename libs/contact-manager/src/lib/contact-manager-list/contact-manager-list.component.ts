@@ -1,5 +1,5 @@
 import { HttpParams } from '@angular/common/http';
-import { ChangeDetectorRef, Component, Input, OnInit, Self } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, Self } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
@@ -12,8 +12,13 @@ import { ContactManagerService } from '../contact-manager.service';
 import { InviteContactManagerComponent } from '../invite-contact-manager/invite-contact-manager.component';
 import { contactManagerDefaultSettings } from '../shared/contact-manager-default-settings.constant';
 import { animations } from '../shared/fade.animation';
-import { CommCentreUser } from '../shared/interfaces/comm-centre-user.interface';
-import { ContactManagerSearchResult } from '../shared/interfaces/contact-manager-search-result.interface';
+import {
+  AccountNumberKey,
+  ContactManagerSearchResult,
+  ContactNameKey,
+  isPortalUserKey,
+  LegalEntityKey
+} from '../shared/interfaces/contact-manager-search-result.interface';
 import { ContactManagerSettings } from '../shared/interfaces/contact-manager-settings.interface';
 import { ContactManager } from '../shared/interfaces/contact-manager.interface';
 import { PortalUser } from '../shared/interfaces/portal-user.interface';
@@ -38,21 +43,21 @@ interface CdkCol {
   animations: [...animations],
   providers: [UnsubscribeService]
 })
-export class ContactManagerListComponent implements OnInit {
+export class ContactManagerListComponent implements OnInit, OnDestroy {
   @Input() searchResult: ContactManagerSearchResult[] = [];
-  @Input() contactManager: ContactManager;
-  @Input() readOnly: boolean;
-  @Input() responsiveHeight: boolean;
-  tokenLoadingSub: Subscription;
-  displayedColumns: string[] = ['UserAvatar', 'Contact Name', 'Email', 'Phone', 'SelectUser'];
-  columns: CdkCol[] = [];
-  customerLoading: boolean;
-  isContactAdmin: boolean;
-  isCompanyAdmin: boolean;
-  activeContact: ContactManagerSearchResult;
-  settings: ContactManagerSettings = {
-    ...contactManagerDefaultSettings
-  };
+  @Input() contactManager?: ContactManager;
+  @Input() readOnly?: boolean;
+  @Input() responsiveHeight?: boolean;
+
+  public displayedColumns = ['UserAvatar', 'Contact Name', 'Email', 'Phone', 'SelectUser'];
+  public columns: CdkCol[] = [];
+  public isContactAdmin = false;
+  public isCompanyAdmin = false;
+  public activeContact?: ContactManagerSearchResult | null;
+  public settings: ContactManagerSettings = { ...contactManagerDefaultSettings };
+
+  private tokenLoadingSub?: Subscription;
+  private customerLoading = false;
 
   constructor(
     @Self() private unsub: UnsubscribeService,
@@ -63,26 +68,26 @@ export class ContactManagerListComponent implements OnInit {
     private contactManagerDialog: ContactManagerDialogService,
     private security: SecurityService,
     private cd: ChangeDetectorRef,
-    private dialogRef: MatDialogRef<void>
+    private dialogRef: MatDialogRef<unknown>
   ) {
   }
 
   ngOnInit() {
     this.columns = [
       {
-        columnDef: this.contactManager.contactName,
+        columnDef: this.contactManager?.contactName || '',
         header: '',
-        cell: (element: Element) => `${element[this.contactManager.contactName]}`
+        cell: (element: Element) => `${element[(this.contactManager?.contactName || '') as keyof Element]}`
       },
       {
-        columnDef: this.contactManager.email,
+        columnDef: this.contactManager?.email || '',
         header: '',
-        cell: (element: Element) => `${element[this.contactManager.email]}`
+        cell: (element: Element) => `${element[(this.contactManager?.email || '') as keyof Element]}`
       },
       {
-        columnDef: this.contactManager.phone,
+        columnDef: this.contactManager?.phone || '',
         header: '',
-        cell: (element: Element) => `${element[this.contactManager.phone]}`
+        cell: (element: Element) => `${element[(this.contactManager?.phone || '') as keyof Element]}`
       }
     ];
     this.unsub.subs = this.security.getUserRoles().subscribe((roles: string[]) => {
@@ -115,17 +120,21 @@ export class ContactManagerListComponent implements OnInit {
 
     this.unsub.subs = this.widgetObserverService.widgetBehaviour$
       .pipe(
-        filter((data: WidgetEmitData) => data
+        filter(data => data
           && data.value
           && data.context === WidgetObserverService.contexts.SET_CONTACT_MANAGER_SETTINGS)
       )
-      .subscribe((data: WidgetEmitData) => {
-        this.settings = { ...this.settings, ...data.value };
+      .subscribe(data => {
+        this.settings = { ...this.settings, ...(data as WidgetEmitData).value };
       });
 
     this.displayedColumns = this.columns.map(column => column.columnDef);
     this.displayedColumns.push('SelectUser');
     this.displayedColumns.unshift('UserAvatar');
+  }
+
+  public ngOnDestroy(): void {
+    this.tokenLoadingSub?.unsubscribe();
   }
 
   editContactManager(searchItem: ContactManagerSearchResult) {
@@ -146,7 +155,7 @@ export class ContactManagerListComponent implements OnInit {
       return;
     }
     this.customerLoading = true;
-    this.contactManagerService.getCustomersByUser(searchItem.PortalUserId, new HttpParams().set('limit', '1').set('offset', '0'))
+    this.contactManagerService.getCustomersByUser(searchItem.PortalUserId || '', new HttpParams().set('limit', '1').set('offset', '0'))
       .pipe(
         tap((customers: PortalUser[]) => {
           this.contactManagerDialog.openDialog({
@@ -169,8 +178,8 @@ export class ContactManagerListComponent implements OnInit {
       componentRef: AssociatedContactsComponent,
       data: {
         accountNumber: searchItem.accountNumber,
-        customerName: searchItem[this.contactManager.contactName],
-        dataSetId: this.contactManager.dataSetId,
+        customerName: searchItem[(this.contactManager?.contactName || '') as keyof ContactManagerSearchResult],
+        dataSetId: this.contactManager?.dataSetId,
         userId: searchItem.PortalUserId,
         contactManagerValue: this.contactManager
       },
@@ -192,8 +201,8 @@ export class ContactManagerListComponent implements OnInit {
     });
   }
 
-  toggleSelectContact(searchItem: ContactManagerSearchResult, event) {
-    if (ContactManagerUtilsService.closestByClassName(event.target, 'action-wrapper') || this.settings.disableSelectEvent) {
+  toggleSelectContact(searchItem: ContactManagerSearchResult, event: Event) {
+    if (ContactManagerUtilsService.closestByClassName(event.target as HTMLElement, 'action-wrapper') || this.settings.disableSelectEvent) {
       return;
     }
     if (!this.contactManager) {
@@ -222,9 +231,7 @@ export class ContactManagerListComponent implements OnInit {
       this.loadUserToken();
       return;
     }
-    if (this.tokenLoadingSub) {
-      this.tokenLoadingSub.unsubscribe();
-    }
+    this.tokenLoadingSub?.unsubscribe();
     this.widgetObserverService.emit({
       context: WidgetObserverService.contexts.DESELECT_CONTACT_MANAGER,
       value: {
@@ -239,17 +246,10 @@ export class ContactManagerListComponent implements OnInit {
   }
 
   private loadUserToken() {
-    if (this.tokenLoadingSub) {
-      this.tokenLoadingSub.unsubscribe();
-    }
-
-    const email = this.activeContact[this.contactManager.email];
-
-    this.unsub.subs = this.tokenLoadingSub = this.auth.getCommCentreUser(this.contactManager.dataSetId, email)
-      .pipe(
-        filter(Boolean)
-      )
-      .subscribe((res: CommCentreUser) => {
+    this.tokenLoadingSub?.unsubscribe();
+    const email = this.activeContact?.[(this.contactManager?.email || '') as keyof ContactManagerSearchResult] as string || '';
+    this.tokenLoadingSub = this.auth.getCommCentreUser(email)
+      .subscribe(res => {
         this.widgetObserverService.emit({
           context: WidgetObserverService.contexts.COMM_USER_DATA_READY,
           value: {
@@ -261,15 +261,18 @@ export class ContactManagerListComponent implements OnInit {
   }
 
   private updateUserData(user: PortalUser) {
-    const userToUpdate = this.searchResult.find((result: ContactManagerSearchResult) => {
-      return result.PortalUserId === String(user.id) || result[this.contactManager.email] === String(user.email);
-    });
-    if (userToUpdate) {
+    const userToUpdate = this.searchResult.find(result =>
+      result.PortalUserId === (user.id as number).toString() ||
+      result[(this.contactManager?.email || '') as keyof ContactManagerSearchResult] === user.email
+    );
+
+    if (userToUpdate && this.contactManager) {
       userToUpdate.items = user.items;
-      userToUpdate[this.contactManager.isPortalUser] = 'Yes';
-      userToUpdate[this.contactManager.contactName] = `${user.fName} ${user.lName}`;
-      userToUpdate[this.contactManager.accountNumber] = user.customerNumber || userToUpdate.accountNumber;
-      userToUpdate[this.contactManager.legalEntity] = user.legalEntity || userToUpdate[this.contactManager.legalEntity];
+      userToUpdate[this.contactManager.isPortalUser as isPortalUserKey] = 'Yes';
+      userToUpdate[this.contactManager.contactName as ContactNameKey] = `${user.fName} ${user.lName}`;
+      userToUpdate[this.contactManager.accountNumber as AccountNumberKey] = user.customerNumber || userToUpdate.accountNumber;
+      userToUpdate[this.contactManager.legalEntity as LegalEntityKey] =
+        user.legalEntity || userToUpdate[this.contactManager.legalEntity as LegalEntityKey];
       userToUpdate.Phone = user.phone || userToUpdate.Phone;
       userToUpdate.Email = user.email || userToUpdate.Email;
       userToUpdate.PortalUserId = `${user.id}`;

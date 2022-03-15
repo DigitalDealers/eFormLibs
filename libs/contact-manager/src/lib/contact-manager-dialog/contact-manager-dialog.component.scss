@@ -1,18 +1,21 @@
-@import "~@digitaldealers/cms-theme/style/mixins";
-@import "../assets/mixins";
+@import '~@digitaldealers/cms-theme/style/mixins';
+@import '../assets/mixins';
 
 :host {
   display: block;
   margin: -24px -24px;
   @include details-header;
+
   .contact-manager-wrapper {
     height: 516px;
     position: relative;
     @include optimalMaxHeight;
+
     &.compact {
       height: 450px;
     }
   }
+
   .spinner-wrapper {
     @include spinner-wrapper;
     background: $white;
@@ -31,9 +34,11 @@
 
 ::ng-deep .didi-parts-contact-manager-dialog {
   width: 800px;
+
   .mat-icon-button {
     outline: none;
   }
+
   .mat-button-focus-overlay {
     display: none !important;
   }

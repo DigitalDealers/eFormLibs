@@ -1,5 +1,5 @@
 export class ContactManagerUtilsService {
-  static closestByClassName(element: HTMLElement, className: string): HTMLElement {
+  static closestByClassName(element: HTMLElement, className: string): HTMLElement | null {
     if (!element) {
       return null;
     }

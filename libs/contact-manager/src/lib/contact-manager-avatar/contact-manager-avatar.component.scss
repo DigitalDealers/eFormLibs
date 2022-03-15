@@ -1,4 +1,4 @@
-@import "~@digitaldealers/cms-theme/style/variables";
+@import '~@digitaldealers/cms-theme/style/variables';
 
 $green: #5abf5d;
 $yellow: #ffc026;
@@ -7,7 +7,7 @@ $action-button-size: 30px;
 @mixin all-circle($color) {
   position: relative;
   &:before {
-    content: "";
+    content: '';
     position: absolute;
     bottom: 0;
     right: 0;
@@ -25,14 +25,18 @@ $action-button-size: 30px;
     height: auto;
     border-radius: 50px;
   }
+
   .avatar-wrapper {
     width: $action-button-size;
+
     &.is-active {
       @include all-circle($green);
     }
+
     &.inactive-user {
       @include all-circle($yellow);
     }
+
     img {
       width: $action-button-size;
     }

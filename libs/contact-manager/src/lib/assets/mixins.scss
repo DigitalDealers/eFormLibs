@@ -1,5 +1,5 @@
 @import '~@digitaldealers/cms-theme/style/variables';
-@import "variables";
+@import 'variables';
 
 @mixin mat-input-theme {
   .mat-form-field .mat-form-field-label {
@@ -13,37 +13,46 @@
       top: 1.5em;
       margin-top: 0 !important;
     }
+
     &.mat-form-field-can-float.mat-form-field-should-float {
       .mat-form-field-label {
         transform: translateY(-1.375rem) scale(0.75) !important;
       }
     }
+
     .mat-form-field-wrapper {
       padding: 0;
       margin: 0;
     }
+
     .mat-form-field-infix {
       padding: .9em 0 .8em;
       border-top: 0;
     }
+
     .mat-form-field-flex {
       margin-top: 0 !important;
     }
+
     .mat-form-field-outline {
       color: $border-color !important;
       top: 0 !important;
     }
+
     &.mat-form-field-invalid {
       .mat-form-field-outline.mat-form-field-outline-thick {
         color: $error-red !important;
       }
+
       &.mat-form-field.mat-focused .mat-form-field-label {
         color: $error-red !important;
       }
     }
+
     .mat-form-field-outline-start {
       border-radius: 3px 0 0 3px;
     }
+
     .mat-form-field-outline-end {
       border-radius: 0 3px 3px 0;
     }
@@ -81,9 +90,11 @@
     padding: 15px 0;
     border-bottom: 1px solid $details-header-border-color;
     background-color: $details-header-bg-color;
+
     ::ng-deep .mat-button-focus-overlay {
       display: none !important;
     }
+
     .details-header {
       font-weight: normal;
       color: black;

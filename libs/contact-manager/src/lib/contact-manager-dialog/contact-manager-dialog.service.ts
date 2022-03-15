@@ -1,7 +1,6 @@
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 
 import { contactManagerDefaultSettings } from '../shared/contact-manager-default-settings.constant';
 import { ContactManagerSettings } from '../shared/interfaces/contact-manager-settings.interface';

@@ -18,11 +18,11 @@ import { WidgetObserverService } from './shared/services/widget-observer.service
   providers: [UnsubscribeService]
 })
 export class ContactManagerComponent implements OnInit {
-  @Input() componentId: number;
-  @Input() contactManager: ContactManager;
-  @Input() twilioData: TwilioData;
-  @Input() inputEvents$: Observable<WidgetEmitData>;
-  @Output() outputEvents: EventEmitter<WidgetEmitData> = new EventEmitter<WidgetEmitData>();
+  @Input() componentId?: number;
+  @Input() contactManager?: ContactManager;
+  @Input() twilioData?: TwilioData;
+  @Input() inputEvents$?: Observable<WidgetEmitData>;
+  @Output() outputEvents = new EventEmitter<WidgetEmitData>();
 
   constructor(
     @Self() private unsub: UnsubscribeService,

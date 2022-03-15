@@ -9,15 +9,15 @@ import {
   Input,
   NgZone,
   OnChanges,
+  OnDestroy,
   OnInit,
   Self,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import uniqBy from 'lodash-es/uniqBy';
 import { PerfectScrollbarDirective } from 'ngx-perfect-scrollbar';
@@ -27,12 +27,16 @@ import { debounceTime, distinctUntilChanged, filter, finalize, map, mapTo, merge
 import { ManageMode } from '../contact-manager-details/manage-mode.enum';
 import { ContactManagerService } from '../contact-manager.service';
 import { animations } from '../shared/fade.animation';
-import { ContactManagerSearchResult } from '../shared/interfaces/contact-manager-search-result.interface';
+import {
+  ContactManagerSearchResult,
+  ContactNameKey,
+  isPortalUserKey,
+  LegalEntityKey
+} from '../shared/interfaces/contact-manager-search-result.interface';
 import { ContactManager } from '../shared/interfaces/contact-manager.interface';
 import { PortalUser } from '../shared/interfaces/portal-user.interface';
 import { Role } from '../shared/interfaces/role.interface';
 import { DidiRole } from '../shared/roles.enum';
-import { AuthApiService } from '../shared/services/auth-api.service';
 import { ConfigService } from '../shared/services/config.service';
 import { SecurityService } from '../shared/services/security.service';
 import { UnsubscribeService } from '../shared/services/unsubscribe.service';
@@ -50,56 +54,55 @@ const inputDebounce = 150;
   animations: [...animations],
   providers: [UnsubscribeService]
 })
-export class ManageDetailsComponent implements OnChanges, OnInit {
-  @ViewChild('customersPs', { static: true }) customersPs: PerfectScrollbarDirective;
-  @ViewChild('rolesInput', { static: false }) rolesInput: ElementRef<HTMLInputElement>;
-  @ViewChild('autoRoles', { static: false }) matAutocomplete: MatAutocomplete;
-  @ViewChild('legalEntityInput', { static: false }) legalEntityInput: ElementRef<HTMLInputElement>;
-  @ViewChild(MatAutocompleteTrigger, { static: false }) matAutocompleteTrigger: MatAutocompleteTrigger;
-  @Input() mode: ManageMode;
-  @Input() user: PortalUser;
-  @Input() customer: PortalUser;
-  @Input() contactManager: ContactManagerSearchResult;
-  @Input() addNew: boolean;
-  @Input() contactManagerValue: ContactManager;
-  blurSubject: Subject<void> = new Subject<void>();
-  editMode: ManageMode = ManageMode.edit;
-  addMode: ManageMode = ManageMode.addToPortal;
-  isCustomer: boolean;
-  loading: boolean;
-  viewProfileLoading: boolean;
-  savingChanges: boolean;
-  deletingUser: boolean;
-  creatingUser: boolean;
-  confirmDelete: boolean;
-  detailsUpdated: boolean;
-  userCreated: boolean;
-  userDeleted: boolean;
-  dataLoading: boolean;
-  rolesOpened: boolean;
-  customersOpened: boolean;
-  customersLoading: boolean;
-  hasNextCustomersData: boolean;
-  userDetailsForm: FormGroup;
-  roleForm: FormGroup;
-  customerForms: FormArray;
-  linkedCustomers: PortalUser[] = [];
-  availableCustomers: PortalUser[] = [];
-  allAvailableCustomers: PortalUser[] = [];
-  selectedCustomers: string[] = [];
-  legalEntities: string[] = [];
-  roles: Role[] = [];
-  linkedRoles: Role[] = [];
-  filteredLegalEntities$: Observable<string[]>;
-  legalEntityPushSubject: Subject<string> = new Subject<string>();
-  filteredRoles$: Observable<Role[]> = of([]);
-  customerNumberChangesSub: Subscription;
-  customerFormChangesSub: Subscription;
-  roleFormChangeSub: Subscription;
-  addingCustomerToThePortal: number;
-  selectedLe: string;
-  readonly userType = 'Customer';
-  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+export class ManageDetailsComponent implements OnChanges, OnInit, OnDestroy {
+  @ViewChild('customersPs', { static: true }) private readonly customersPs?: PerfectScrollbarDirective;
+  @ViewChild('rolesInput') public readonly rolesInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('legalEntityInput') legalEntityInput?: ElementRef<HTMLInputElement>;
+  @ViewChild(MatAutocompleteTrigger) matAutocompleteTrigger?: MatAutocompleteTrigger;
+
+  @Input() mode?: ManageMode;
+  @Input() user?: PortalUser;
+  @Input() customer?: PortalUser;
+  @Input() contactManager?: ContactManagerSearchResult;
+  @Input() addNew?: boolean;
+  @Input() contactManagerValue?: ContactManager;
+
+  public readonly editMode = ManageMode.edit;
+  public readonly addMode = ManageMode.addToPortal;
+  public readonly separatorKeysCodes = [ENTER, COMMA];
+  public isCustomer = false;
+  public viewProfileLoading = false;
+  public savingChanges = false;
+  public deletingUser = false;
+  public creatingUser = false;
+  public confirmDelete = false;
+  public detailsUpdated = false;
+  public userCreated = false;
+  public userDeleted = false;
+  public dataLoading = false;
+  public userDetailsForm?: FormGroup;
+  public roleForm?: FormGroup;
+  public customerForms?: FormArray;
+  public availableCustomers: PortalUser[] = [];
+  public selectedCustomers: string[] = [];
+  public filteredLegalEntities$?: Observable<string[]>;
+  public filteredRoles$?: Observable<Role[]>;
+  public addingCustomerToThePortal: number | null = null;
+
+  private readonly userType = 'Customer';
+  private blurSubject = new Subject<void>();
+  private customersOpened = false;
+  private customersLoading = false;
+  private hasNextCustomersData = false;
+  private linkedCustomers: PortalUser[] = [];
+  private allAvailableCustomers: PortalUser[] = [];
+  private legalEntities: string[] = [];
+  private roles: Role[] = [];
+  private linkedRoles: Role[] = [];
+  private legalEntityPushSubject = new Subject<string>();
+  private customerNumberChangesSub?: Subscription;
+  private customerFormChangesSub?: Subscription;
+  private selectedLe = '';
   private params = ManageDetailsComponent.getCustomerSearchParams();
 
   private static getCustomerSearchParams() {
@@ -127,9 +130,6 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private zone: NgZone,
-    private dialog: MatDialog,
-    private authApi: AuthApiService,
-    private dialogRef: MatDialogRef<void>,
     private widgetObserver: WidgetObserverService,
     private snackBar: MatSnackBar,
     private security: SecurityService,
@@ -149,10 +149,10 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
         this.params = this.params.set('offset', '0').set('text', '');
         this.loadCustomers({ firstLoad: false, reset: true });
       });
-    this.legalEntities = this.contactManagerValue.legalEntities || [];
+    this.legalEntities = this.contactManagerValue?.legalEntities || [];
 
-    this.roles = (this.contactManagerValue.roles || [])
-      .filter((role: Role) => role.role.toLowerCase() !== this.userType.toLowerCase());
+    this.roles = (this.contactManagerValue?.roles || [])
+      .filter(role => role.role.toLowerCase() !== this.userType.toLowerCase());
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -166,7 +166,7 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
         case ManageMode.edit:
           if (this.user) {
             this.createForm(this.getUserDataForEdit());
-            this.loadContactManagerRoles(this.user.id);
+            this.loadContactManagerRoles(this.user.id?.toString() || '');
             this.toggleDataLoading(false);
           } else {
             this.createForm(this.getUserDataForAdd());
@@ -180,25 +180,61 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
     }
   }
 
+  public ngOnDestroy(): void {
+    this.customerNumberChangesSub?.unsubscribe();
+    this.customerFormChangesSub?.unsubscribe();
+  }
+
   onFocus(index: number) {
-    this.unsub.subs = this.customerNumberChangesSub = this.customerForms.at(index).get('customerInfo')
+    this.customerNumberChangesSub = this.getControl(this.getCustomerForm(index), 'customerInfo')
       .valueChanges
       .pipe(
         filter(Boolean),
         debounceTime(inputDebounce),
         distinctUntilChanged()
-      ).subscribe((query: string) => {
-        this.params = this.params.set('offset', '0').set('text', query);
+      ).subscribe(query => {
+        this.params = this.params.set('offset', '0').set('text', query as string);
         this.loadCustomers({ firstLoad: false, reset: true });
       });
   }
 
   onBlur() {
     this.customersOpened = false;
-    if (this.customerNumberChangesSub) {
-      this.customerNumberChangesSub.unsubscribe();
-    }
+    this.customerNumberChangesSub?.unsubscribe();
     this.blurSubject.next();
+  }
+
+  public getControl(form: FormGroup | undefined, controlName: string): FormControl {
+    if (!form) {
+      throw new Error('Form is not initialized');
+    }
+    const control = form.get(controlName);
+    if (!control) {
+      throw new Error(`Control ${controlName} not found`);
+    }
+    return control as FormControl;
+  }
+
+  public getCustomerForms(): FormGroup[] {
+    if (!this.customerForms) {
+      throw new Error('customerForms is not defined');
+    }
+    return this.customerForms.controls as FormGroup[];
+  }
+
+  public getCustomerFormsValue(): PortalUser[] {
+    if (!this.customerForms) {
+      throw new Error('customerForms is not defined');
+    }
+    return this.customerForms.value as PortalUser[];
+  }
+
+  private getCustomerForm(index: number): FormGroup {
+    const form = this.customerForms?.at(index);
+    if (!form) {
+      throw new Error(`customerForm at index ${index} is not defined`);
+    }
+    return form as FormGroup;
   }
 
   createForm(userData: PortalUser) {
@@ -231,54 +267,57 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
       role: [''],
       roles: [[]]
     });
-    if (this.roleFormChangeSub) {
-      this.roleFormChangeSub.unsubscribe();
-    }
 
-    this.filteredRoles$ = this.roleForm.get('role').valueChanges
+    this.filteredRoles$ = this.getControl(this.roleForm, 'role').valueChanges
       .pipe(
         startWith(''),
-        filter((value: string) => typeof value === 'string'),
-        map((value: string) => {
-          return this.roles.filter((role: Role) => role.role.toLowerCase().includes(value.toLowerCase()));
+        filter(value => typeof value === 'string'),
+        map(value => {
+          return this.roles.filter(role => role.role.toLowerCase().includes(value.toLowerCase()));
         })
       );
 
     this.addCustomerForm();
     this.addLinkedCustomersToForm();
     const emailControl = this.userDetailsForm.get('email');
-    if (emailControl && emailControl.value) {
+    if (emailControl?.value) {
       emailControl.markAsTouched();
     }
 
     this.filteredLegalEntities$ = merge(
-      this.userDetailsForm.get('legalEntity').valueChanges,
+      this.getControl(this.userDetailsForm, 'legalEntity').valueChanges,
       this.legalEntityPushSubject
     ).pipe(
       startWith(''),
       map((value: string) => {
         const filterValue = (value || '').toLowerCase();
-        return this.legalEntities.filter((le: string) => le.toLowerCase().includes(filterValue));
+        return this.legalEntities.filter(le => le.toLowerCase().includes(filterValue));
       })
     );
 
-    this.unsub.subs = this.security.getUserRoles().subscribe((roles: string[]) => {
+    this.unsub.subs = this.security.getUserRoles().subscribe(roles => {
       this.isCustomer = roles.indexOf(DidiRole.CUSTOMER) >= 0;
       const tokenData = this.config.tokenData;
       const leKey = Object.keys(tokenData).find((key: string) => !!key.match(/\/le$/));
       if (leKey && this.isCustomer) {
-        this.userDetailsForm.get('legalEntity').setValue(tokenData[leKey]);
+        this.getControl(this.userDetailsForm, 'legalEntity').setValue(tokenData[leKey]);
       }
     });
   }
 
   addCustomerForm() {
+    if (!this.customerForms) {
+      return;
+    }
     const newForm = this.getNewForm();
     this.customerForms.push(newForm);
     this.subscribeOnCustomerValueChange();
   }
 
   removeForm(index: number) {
+    if (!this.customerForms) {
+      return;
+    }
     this.customerForms.removeAt(index);
     this.subscribeOnCustomerValueChange();
   }
@@ -293,12 +332,13 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
   }
 
   loadCustomers({ reset, firstLoad }: { reset: boolean; firstLoad: boolean; }) {
+    if (!this.contactManagerValue) {
+      throw new Error('contactManagerValue is not defined');
+    }
     if (reset) {
       this.params = this.params.set('offset', '0');
       this.hasNextCustomersData = true;
-      if (this.customersPs) {
-        this.customersPs.scrollToTop();
-      }
+      this.customersPs?.scrollToTop();
     } else {
       const currentOffset = Number(this.params.get('offset'));
       this.params = this.params.set('offset', String(currentOffset + Number(this.params.get('limit'))));
@@ -332,7 +372,7 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
       return;
     }
 
-    this.customerForms.at(index).setValue({
+    this.getCustomerForm(index).setValue({
       customerNumber: customer.customerNumber,
       customerInfo: `${customer.customerNumber} - ${customer.companyName}`,
       companyName: customer.companyName,
@@ -340,7 +380,7 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
     });
   }
 
-  rolesDisplayWithFn(value) {
+  public rolesDisplayWithFn(value: unknown) {
     if (!value) {
       return '';
     }
@@ -359,22 +399,14 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
 
   selectLe(event: MatAutocompleteSelectedEvent) {
     this.selectedLe = event.option.value;
-    this.legalEntityInput.nativeElement.blur();
+    this.legalEntityInput?.nativeElement.blur();
   }
 
   checkLe() {
-    if (!this.selectedLe || this.selectedLe !== this.userDetailsForm.get('legalEntity').value) {
-      this.userDetailsForm.get('legalEntity').setValue(null);
+    if (!this.selectedLe || this.selectedLe !== this.getControl(this.userDetailsForm, 'legalEntity').value) {
+      this.getControl(this.userDetailsForm, 'legalEntity').setValue(null);
       this.selectedLe = '';
     }
-  }
-
-  openRoles() {
-    this.rolesOpened = true;
-  }
-
-  closeRoles() {
-    this.rolesOpened = false;
   }
 
   openCustomers() {
@@ -387,41 +419,41 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
   }
 
   showAllRoles() {
-    this.roleForm.get('role').setValue('');
+    this.getControl(this.roleForm, 'role').setValue('');
   }
 
   addRole(event: MatChipInputEvent): void {
-    const input = event.input;
+    const input = event.chipInput?.inputElement;
     const value = event.value;
 
-    const existingRole = this.roles.find((role: Role) => (role.role || '').toLowerCase() === value);
+    const existingRole = this.roles.find(role => (role.role || '').toLowerCase() === value);
 
     if ((value || '').trim() && existingRole) {
-      const currentRoles = this.roleForm.get('roles').value;
-      this.roleForm.get('roles').setValue(uniqBy([...currentRoles, existingRole], 'id'));
+      const currentRoles = this.getControl(this.roleForm, 'roles').value;
+      this.getControl(this.roleForm, 'roles').setValue(uniqBy([...currentRoles, existingRole], 'id'));
     }
 
     if (input) {
       input.value = '';
     }
 
-    this.roleForm.get('role').setValue(null);
+    this.getControl(this.roleForm, 'role').setValue(null);
   }
 
   selectRole(value: Role) {
-    const currentRoles = this.roleForm.get('roles').value;
-    this.roleForm.get('roles').setValue(uniqBy([...currentRoles, value], 'id'));
-    if (this.rolesInput && this.rolesInput.nativeElement) {
+    const currentRoles = this.getControl(this.roleForm, 'roles').value;
+    this.getControl(this.roleForm, 'roles').setValue(uniqBy([...currentRoles, value], 'id'));
+    if (this.rolesInput?.nativeElement) {
       this.rolesInput.nativeElement.value = '';
     }
-    this.roleForm.get('role').setValue(null);
+    this.getControl(this.roleForm, 'role').setValue(null);
   }
 
   removeRole(value: Role): void {
-    const roles = this.roleForm.get('roles').value.filter((role: Role) => {
+    const roles = this.getControl(this.roleForm, 'roles').value.filter((role: Role) => {
       return role.id !== value.id;
     });
-    this.roleForm.get('roles').setValue(roles);
+    this.getControl(this.roleForm, 'roles').setValue(roles);
   }
 
   save() {
@@ -436,35 +468,37 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
   }
 
   updateUser() {
+    if (!this.user?.id) {
+      return;
+    }
     this.savingChanges = true;
-    const firstName = (this.userDetailsForm.get('fName').value as string).trim();
-    const lastName = (this.userDetailsForm.get('lName').value as string).trim();
-    const userData = { ...this.userDetailsForm.getRawValue(), fName: firstName, lName: lastName };
-    const toUnlink = this.linkedCustomers.filter((customer: PortalUser) => {
-      return !this.customerForms.value.some((customerInForm: PortalUser) => customerInForm.id === customer.id);
+    const firstName = (this.getControl(this.userDetailsForm, 'fName').value as string).trim();
+    const lastName = (this.getControl(this.userDetailsForm, 'lName').value as string).trim();
+    const userData = { ...(this.userDetailsForm as FormGroup).getRawValue(), fName: firstName, lName: lastName };
+    const toUnlink = this.linkedCustomers.filter(customer => {
+      return !this.getCustomerFormsValue().some(customerInForm => customerInForm.id === customer.id);
     });
-    const toLink = this.customerForms.value
-      .filter((customerInForm: PortalUser) => {
-        return !this.linkedCustomers.some((customer: PortalUser) => customerInForm.id === customer.id);
+    const toLink = this.getCustomerFormsValue()
+      .filter(customerInForm => {
+        return !this.linkedCustomers.some(customer => customerInForm.id === customer.id);
       });
-    const rolesToUnlink = this.linkedRoles.filter((role: Role) => {
-      return !this.roleForm.get('roles').value.some((roleInForm: Role) => roleInForm.id === role.id);
+    const rolesToUnlink = this.linkedRoles.filter(role => {
+      return !this.getControl(this.roleForm, 'roles').value.some((roleInForm: Role) => roleInForm.id === role.id);
     });
-    const rolesToLink = this.roleForm.get('roles').value
+    const rolesToLink = this.getControl(this.roleForm, 'roles').value
       .filter((roleInForm: Role) => {
-        return !this.linkedRoles.some((role: Role) => roleInForm.id === role.id);
+        return !this.linkedRoles.some(role => roleInForm.id === role.id);
       });
 
-    let model$;
-    if (this.userDetailsForm.get('picture').value) {
-      model$ = this.contactManagerService.update(this.user.id, userData);
+    let model$: Observable<PortalUser>;
+    if (this.getControl(this.userDetailsForm, 'picture').value) {
+      model$ = this.contactManagerService.update(this.user.id.toString(), userData);
     } else {
-      const avatarImage = UserAvatarService
-        .generateAvatarFromName(`${firstName} ${lastName}`);
+      const avatarImage = UserAvatarService.generateAvatarFromName(`${firstName} ${lastName}`);
       model$ = this.contactManagerService.imgUpload(avatarImage)
         .pipe(
-          map((res: { uploadResult: string }) => res.uploadResult),
-          mergeMap((picture: string) => this.contactManagerService.update(this.user.id, {
+          map(res => res.uploadResult),
+          mergeMap(picture => this.contactManagerService.update(((this.user as PortalUser).id as number).toString(), {
             ...userData,
             picture
           }))
@@ -473,29 +507,21 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
 
     this.unsub.subs = model$
       .pipe(
-        mergeMap((user: PortalUser) => this.linkCustomersToUser(user, toLink)
-          .pipe(mapTo(user))
-        ),
-        mergeMap((user: PortalUser) => this.unlinkCustomerFromUser(user, toUnlink)
-          .pipe(mapTo(user))
-        ),
-        mergeMap((user: PortalUser) => this.linkRolesToUser(user, rolesToLink)
-          .pipe(mapTo(user))
-        ),
-        mergeMap((user: PortalUser) => this.unlinkRolesFromUser(user, rolesToUnlink)
-          .pipe(mapTo(user))
-        ),
+        mergeMap(user => this.linkCustomersToUser(user, toLink).pipe(mapTo(user))),
+        mergeMap(user => this.unlinkCustomerFromUser(user, toUnlink).pipe(mapTo(user))),
+        mergeMap(user => this.linkRolesToUser(user, rolesToLink).pipe(mapTo(user))),
+        mergeMap(user => this.unlinkRolesFromUser(user, rolesToUnlink).pipe(mapTo(user))),
         finalize(() => this.savingChanges = false)
       )
-      .subscribe((updatedUser: PortalUser) => {
+      .subscribe(updatedUser => {
         this.detailsUpdated = true;
         this.widgetObserver.emit({
           context: WidgetObserverService.contexts.CONTACT_MANAGER_UPDATED,
           value: {
             ...updatedUser,
-            items: (this.customerForms.value || []).map((customer) => ({
-              [this.contactManagerValue.accountNumber]: customer.customerNumber,
-              [this.contactManagerValue.customerName]: customer.companyName
+            items: this.getCustomerFormsValue().map(customer => ({
+              [this.contactManagerValue?.accountNumber || '']: customer.customerNumber,
+              [this.contactManagerValue?.customerName || '']: customer.companyName
             }))
           }
         });
@@ -504,24 +530,24 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
 
   addToPortal() {
     this.creatingUser = true;
-    const firstName = (this.userDetailsForm.get('fName').value as string).trim();
-    const lastName = (this.userDetailsForm.get('lName').value as string).trim();
-    const userData = { ...this.userDetailsForm.value, fName: firstName, lName: lastName };
+    const firstName = (this.getControl(this.userDetailsForm, 'fName').value as string).trim();
+    const lastName = (this.getControl(this.userDetailsForm, 'lName').value as string).trim();
+    const userData = { ...(this.userDetailsForm as FormGroup).value, fName: firstName, lName: lastName };
     const avatarImage = UserAvatarService.generateAvatarFromName(`${firstName} ${lastName}`);
-    let toLink = [...this.customerForms.value] as PortalUser[];
+    const toLink = [...this.getCustomerFormsValue()] as PortalUser[];
     this.unsub.subs = this.contactManagerService.imgUpload(avatarImage)
       .pipe(
         map((res: { uploadResult: string }) => res.uploadResult),
         mergeMap((picture: string) => this.contactManagerService.create({ ...userData, picture })),
         mergeMap((user: PortalUser) => this.linkCustomersToUser(user, toLink.map((customer: PortalUser) => ({
             ...customer,
-            legalEntity: this.userDetailsForm.get('legalEntity').value
+            legalEntity: this.getControl(this.userDetailsForm, 'legalEntity').value
           })))
             .pipe(
               mapTo(user)
             )
         ),
-        mergeMap((user: PortalUser) => this.linkRolesToUser(user, this.roleForm.get('roles').value)
+        mergeMap((user: PortalUser) => this.linkRolesToUser(user, this.getControl(this.roleForm, 'roles').value)
           .pipe(
             mapTo(user)
           )
@@ -531,7 +557,7 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
       .subscribe((addedUser: PortalUser) => {
         this.userCreated = true;
         this.user = addedUser;
-        this.linkedCustomers = this.customerForms.value;
+        this.linkedCustomers = this.getCustomerFormsValue();
         this.widgetObserver.emit({
           context: this.addNew
             ? WidgetObserverService.contexts.CONTACT_MANAGER_ADDED_NEW
@@ -550,9 +576,12 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
   }
 
   deleteUser() {
+    if (!this.user?.id) {
+      return;
+    }
     this.confirmDelete = false;
     this.deletingUser = true;
-    this.unsub.subs = this.contactManagerService.deleteItem(this.user.id)
+    this.unsub.subs = this.contactManagerService.deleteItem(this.user.id.toString())
       .pipe(
         finalize(() => this.deletingUser = false)
       )
@@ -560,24 +589,27 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
         this.userDeleted = true;
         this.widgetObserver.emit({
           context: WidgetObserverService.contexts.CONTACT_MANAGER_DELETED,
-          value: this.user.id
+          value: (this.user as PortalUser).id
         });
       });
   }
 
   viewProfile() {
+    if (!this.contactManagerValue) {
+      throw new Error('contactManagerValue is not defined');
+    }
     this.detailsUpdated = false;
     this.userCreated = false;
     this.userDeleted = false;
     this.params = ManageDetailsComponent.getCustomerSearchParams();
 
     this.viewProfileLoading = true;
-    this.unsub.subs = combineLatest<any, any>([
+    this.unsub.subs = combineLatest([
       this.contactManagerService.getCustomersList(this.params, this.contactManagerValue),
       this.getLinkedCustomers()
     ]).pipe(
       finalize(() => this.viewProfileLoading = false)
-    ).subscribe((res: [{ data: PortalUser[] }, PortalUser[]]) => {
+    ).subscribe((res) => {
       this.availableCustomers = res[0].data;
       if (res[1]) {
         this.customerForms = new FormArray([]);
@@ -590,16 +622,16 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
     if (this.mode !== this.editMode) {
       this.mode = this.editMode;
       this.createForm(this.getUserDataForEdit());
-      this.loadContactManagerRoles(this.user.id);
+      this.loadContactManagerRoles((this.user as PortalUser).id?.toString() || '');
     }
   }
 
-  addCustomerToPortal(event: MouseEvent, customer: PortalUser, index: number) {
+  addCustomerToPortal(event: MouseEvent | null, customer: PortalUser, index: number) {
     if (event) {
       event.preventDefault();
     }
     this.addingCustomerToThePortal = index;
-    this.matAutocompleteTrigger.closePanel();
+    this.matAutocompleteTrigger?.closePanel();
 
     this.contactManagerService.createCustomer({
       customerNumber: customer.customerNumber,
@@ -608,16 +640,16 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
     }).pipe(
       finalize(() => this.addingCustomerToThePortal = null)
     ).subscribe((response: PortalUser) => {
-      this.customerForms.at(index).setValue({
+      this.getCustomerForm(index).setValue({
         customerNumber: response.customerNumber,
         customerInfo: `${response.customerNumber} - ${response.companyName}`,
         companyName: response.companyName,
         id: response.id
       });
-      this.snackBar.open('Customer has been added to the portal', null, {
+      this.snackBar.open('Customer has been added to the portal', undefined, {
         duration: 2000
       });
-      this.availableCustomers = this.availableCustomers.map((availableCustomer: PortalUser) => {
+      this.availableCustomers = this.availableCustomers.map(availableCustomer => {
         if (availableCustomer.companyName === response.companyName && availableCustomer.customerNumber === response.customerNumber) {
           return {
             ...availableCustomer,
@@ -647,14 +679,14 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
     this.loadCustomers({ firstLoad: false, reset: false });
   }
 
-  private linkCustomersToUser(user: PortalUser, customers: PortalUser[] = []): Observable<PortalUser[]> {
+  private linkCustomersToUser(user: PortalUser, customers: PortalUser[] = []): Observable<(PortalUser | null)[]> {
     const customersToLink = (customers || [])
       .filter((customer: PortalUser) => !!customer.customerNumber);
     if (!customersToLink.length) {
       return of([]);
     }
-    return combineLatest(customersToLink.map((customer: PortalUser) => {
-      return this.contactManagerService.linkCustomerToUser({ id: user.id, customerId: customer.id });
+    return combineLatest(customersToLink.map(customer => {
+      return this.contactManagerService.linkCustomerToUser({ id: user.id as number, customerId: customer.id as number });
     }));
   }
 
@@ -665,7 +697,7 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
       return of([]);
     }
     return combineLatest(customersToUnlink.map((customer: PortalUser) => {
-      return this.contactManagerService.unlinkCustomerFromUser({ id: user.id, customerId: customer.id });
+      return this.contactManagerService.unlinkCustomerFromUser({ id: user.id as number, customerId: customer.id as number });
     }) as Observable<PortalUser>[]);
   }
 
@@ -704,14 +736,18 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
   }
 
   private getUserDataForAdd(): PortalUser {
+    const {
+      firstName,
+      lastName
+    } = ManageDetailsMapService.parseNames(this.contactManager?.[(this.contactManagerValue?.contactName || '') as ContactNameKey] || '');
     return {
-      fName: ManageDetailsMapService.parseNames(this.contactManager[this.contactManagerValue.contactName]).firstName,
-      lName: ManageDetailsMapService.parseNames(this.contactManager[this.contactManagerValue.contactName]).lastName,
+      fName: firstName,
+      lName: lastName,
       type: this.userType,
-      email: this.contactManager[this.contactManagerValue.email] || '',
-      phone: this.contactManager[this.contactManagerValue.phone] || '',
-      legalEntity: this.contactManager[this.contactManagerValue.legalEntity] || '',
-      entityId: null,
+      email: this.contactManager?.[this.contactManagerValue?.email as keyof ContactManagerSearchResult] || '',
+      phone: this.contactManager?.[this.contactManagerValue?.phone as keyof ContactManagerSearchResult] || '',
+      legalEntity: this.contactManager?.[this.contactManagerValue?.legalEntity as LegalEntityKey] || '',
+      entityId: '',
       locations: null,
       applications: null
     } as PortalUser;
@@ -725,23 +761,28 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
       email: '',
       phone: '',
       legalEntity: '',
-      entityId: null,
+      entityId: '',
       locations: null,
       applications: null
     } as PortalUser;
   }
 
   private toggleDataLoading(toggle: boolean) {
+    if (!this.userDetailsForm || !this.customerForms) {
+      return;
+    }
+
     this.dataLoading = toggle;
     if (toggle) {
       this.userDetailsForm.disable({ emitEvent: false });
       this.customerForms.disable({ emitEvent: false });
       return;
     }
+
     this.userDetailsForm.enable({ emitEvent: false });
     this.customerForms.enable({ emitEvent: false });
     if (this.mode === ManageMode.edit) {
-      this.userDetailsForm.get('email').disable({ emitEvent: false });
+      this.getControl(this.userDetailsForm, 'email').disable({ emitEvent: false });
     }
   }
 
@@ -749,33 +790,37 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
     this.unsub.subs = this.getLinkedCustomers()
       .pipe(
         filter(Boolean)
-      ).subscribe((res: PortalUser[]) => {
-        this.linkedCustomers = res || [];
+      ).subscribe(res => {
+        this.linkedCustomers = res as PortalUser[];
         this.loadDataForLinkedCustomers();
         this.addLinkedCustomersToForm();
       });
   }
 
-  private getLinkedCustomers() {
-    const userId = this.contactManager.PortalUserId && this.contactManager.PortalUserId.split('|')[0];
-    if (userId && this.contactManager[this.contactManagerValue.isPortalUser] === 'Yes') {
+  private getLinkedCustomers(): Observable<PortalUser[] | null> {
+    const userId = this.contactManager?.PortalUserId?.split('|')[0];
+    if (userId && this.contactManager?.[this.contactManagerValue?.isPortalUser as isPortalUserKey] === 'Yes') {
       return this.contactManagerService.getCustomersByUser(userId, ManageDetailsComponent.getCustomerSearchParams());
     }
     return of(null);
   }
 
   private loadDataForLinkedCustomers() {
-    const customersWithoutData = this.linkedCustomers.filter((linkedCustomer: PortalUser) => {
+    if (!this.contactManagerValue) {
+      throw new Error('contactManagerValue is not defined');
+    }
+
+    const customersWithoutData = this.linkedCustomers.filter(linkedCustomer => {
       return !this.allAvailableCustomers
-        .some((availableCustomer: PortalUser) => availableCustomer.customerNumber === linkedCustomer.customerNumber);
+        .some(availableCustomer => availableCustomer.customerNumber === linkedCustomer.customerNumber);
     });
     this.unsub.subs = combineLatest(
-      customersWithoutData.map((linkedCustomer: PortalUser) => {
+      customersWithoutData.map(linkedCustomer => {
         const customerSearchParams = new HttpParams()
           .set('limit', '1')
           .set('offset', '0')
-          .set('text', linkedCustomer.customerNumber);
-        return this.contactManagerService.getCustomersList(customerSearchParams, this.contactManagerValue)
+          .set('text', linkedCustomer.customerNumber || '');
+        return this.contactManagerService.getCustomersList(customerSearchParams, this.contactManagerValue as ContactManager)
           .pipe(
             map(((res: { data: PortalUser[] }) => res.data[0] || null))
           );
@@ -791,11 +836,15 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
       this.linkedCustomers = [this.customer];
       this.addLinkedCustomersToForm();
     }
-    if (this.contactManager[this.contactManagerValue.isPortalUser] !== 'Yes' && !this.addNew) {
+    if (
+      this.contactManagerValue &&
+      this.contactManager?.[this.contactManagerValue.isPortalUser as isPortalUserKey] !== 'Yes' &&
+      !this.addNew
+    ) {
       const customerSearchParams = new HttpParams()
         .set('limit', '1')
         .set('offset', '0')
-        .set('text', this.contactManager.accountNumber);
+        .set('text', this.contactManager?.accountNumber || '');
       this.unsub.subs = this.contactManagerService.getCustomersList(customerSearchParams, this.contactManagerValue)
         .pipe(
           filter((res: { data: PortalUser[] }) => Boolean(res.data[0])),
@@ -813,12 +862,12 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
   }
 
   private addLinkedCustomersToForm() {
-    this.linkedCustomers.forEach((customer: PortalUser, index) => {
-      const control = this.customerForms.at(index);
+    this.linkedCustomers.forEach((customer, index) => {
+      const control = this.getCustomerForm(index);
       if (!control) {
-        this.customerForms.setControl(index, this.getNewForm());
+        (this.customerForms as FormArray).setControl(index, this.getNewForm());
       }
-      this.customerForms.at(index).setValue({
+      this.getCustomerForm(index).setValue({
         customerNumber: customer.customerNumber,
         companyName: customer.companyName,
         customerInfo: `${customer.customerNumber} - ${customer.companyName}`,
@@ -830,33 +879,29 @@ export class ManageDetailsComponent implements OnChanges, OnInit {
   }
 
   private subscribeOnCustomerValueChange() {
-    if (this.customerFormChangesSub) {
-      this.customerFormChangesSub.unsubscribe();
-    }
-    this.customerFormChangesSub = this.customerForms.valueChanges
+    this.customerFormChangesSub?.unsubscribe();
+    this.customerFormChangesSub = (this.customerForms as FormArray).valueChanges
       .pipe(
-        startWith(this.customerForms.value as PortalUser),
-        map((value: PortalUser[]) => value.map((customer: PortalUser) => customer.customerNumber))
+        startWith(this.getCustomerFormsValue()),
+        map((value: PortalUser[]) => value.map(customer => customer.customerNumber || ''))
       )
       .subscribe((ids: string[]) => this.selectedCustomers = ids);
   }
 
-  private loadContactManagerRoles(userId) {
+  private loadContactManagerRoles(userId: string) {
     this.unsub.subs = this.contactManagerService.getCustomerRoles(userId)
-      .subscribe((res: Role[]) => {
-        const customRoles = res.filter((role: Role) => role.role.toLowerCase() !== this.userType.toLowerCase());
+      .subscribe(res => {
+        const customRoles = res.filter(role => role.role.toLowerCase() !== this.userType.toLowerCase());
         this.linkedRoles = [...customRoles];
-        this.roleForm.get('roles').setValue(customRoles);
+        this.getControl(this.roleForm, 'roles').setValue(customRoles);
       });
   }
 
   private detectScrollChanges() {
     this.detectChanges();
     setTimeout(() => {
-      if (this.customersPs) {
-        this.customersPs.update();
-        this.detectChanges();
-      }
+      this.customersPs?.update();
+      this.detectChanges();
     });
   }
 

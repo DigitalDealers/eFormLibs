@@ -16,4 +16,6 @@ export interface PortalUser {
   picture?: string;
   isInPortal?: boolean;
   items?: ContactManagerCustomer[];
+  userFName?: string;
+  extraName?: string;
 }

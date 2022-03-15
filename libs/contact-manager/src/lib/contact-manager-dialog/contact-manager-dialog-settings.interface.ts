@@ -6,5 +6,5 @@ export interface ContactManagerDialogSettings {
   data: unknown;
   componentRef: ComponentType<unknown> | TemplateRef<unknown>;
   disableAnimation?: boolean;
-  prevDialogRef?: MatDialogRef<unknown>;
+  prevDialogRef?: MatDialogRef<unknown> | null;
 }

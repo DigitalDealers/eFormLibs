@@ -4,7 +4,7 @@
 
   <ng-container matColumnDef="UserAvatar">
     <td mat-cell *matCellDef="let element">
-      <didi-contact-manager-avatar [customerName]="element[contactManager.contactName]"
+      <didi-contact-manager-avatar [customerName]="element[contactManager?.contactName]"
                                    [isActive]="element['Portal User Status'] === 'Active'">
       </didi-contact-manager-avatar>
     </td>
@@ -18,7 +18,7 @@
     <td mat-cell *matCellDef="let element">
       <div class="action-wrapper" *ngIf="isContactAdmin">
         <button *ngIf="isCompanyAdmin
-                        && element[contactManager.isPortalUser] === 'Yes'
+                        && element[contactManager?.isPortalUser] === 'Yes'
                         && !readOnly
                         && !settings.hideAssociatedContacts"
                 matTooltip="Associated Contacts"
@@ -42,7 +42,7 @@
             <mat-icon>mail_outline</mat-icon>
           </button>
         </ng-container>
-        <button *ngIf="element[contactManager.isPortalUser] === 'Yes'"
+        <button *ngIf="element[contactManager?.isPortalUser] === 'Yes'"
                 matTooltip="Edit"
                 matTooltipClass="didi-comm-centre-action-tooltip"
                 mat-icon-button
@@ -52,7 +52,7 @@
                 class="edit-contact-manager">
           <mat-icon class="material-icons-outlined">edit_outline</mat-icon>
         </button>
-        <button *ngIf="element[contactManager.isPortalUser] !== 'Yes'"
+        <button *ngIf="element[contactManager?.isPortalUser] !== 'Yes'"
                 matTooltip="Add to portal"
                 matTooltipClass="didi-comm-centre-action-tooltip"
                 mat-icon-button
@@ -69,7 +69,7 @@
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"
       [class.read-only]="readOnly"
       [class.active-contact]="activeContact?.Email === getPortalUserEmail(row)"
-      [class.not-in-portal]="row[contactManager.isPortalUser] !== 'Yes'"
+      [class.not-in-portal]="row[contactManager?.isPortalUser] !== 'Yes'"
       [style.height]="responsiveHeight ? 'auto' : '48'"
       [@fadeIn]="'in'"
       (click)="toggleSelectContact(row, $event)"></tr>

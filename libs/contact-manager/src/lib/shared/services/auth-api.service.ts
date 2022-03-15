@@ -19,12 +19,12 @@ export class AuthApiService {
               private config: ConfigService) {
   }
 
-  getCommCentreUser(dataSetId: number, userEmail: string): Observable<CommCentreUser> {
+  getCommCentreUser(userEmail: string): Observable<{ token: string }> {
     return this.httpClient.get<CommCentreUser>(`${this.config.authApiUrl}/users/getCommCentreUser/${userEmail}`, {
       headers: this.headers,
     }).pipe(
       map(({ id_token }) => ({
-        token: id_token
+        token: id_token || ''
       }))
     );
   }
@@ -34,4 +34,3 @@ export class AuthApiService {
       .get<Role[]>(`${this.config.authApiUrl}/dealers/${this.config.getDealerId()}/roles`, { params, headers: this.headers });
   }
 }
-

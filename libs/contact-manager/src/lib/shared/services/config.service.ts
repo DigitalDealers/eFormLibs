@@ -34,8 +34,10 @@ export class ConfigService {
     return this.jwtHelper.decodeToken(this.getAccessToken());
   }
 
-  constructor(private cookie: CookieService,
-              @Inject(contactManagerConfigToken) private config: ContactManagerConfig) {
+  constructor(
+    private cookie: CookieService,
+    @Inject(contactManagerConfigToken) private config: ContactManagerConfig
+  ) {
   }
 
   getAccessToken(): string {

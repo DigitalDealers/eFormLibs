@@ -136,12 +136,12 @@ export class ContactManagerSearchComponent implements OnInit, OnDestroy {
     }
     this.searchSub?.unsubscribe();
     this.loading = true;
-    this.searchSub = this.dataSetSearchService.liteSearch(this.contactManager.dataSetId, {
+    this.searchSub = this.dataSetSearchService.liteSearch<ContactManagerSearchResult>(this.contactManager.dataSetId, {
       query: ContactManagerSearchComponent.prepareQuery(value),
       offset: this.searchParams.offset.toString(),
       limit: this.searchParams.limit.toString()
     }).pipe(
-      map((items) => ContactManagerMappersService.mapContactManagerSearchResult(items)),
+      map(items => ContactManagerMappersService.mapContactManagerSearchResult(items)),
       finalize(() => this.loading = false)
     ).subscribe((res: ContactManagerSearchResult[]) => {
       if (!this.searchControl.value && !this.hiddenSearch) {

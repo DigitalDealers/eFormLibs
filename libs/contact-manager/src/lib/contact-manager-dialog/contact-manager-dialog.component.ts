@@ -20,19 +20,20 @@ import { WidgetObserverService } from '../shared/services/widget-observer.servic
   providers: [UnsubscribeService]
 })
 export class ContactManagerDialogComponent implements OnInit {
-  public contactManager: ContactManager;
-  public widgetsLoading: boolean;
-  public isContactAdmin: boolean;
+  public contactManager?: ContactManager | null;
+  public widgetsLoading = false;
+  public isContactAdmin = false;
   public contactManagerId = Date.now();
 
   private readonly contactManagerSettings: Partial<ContactManagerSettings>;
 
-  private static getWidgetConfig<T = any>(modules: ModuleWidget[], widgetType: string, field: string): T | null {
-    const module = modules.find(widget => widget.type.type === widgetType);
-    if (!(module && module[field])) {
+  private static getWidgetConfig<T = unknown>(modules: ModuleWidget[], widgetType: string, field: string): T | null {
+    const module = modules.find(widget => widget.type?.type === widgetType);
+    if (!module?.[field as keyof ModuleWidget]) {
       return null;
     }
-    return (typeof module[field] === 'string') ? (JSON.parse(module[field]) as T) : (module[field] as T);
+    const value = module[field as keyof ModuleWidget];
+    return (typeof value === 'string') ? (JSON.parse(value) as T) : (value as unknown as T);
   }
 
   constructor(

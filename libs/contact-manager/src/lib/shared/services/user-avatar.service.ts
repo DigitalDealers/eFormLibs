@@ -1,9 +1,13 @@
 export class UserAvatarService {
-  static generateAvatarFromName(customerName: string = '') {
+  static generateAvatarFromName(customerName: string = ''): string {
     const canvas = document.createElement('canvas') as HTMLCanvasElement;
     canvas.width = 320;
     canvas.height = 320;
     const context = canvas.getContext('2d');
+    if (!context) {
+      throw new Error('Failed to create canvas');
+    }
+
     context.moveTo(20, 20);
     context.lineTo(100, 20);
 

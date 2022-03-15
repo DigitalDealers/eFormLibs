@@ -2,18 +2,28 @@ import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, finalize, map, share, tap } from 'rxjs/operators';
-import { HttpBackendClientService } from './http-backend-client.service';
+
 import { ConfigService } from './config.service';
+import { HttpBackendClientService } from './http-backend-client.service';
 
 @Injectable()
 export class SecurityService {
-  roles: string[] = JSON.parse(localStorage.getItem(`${this.config.localStoragePrefix}.roles`)) || [];
-  rolesLoading$: Observable<any>;
+  roles: string[];
+  rolesLoading$?: Observable<string[]> | null;
   private readonly headers = {
     'Authorization': `Bearer ${this.config.getAccessToken()}`
   };
-  constructor(private httpClient: HttpBackendClientService,
-              private config: ConfigService) {
+
+  constructor(
+    private httpClient: HttpBackendClientService,
+    private config: ConfigService
+  ) {
+    const rolesString = localStorage.getItem(`${this.config.localStoragePrefix}.roles`) || '';
+    try {
+      this.roles = JSON.parse(rolesString);
+    } catch (e) {
+      this.roles = [];
+    }
   }
 
   getUserRoles(): Observable<string[]> {
@@ -26,11 +36,8 @@ export class SecurityService {
     }
     this.rolesLoading$ = this.getUserFullProfile()
       .pipe(
-        tap((user: { roles: string[] }) => {
-          const roles = (user.roles || []).map(role => role.trim());
-          localStorage.setItem(`${this.config.localStoragePrefix}.roles`, JSON.stringify(roles));
-        }),
-        map((user: { roles: string[] }) => (user.roles || []).map(role => role.trim())),
+        map(user => (user.roles || []).map(role => role.trim())),
+        tap(roles => localStorage.setItem(`${this.config.localStoragePrefix}.roles`, JSON.stringify(roles))),
         finalize(() => this.rolesLoading$ = null),
         share(),
         catchError(err => {
@@ -41,9 +48,9 @@ export class SecurityService {
     return this.rolesLoading$;
   }
 
-  public getUserFullProfile() {
+  public getUserFullProfile(): Observable<{ roles?: string[] }> {
     const params = new HttpParams().set('fullProfile', 'true');
-    return this.httpClient.get(`${this.config.authApiUrl}/users/getByToken`, {
+    return this.httpClient.get<{ roles?: string[] }>(`${this.config.authApiUrl}/users/getByToken`, {
       params,
       headers: this.headers
     });

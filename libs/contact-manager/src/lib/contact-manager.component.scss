@@ -1,4 +1,4 @@
-@import "~@digitaldealers/cms-theme/style/variables";
+@import '~@digitaldealers/cms-theme/style/variables';
 
 $padding-top: 16px;
 $min-height: 200px;
@@ -7,13 +7,14 @@ $min-height: 200px;
   .solo-widget-wrapper {
     position: relative;
     border-radius: 4px !important;
-    box-shadow: 0 10px 24px -8px rgba(0, 0 ,0, .08);
+    box-shadow: 0 10px 24px -8px rgba(0, 0, 0, .08);
     background: $white;
     padding: $padding-top 10px;
     min-height: 200px;
     overflow: hidden;
     height: 100%;
   }
+
   .contact-manager-search {
     display: flex;
     flex-direction: column;
@@ -31,24 +32,30 @@ $min-height: 200px;
     @media (max-width: 1199px) {
       width: calc(100% - 320px);
     }
+
     .mat-dialog-container {
       overflow: hidden;
     }
+
     @media (max-width: 767px) {
       margin-left: 0;
       width: 100%;
     }
+
     .mat-form-field-appearance-outline {
       .mat-form-field-infix {
         font-size: 14px !important;
       }
+
       .mat-form-field-wrapper {
         margin: 0 !important;
       }
     }
+
     .mat-dialog-container {
       background: $white;
     }
+
     .ps--active-x > .ps__rail-x {
       display: none;
     }
