@@ -1,0 +1,78 @@
+<mat-form-field style="flex:0;" appearance="outline">
+  <input matInput
+         class="search-input"
+         type="text"
+         name="title"
+         autocomplete="off"
+         title="Start searching by Name, Phone, Email"
+         [formControl]="searchControl">
+  <i class="communication-centre-icon-search"></i>
+  <button *ngIf="!loading && searchControl.value"
+          [@fadeBoth]="'in'"
+          (click)="resetSearchManual()"
+          class="clear-search-button"
+          mat-icon-button
+          type="button">
+    <i class="communication-centre-icon-close"></i>
+  </button>
+</mat-form-field>
+<div *ngIf="!loading && !searchResult.length && !noResults && !searchControl.value && !hiddenSearch"
+     [@fadeBoth]="'in'"
+     class="search-placeholder-image">
+  <div class="image-wrapper">
+    <img [src]="searchPlaceholderImage" alt="Contact manager search">
+    <p class="search-watermark">Start searching by Name, Phone or Email</p>
+  </div>
+</div>
+<div class="table-wrapper"
+     [perfectScrollbar]="{ suppressScrollX: true, suppressScrollY: false }"
+     [class.dialog-mode]="dialogMode && isContactAdmin"
+     [class.has-results]="searchResult.length">
+  <didi-contact-manager-list [searchResult]="searchResult"
+                             [responsiveHeight]="true"
+                             [contactManager]="contactManager"></didi-contact-manager-list>
+</div>
+<div class="table-spinner-wrapper" [@fadeBoth]="'in'" *ngIf="loading && !searchItemsAnimating && searchControl.value">
+  <mat-spinner [diameter]="30"
+               [@fadeBoth]="'in'"></mat-spinner>
+</div>
+<div class="pagination-wrapper"
+     [class.dialog-mode]="dialogMode && isContactAdmin"
+     [class.pagination-hidden]="!paginationVisible"
+     [class.pagination-no-results]="noResults">
+  <button mat-icon-button type="button"
+          (click)="setPage(currentPage - 1)"
+          [disabled]="currentPage === 1">
+    <i class="communication-centre-icon-down-arrow"></i>
+  </button>
+  <span class="current-page">{{currentPage}}</span>
+  <button mat-icon-button type="button"
+          (click)="setPage(currentPage + 1)"
+          [disabled]="!searchResult?.length || searchResult?.length < searchParams?.limit">
+    <i class="communication-centre-icon-up-arrow"></i>
+  </button>
+</div>
+<div class="no-results"
+     [@fadeBoth]="'in'"
+     *ngIf="noResults && !loading && !searchItemsAnimating && !searchResult?.length">
+  <p class="no-results-description">User doesn't exist</p>
+  <button *ngIf="!dialogMode && isContactAdmin"
+          mat-raised-button
+          type="button"
+          class="green-button"
+          [disableRipple]="true"
+          (click)="addUser()">
+    Add User
+  </button>
+</div>
+<div class="details-footer form-action-buttons"
+     [class.footer-no-results]="noResults && !loading && !searchItemsAnimating && !searchResult?.length"
+     *ngIf="dialogMode && isContactAdmin">
+  <button mat-raised-button
+          type="button"
+          class="green-button"
+          [disableRipple]="true"
+          (click)="addUser()">
+    Add User
+  </button>
+</div>

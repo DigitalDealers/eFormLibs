@@ -1,0 +1,184 @@
+@import '~@digitaldealers/cms-theme/style/variables';
+@import "variables";
+
+@mixin mat-input-theme {
+  .mat-form-field .mat-form-field-label {
+    font-size: 16px;
+  }
+  .mat-form-field.mat-focused .mat-form-field-label {
+    color: rgba(0, 0, 0, 0.6);
+  }
+  .mat-form-field-appearance-outline {
+    .mat-form-field-label {
+      top: 1.5em;
+      margin-top: 0 !important;
+    }
+    &.mat-form-field-can-float.mat-form-field-should-float {
+      .mat-form-field-label {
+        transform: translateY(-1.375rem) scale(0.75) !important;
+      }
+    }
+    .mat-form-field-wrapper {
+      padding: 0;
+      margin: 0;
+    }
+    .mat-form-field-infix {
+      padding: .9em 0 .8em;
+      border-top: 0;
+    }
+    .mat-form-field-flex {
+      margin-top: 0 !important;
+    }
+    .mat-form-field-outline {
+      color: $border-color !important;
+      top: 0 !important;
+    }
+    &.mat-form-field-invalid {
+      .mat-form-field-outline.mat-form-field-outline-thick {
+        color: $error-red !important;
+      }
+      &.mat-form-field.mat-focused .mat-form-field-label {
+        color: $error-red !important;
+      }
+    }
+    .mat-form-field-outline-start {
+      border-radius: 3px 0 0 3px;
+    }
+    .mat-form-field-outline-end {
+      border-radius: 0 3px 3px 0;
+    }
+  }
+  .mat-form-field-outline-thick {
+    .mat-form-field-outline-start, .mat-form-field-outline-end, .mat-form-field-outline-gap {
+      border-width: 1px;
+    }
+  }
+}
+
+@mixin placeholder {
+  color: $black;
+  font-size: 16px;
+
+  &::-webkit-input-placeholder {
+    color: $search-placeholder-gray !important;
+  }
+
+  &:-ms-input-placeholder {
+    color: $search-placeholder-gray !important;
+  }
+
+  &::placeholder {
+    color: $search-placeholder-gray !important;
+  }
+}
+
+@mixin details-header {
+  $details-header-border-color: #f9f9f9;
+  $details-header-bg-color: #fefefe;
+  .details-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid $details-header-border-color;
+    background-color: $details-header-bg-color;
+    ::ng-deep .mat-button-focus-overlay {
+      display: none !important;
+    }
+    .details-header {
+      font-weight: normal;
+      color: black;
+      padding: 0 18px;
+      margin: 0;
+      font-size: 1.25rem;
+    }
+  }
+  .details-footer {
+    display: flex;
+    align-items: center;
+    height: 66px;
+    border-top: 1px solid $details-header-border-color;
+    background-color: $details-header-bg-color;
+  }
+  .manage-close-button {
+    width: 21px;
+    height: 21px;
+    line-height: 21px;
+    margin-left: auto;
+    margin-right: 15px;
+  }
+  .mat-flat-button, .mat-icon-button {
+    outline: none;
+  }
+  .communication-centre-icon-close {
+    position: relative;
+    top: -1px;
+    font-size: 14px;
+    color: $action-icon-color;
+  }
+}
+
+@mixin spinner-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+@mixin form-control-error {
+  .form-group {
+    position: relative;
+  }
+
+  .form-control-error {
+    background: $error-red;
+    padding: 5px 8px;
+    border-radius: 3px;
+    position: absolute;
+    right: 0;
+    bottom: 37px;
+    margin-bottom: 8px;
+    max-width: 230px;
+    font-size: 80%;
+    z-index: 1;
+  }
+
+  .form-control-error:after {
+    width: 0;
+    height: 0;
+    content: '';
+    display: block;
+    border-style: solid;
+    border-width: 5px 5px 0;
+    border-color: $error-red transparent transparent;
+    position: absolute;
+    right: 20px;
+    bottom: -4px;
+    margin-left: -5px;
+  }
+
+  .form-control-error ul {
+    list-style: none;
+    color: $white;
+    padding: 0;
+    margin: 0;
+  }
+
+  .form-control-error-list ul {
+    list-style: none;
+    color: $error-red;
+    padding: 0;
+    margin: 5px 0 0 0;
+    font-size: 80%;
+    font-weight: 400;
+  }
+
+  ::ng-deep {
+    .user-form-field-pending-spinner.mat-progress-spinner {
+      circle {
+        stroke: $white !important;
+        text-decoration-style: initial;
+      }
+    }
+  }
+}

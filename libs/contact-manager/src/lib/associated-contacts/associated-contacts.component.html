@@ -1,0 +1,30 @@
+<div class="details-wrapper">
+  <h5 class="details-header">Associated Contacts</h5>
+  <button mat-icon-button
+          type="button"
+          class="manage-close-button"
+          mat-dialog-close
+          [disableRipple]="true">
+    <i class="communication-centre-icon-close"></i>
+  </button>
+</div>
+<mat-progress-bar *ngIf="associatedContactsLoading"
+                  class="hidden-progress-bar"
+                  [class.visible]="associatedContactsLoading"
+                  [mode]="'indeterminate'"></mat-progress-bar>
+<div class="associated-contacts-wrapper"
+     perfectScrollbar
+     #ps="ngxPerfectScrollbar"
+     (psYReachEnd)="loadNext()">
+  <didi-contact-manager-list [searchResult]="associatedContacts"
+                             [readOnly]="true"
+                             [contactManager]="contactManagerValue"></didi-contact-manager-list>
+  <div class="no-results" [@fadeBoth]="''" *ngIf="!associatedContactsLoading && !associatedContacts?.length">
+    No results
+  </div>
+</div>
+<div class="details-footer">
+  <button type="button" mat-raised-button class="green-button" mat-dialog-close i18n (click)="addUser()">
+    Add User
+  </button>
+</div>

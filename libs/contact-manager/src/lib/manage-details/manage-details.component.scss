@@ -1,0 +1,265 @@
+@import "~@digitaldealers/cms-theme/style/variables";
+@import "~@digitaldealers/cms-theme/style/mixins";
+@import "../assets/variables";
+@import "../assets/mixins";
+
+$section-margin: 30px;
+$gap: 16px;
+$read-only-bg: #f8f8f8;
+$delete-button-color: #f47979;
+$inner-padding: 18px;
+
+:host {
+  display: block;
+  padding: $section-margin $inner-padding 0;
+  position: relative;
+  &.processing-manage {
+    max-height: calc(85vh - 65px);
+    overflow: hidden;
+  }
+  .process-changes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: $white;
+    .process-changes-inner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .mat-spinner {
+      ::ng-deep circle {
+        stroke: $dark-blue !important;
+      }
+      margin-bottom: 25px;
+    }
+    .process-text, .confirm-text {
+      font-size: 16px;
+      color: $dark-gray;
+    }
+    .confirm-text {
+      margin-bottom: 23px;
+    }
+  }
+  .mat-progress-bar {
+    height: 2px;
+    margin: -$section-margin 0 $section-margin;
+    width: calc(100% + 36px);
+  }
+  .mat-progress-bar {
+    margin-left: -$inner-padding;
+    margin-right: -$inner-padding;
+  }
+  .communication-centre-icon-plus-thin:before {
+    color: $dark-gray;
+  }
+  .communication-centre-icon-success {
+    font-size: 40px;
+    margin-bottom: 25px;
+    color: $dark-blue;
+  }
+  .delete-customer-button {
+    margin-right: -10px;
+    .communication-centre-icon-delete-icon:before {
+      color: $dark-gray;
+    }
+  }
+  .details-label {
+    font-size: 16px;
+    margin-bottom: 1rem;
+    position: relative;
+    width: 100%;
+  }
+  .divider {
+    height: 1px;
+    background-color: $border-color;
+    margin: 14px 0 $section-margin;
+  }
+  .controls-row, .integration-header {
+    display: flex;
+    align-items: center;
+    .mat-form-field {
+      margin-bottom: 0;
+      margin-right: 20px;
+      flex: 1;
+      &.mat-form-field-disabled {
+        background: $read-only-bg;
+      }
+      &.customer-name-field {
+        margin-right: 8px;
+      }
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .customer-list-placeholder {
+    min-height: 95px;
+  }
+
+  .controls-row {
+    margin-bottom: $gap;
+    position: relative;
+    &:last-child {
+      margin-bottom: $section-margin;
+    }
+    &.controls-row-flex-start {
+      align-items: flex-start;
+    }
+    &.controls-row-disabled {
+      pointer-events: none;
+    }
+    .customer-loading {
+      position: absolute;
+      background: $white;
+      z-index: 1;
+      top: 4px;
+      left: 2px;
+      bottom: 1px;
+      display: flex;
+      align-items: center;
+      right: 85px;
+      padding-left: 8px;
+      .mat-spinner {
+        margin-right: 15px;
+        circle {
+          stroke: $blue !important;
+          stroke-width: 1px !important;
+        }
+      }
+      > span {
+        color: $dark-gray;
+      }
+    }
+  }
+  .mat-icon-button,.mat-raised-button {
+    outline: none;
+  }
+  .user-details-form {
+    margin-bottom: $section-margin;
+  }
+  .add-customer-button {
+    position: absolute;
+    right: -10px;
+    top: -5px;
+  }
+  .delete-customer-from-portal {
+    margin-right: auto;
+    ::ng-deep .communication-centre-icon-delete-icon:before {
+      color: $delete-button-color;
+      font-size: 17px;
+    }
+  }
+  @include details-header;
+  .confirm-delete-buttons, .form-action-buttons {
+    .mat-raised-button {
+      @include raised-button;
+    }
+    .green-button, .red-button {
+      margin-left: 10px;
+    }
+    .gray-button {
+      margin-left: auto;
+    }
+  }
+  .form-action-buttons {
+    margin-left: -$inner-padding;
+    margin-right: -$inner-padding;
+    padding: 0 18px 0 6px;
+  }
+  .confirm-delete-buttons {
+    .save-button, .cancel-button {
+      font-weight: normal;
+      height: 30px;
+      line-height: 30px;
+      font-size: 13px;
+    }
+  }
+  ::ng-deep {
+    @include mat-input-theme;
+    @include progress-bar;
+    @include chip-list;
+    @include form-control-error;
+    .chips-autocomplete-field.has-items {
+      .right-icon {
+        margin-top: 2px;
+      }
+    }
+    input.mat-input-element {
+      @include placeholder;
+    }
+    input.mat-input-element {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      &[disabled] {
+        color: $disabled-input-text;
+      }
+    }
+    .autocomplete-field {
+      &.mat-form-field-appearance-outline {
+        .mat-form-field-infix {
+          padding: 0.62em 0 .62em;
+        }
+      }
+      &.roles-autocomplete-field {
+        .mat-icon {
+          margin-left: auto;
+        }
+      }
+    }
+    .mat-form-field-appearance-outline .mat-form-field-infix {
+      cursor: pointer;
+      display: flex;
+      mat-icon {
+        position: relative;
+        color: $button-gray;
+        top: 1px;
+        &.hide-icon {
+          visibility: hidden;
+        }
+      }
+    }
+  }
+  ::ng-deep {
+    &.hidden {
+      display: none !important;
+    }
+  }
+}
+
+::ng-deep {
+  .error-tooltip {
+    background-color: $warn;
+    color: $white;
+  }
+  .didi-mat-autocomplete-list-wrapper {
+    position: relative;
+    height: 100%;
+    max-height: 250px;
+    .mat-option {
+      .mat-option-text {
+        display: flex;
+        align-items: center;
+        .customer-info {
+          flex: 1;
+        }
+      }
+    }
+    &.hide-autocomplete {
+      display: none;
+    }
+    .ps__rail-y {
+      left: initial !important;
+      right: 0 !important;
+    }
+  }
+}

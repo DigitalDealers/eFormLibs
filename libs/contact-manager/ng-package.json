@@ -1,0 +1,21 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/contact-manager",
+  "lib": {
+    "entryFile": "src/public-api.ts",
+    "umdModuleIds": {
+      "@digitaldealers/cms-theme": "cmsTheme",
+      "@auth0/angular-jwt": "angularJwt",
+      "lodash": "lodash",
+      "ngx-cookie-service": "ngxCookieService",
+      "ngx-perfect-scrollbar": "ngxPerfectScrollbar"
+    }
+  },
+  "whitelistedNonPeerDependencies": [
+    "@digitaldealers/cms-theme",
+    "@auth0/angular-jwt",
+    "lodash",
+    "ngx-cookie-service",
+    "ngx-perfect-scrollbar"
+  ]
+}

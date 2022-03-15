@@ -1,0 +1,22 @@
+<div class="contact-manager-wrapper" perfectScrollbar>
+  <div class="details-wrapper">
+    <h5 class="details-header" *ngIf="manageMode === editMode">Edit User</h5>
+    <h5 class="details-header" *ngIf="manageMode === addToPortalMode">Add User</h5>
+    <button mat-icon-button
+            type="button"
+            class="manage-close-button"
+            mat-dialog-close
+            [disableRipple]="true">
+      <i class="communication-centre-icon-close"></i>
+    </button>
+  </div>
+
+  <didi-manage-details #details
+                       class="manage-details"
+                       [addNew]="addNew"
+                       [contactManager]="contactManager"
+                       [contactManagerValue]="contactManagerValue"
+                       [user]="user"
+                       [customer]="customer"
+                       [mode]="manageMode"></didi-manage-details>
+</div>

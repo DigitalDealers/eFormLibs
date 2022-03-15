@@ -1,0 +1,34 @@
+@import '~@digitaldealers/cms-theme/style/mixins';
+@import "../assets/mixins";
+
+:host {
+  display: block;
+  margin: -24px -24px;
+  position: relative;
+  @include details-header;
+  @include no-results;
+  .no-results {
+    top: 0;
+    bottom: 0;
+  }
+  .associated-contacts-wrapper {
+    position: relative;
+    min-height: 384px;
+    @include optimalMaxHeight(100px);
+  }
+  .mat-raised-button {
+    @include raised-button;
+  }
+  .green-button {
+    margin-left: auto;
+    margin-right: 24px;
+  }
+  ::ng-deep {
+    @include progress-bar;
+    .mat-progress-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+    }
+  }
+}

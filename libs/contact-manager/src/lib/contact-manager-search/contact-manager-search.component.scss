@@ -1,0 +1,167 @@
+@import "~@digitaldealers/cms-theme/style/variables";
+@import "~@digitaldealers/cms-theme/style/mixins";
+@import "../assets/mixins";
+
+$search-placeholder-disabled: lighten($search-placeholder-gray, 15);
+$input-height: 42px;
+
+:host.contact-manager-search {
+  @include search-placeholder-layout;
+  @include details-header;
+  .mat-form-field {
+    width: 100%;
+  }
+
+  .form-action-buttons {
+    .mat-raised-button {
+      @include raised-button;
+    }
+  }
+
+  .details-footer {
+    margin-left: -20px;
+    margin-right: -20px;
+    justify-content: flex-end;
+    padding: 0 20px;
+    margin-bottom: -16px;
+    &.footer-no-results {
+      margin-top: auto;
+    }
+  }
+
+  .communication-centre-icon-plus-square {
+    margin-right: 10px;
+    font-size: 14px;
+  }
+
+  .table-wrapper {
+    &.has-results {
+      padding: 4px 0 0;
+      margin-bottom: -20px;
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 70px;
+      overflow: auto;
+      top: 62px;
+    }
+    &.dialog-mode {
+      bottom: 136px;
+    }
+  }
+  ::ng-deep {
+    .communication-centre-icon-search {
+      position: absolute;
+      color: $search-placeholder-gray;
+      left: -26px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      top: 0;
+    }
+    .table-spinner-wrapper {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      justify-content: center;
+    }
+    .mat-spinner {
+      circle {
+        stroke: $blue;
+        stroke-width: 2px !important;
+      }
+    }
+    .clear-search-button {
+      position: absolute;
+      right: 0;
+      top: 0;
+      outline: none;
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+      margin-top: .45rem;
+      margin-right: -0.5em;
+      .mat-button-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+      }
+      .communication-centre-icon-close {
+        font-size: 8.5px;
+        color: $action-icon-color;
+        cursor: pointer;
+      }
+    }
+    .mat-form-field-appearance-outline {
+      .mat-form-field-flex {
+        padding-left: 40px;
+        margin-top: 0;
+      }
+    }
+    @include mat-input-theme;
+    .search-input {
+      @include placeholder;
+    }
+  }
+}
+
+@include no-results;
+
+.no-results {
+  flex-direction: column;
+  .mat-raised-button {
+    @include raised-button;
+  }
+  .no-results-description {
+    font-size: 16px;
+    color: $dark-gray;
+  }
+}
+
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 0 0;
+  margin-top: auto;
+  .current-page {
+    display: inline-block;
+    margin: 0 8px;
+    color: $search-placeholder-gray;
+  }
+  &.dialog-mode {
+    padding: 9px 0 9px;
+  }
+  &.pagination-no-results {
+    display: none;
+  }
+  &.pagination-hidden {
+    > * {
+      display: none;
+    }
+    padding: 0;
+  }
+  ::ng-deep {
+    .communication-centre-icon-down-arrow, .communication-centre-icon-up-arrow {
+      transform: rotate(90deg);
+      display: inline-block;
+      font-size: 12px;
+      font-weight: bold;
+      line-height: 28px;
+      color: $search-placeholder-gray;
+    }
+    .mat-icon-button {
+      outline: none;
+      width: 28px;
+      height: 28px;
+      line-height: 21px;
+      &[disabled] {
+        i {
+          color: $search-placeholder-disabled;
+        }
+      }
+    }
+  }
+}

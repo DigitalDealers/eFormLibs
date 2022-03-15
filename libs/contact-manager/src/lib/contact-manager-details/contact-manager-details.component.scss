@@ -1,0 +1,28 @@
+@import "~@digitaldealers/cms-theme/style/variables";
+@import "../assets/mixins";
+
+:host {
+  display: block;
+  margin: -24px -24px;
+
+  .contact-manager-wrapper {
+    max-height: 85vh;
+    position: relative;
+  }
+
+  &.reduce-bottom-margin {
+    margin-bottom: -24px;
+  }
+  @include details-header;
+  .edit-contact-manager {
+    margin-right: -10px;
+  }
+  p {
+    margin: 0;
+  }
+}
+
+:host::ng-deep .mat-button-focus-overlay {
+  opacity: 0 !important;
+}
+

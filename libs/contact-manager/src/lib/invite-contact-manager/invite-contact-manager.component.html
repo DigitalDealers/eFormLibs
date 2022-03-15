@@ -1,0 +1,55 @@
+<div class="details-wrapper">
+  <h5 class="details-header">Invite User</h5>
+  <button mat-icon-button
+          type="button"
+          class="manage-close-button"
+          mat-dialog-close
+          [disableRipple]="true">
+    <i class="communication-centre-icon-close"></i>
+  </button>
+</div>
+<div class="invite-wrapper">
+  <div class="invite-changes-inner" [@fadeBoth]="''" *ngIf="noCustomer">
+    <div class="confirm-delete-buttons">
+      <button mat-raised-button
+              type="button"
+              class="save-button"
+              (click)="viewProfile()">
+        View profile
+      </button>
+    </div>
+  </div>
+  <div class="invite-changes-inner" [@fadeBoth]="''" *ngIf="inviting">
+    <mat-spinner [diameter]="40"></mat-spinner>
+    <p class="process-text">Sending invitation...</p>
+  </div>
+  <div class="invite-changes-inner" [@fadeBoth]="''" *ngIf="invited && !inviting">
+    <i class="communication-centre-icon-success"></i>
+    <p class="process-text">
+      Invitation successfully sent
+    </p>
+  </div>
+
+  <div class="invite-changes-inner" [@fadeBoth]="''" *ngIf="confirmInvite">
+    <p class="confirm-text">
+      Do you want to send an invite to {{fullName}}?
+    </p>
+    <p class="confirm-text-description">
+      ({{email}})
+    </p>
+    <div class="confirm-delete-buttons">
+      <button mat-raised-button
+              type="button"
+              class="gray-button"
+              mat-dialog-close>
+        Cancel
+      </button>
+      <button mat-raised-button
+              type="button"
+              class="green-button"
+              (click)="send()">
+        Send
+      </button>
+    </div>
+  </div>
+</div>

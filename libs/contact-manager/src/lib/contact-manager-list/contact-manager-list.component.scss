@@ -1,0 +1,130 @@
+@import "~@digitaldealers/cms-theme/style/variables";
+
+$side-padding: 14px;
+$action-button-size: 30px;
+$avatar-right-padding: 16px;
+$avatar-cell-size: $side-padding + $action-button-size + $avatar-right-padding;
+
+:host {
+  .mat-table {
+    width: 100%;
+    table-layout: fixed;
+    .mat-icon-button {
+      outline: none;
+    }
+    tr.mat-row {
+      td.mat-cell {
+        border-bottom-color: $border-light-color;
+        padding: 1.45% 2px 1%;
+        @supports (-moz-appearance:none) {
+          padding: 1.3% 2px 1%;
+        }
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        &.mat-column-Contact-Name {
+          width: auto;
+        }
+        &.mat-column-Email {
+          width: 40%;
+        }
+        &.mat-column-Phone {
+          width: 24%;
+        }
+        &.mat-column-UserAvatar {
+          width: $avatar-cell-size;
+          padding: 0 $avatar-right-padding 0 $side-padding;
+          @media (max-height: 720px) {
+            width: $avatar-cell-size - 2;
+          }
+        }
+        &.mat-column-SelectUser {
+          position: relative;
+          overflow: visible;
+          width: 0;
+          .action-wrapper {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            width: 200px;
+            opacity: 0;
+            pointer-events: none;
+            background: linear-gradient(to right, transparent 0%, $hover-white 20%, $hover-white 100%);
+            justify-content: flex-end;
+            padding-right: 10px;
+
+            .edit-contact-manager {
+              width: $action-button-size;
+              height: $action-button-size;
+              line-height: $action-button-size;
+              margin-right: 20px;
+              .mat-icon {
+                $icon-size: 21px;
+                color: $dark-gray;
+                font-size: $icon-size;
+                width: $icon-size;
+                height: $icon-size;
+                line-height: $icon-size;
+              }
+              &:last-child {
+                margin-right: 0;
+              }
+              @media (max-height: 720px) {
+                width: $action-button-size - 2;
+                height: $action-button-size - 2;
+                line-height: $action-button-size - 2;
+              }
+              &:hover {
+                ::ng-deep .mat-button-focus-overlay {
+                  opacity: .07 !important;
+                  display: block;
+                }
+              }
+            }
+          }
+        }
+      }
+      &:last-child {
+        td.mat-cell {
+          border-bottom: none;
+        }
+      }
+      &.not-in-portal {
+        td.mat-cell {
+          opacity: .4;
+          &.mat-column-SelectUser {
+            opacity: 1;
+          }
+        }
+      }
+    }
+    tr:hover:not(.read-only) {
+      background: $hover-white;
+      cursor: pointer;
+      .action-wrapper {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+      }
+    }
+    tr.read-only:hover {
+      background: $hover-white;
+      .action-wrapper {
+        cursor: pointer;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+      }
+    }
+    tr.active-contact {
+      background: $hover-white;
+    }
+  }
+}
+
+::ng-deep .didi-comm-centre-action-tooltip {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 7px;
+}

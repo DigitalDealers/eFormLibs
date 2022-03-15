@@ -1,0 +1,300 @@
+<mat-progress-bar *ngIf="dataLoading"
+                  class="hidden-progress-bar"
+                  [class.visible]="dataLoading"
+                  [mode]="'indeterminate'"></mat-progress-bar>
+<div class="details-label">
+  User Details
+</div>
+<form [formGroup]="userDetailsForm" class="user-details-form">
+  <div class="controls-row">
+    <mat-form-field appearance="outline">
+      <mat-label>First Name</mat-label>
+      <input type="text"
+             title="First Name"
+             matInput
+             formControlName="fName"
+             autocomplete="off">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Last Name</mat-label>
+      <input type="text"
+             title="Last Name"
+             matInput
+             formControlName="lName"
+             autocomplete="off">
+    </mat-form-field>
+  </div>
+
+  <div class="controls-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Phone</mat-label>
+      <input type="text"
+             title="Phone"
+             matInput
+             formControlName="phone"
+             autocomplete="off">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline"
+                    matTooltipClass="error-tooltip"
+                    matTooltipPosition="above">
+      <mat-label>Email</mat-label>
+      <input type="text"
+             title="Email"
+             matInput
+             formControlName="email"
+             autocomplete="off">
+      <div class="form-control-error" *ngIf="userDetailsForm.get('email').dirty && !userDetailsForm.get('email').valid">
+        <ul>
+          <li *ngIf="userDetailsForm.get('email').hasError('required')">
+            Field is required
+          </li>
+          <li *ngIf="userDetailsForm.get('email').hasError('email') && userDetailsForm.get('email').value">
+            Email is not valid
+          </li>
+          <li *ngIf="userDetailsForm.get('email').hasError('duplicate')">Email is already in use</li>
+          <li *ngIf="userDetailsForm.get('email').pending">
+            <mat-progress-spinner class="user-form-field-pending-spinner form-field-spinner"
+                                  color="warn"
+                                  mode="indeterminate"
+                                  diameter="16"></mat-progress-spinner>
+          </li>
+        </ul>
+      </div>
+    </mat-form-field>
+  </div>
+  <div class="controls-row controls-row-flex-start">
+    <mat-form-field appearance="outline" class="autocomplete-field" [class.hidden]="isCustomer">
+      <mat-label>Legal Entity</mat-label>
+      <input type="text"
+             #legalEntityInput
+             title="Legal Entity"
+             matInput
+             formControlName="legalEntity"
+             autocomplete="off"
+             (click)="showAllLe()"
+             (blur)="checkLe()"
+             [matAutocomplete]="autoLe">
+      <mat-icon>keyboard_arrow_down</mat-icon>
+      <mat-autocomplete #autoLe="matAutocomplete" (optionSelected)="selectLe($event)">
+        <div class="didi-mat-autocomplete-list-wrapper" perfectScrollbar>
+          <mat-option *ngFor="let le of filteredLegalEntities$ | async; let i = index;"
+                      [value]="le">
+            {{ le }}
+          </mat-option>
+        </div>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline"
+                    class="autocomplete-field roles-autocomplete-field chips-autocomplete-field"
+                    [class.has-items]="roleForm?.get('roles')?.value?.length"
+                    [formGroup]="roleForm">
+      <mat-label>Roles</mat-label>
+      <mat-chip-list class="chip-list" #chipList (click)="rolesInput.focus()">
+        <mat-chip *ngFor="let role of roleForm.get('roles').value"
+                  [selectable]="true"
+                  [removable]="true"
+                  (removed)="removeRole(role)">
+          {{role.role}}
+          <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+        <input type="text"
+               autocomplete="off"
+               #rolesInput
+               title="Roles"
+               matInput
+               [formControl]="roleForm.get('role')"
+               [matAutocomplete]="autoRoles"
+               [matChipInputFor]="chipList"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               (click)="showAllRoles()"
+               (matChipInputTokenEnd)="addRole($event)">
+      </mat-chip-list>
+      <div class="right-icon" (click)="rolesInput.focus()">
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </div>
+      <mat-autocomplete #autoRoles="matAutocomplete"
+                        (optionSelected)="rolesInput.blur()"
+                        (opened)="openRoles()"
+                        (closed)="closeRoles()"
+                        [displayWith]="rolesDisplayWithFn">
+        <div class="didi-mat-autocomplete-list-wrapper"
+             perfectScrollbar
+             #rolesPs="ngxPerfectScrollbar">
+          <mat-option *ngFor="let role of filteredRoles$ | async; let i = index;"
+                      [value]="role"
+                      (click)="selectRole(role)">
+            {{ role.role }}
+          </mat-option>
+        </div>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+</form>
+
+<ng-container *ngIf="user || mode === addMode">
+  <div class="details-label">
+    Customer
+    <button mat-icon-button
+            class="add-customer-button"
+            (click)="addCustomerForm()">
+      <i class="communication-centre-icon-plus-thin"></i>
+    </button>
+  </div>
+
+  <div class="controls-row"
+       [class.controls-row-disabled]="addingCustomerToThePortal === i"
+       *ngFor="let customerForm of customerForms.controls; let i = index;">
+    <div class="customer-loading"
+         [@fadeBoth]="'in'"
+         *ngIf="addingCustomerToThePortal === i">
+      <mat-spinner [diameter]="20"></mat-spinner>
+      <span>Adding customer to the portal...</span>
+    </div>
+    <mat-form-field appearance="outline"
+                    [formGroup]="customerForm"
+                    [class.autocomplete-field]="mode === editMode || mode === addMode">
+      <mat-label>Customer</mat-label>
+      <input type="text"
+             #customerNumberInput
+             title="Customer"
+             matInput
+             formControlName="customerInfo"
+             autocomplete="off"
+             [matAutocomplete]="auto"
+             (focus)="onFocus(i)"
+             (blur)="onBlur()">
+      <mat-icon *ngIf="mode === editMode || mode === addMode">keyboard_arrow_down</mat-icon>
+      <mat-autocomplete #auto="matAutocomplete"
+                        (opened)="openCustomers()"
+                        (closed)="closeCustomers()"
+                        (optionSelected)="customerNumberInput.blur()">
+        <div class="didi-mat-autocomplete-list-wrapper"
+             #customersPs="ngxPerfectScrollbar"
+             perfectScrollbar
+             (psYReachEnd)="loadNextCustomers()">
+          <mat-option *ngFor="let customer of availableCustomers"
+                      [value]="customer.customerNumber"
+                      [disabled]="selectedCustomers.indexOf(customer.customerNumber) >= 0
+                                  && !(customer.id === customerForms.at(i)?.value?.id)"
+                      (click)="selectCustomer(customer, i)">
+            <div class="customer-info">
+              {{ customer.customerNumber }} - {{customer.companyName}}
+            </div>
+          </mat-option>
+        </div>
+      </mat-autocomplete>
+    </mat-form-field>
+    <button mat-icon-button
+            class="delete-customer-button"
+            (click)="removeForm(i)">
+      <i class="communication-centre-icon-delete-icon"></i>
+    </button>
+  </div>
+</ng-container>
+
+<div class="customer-list-placeholder" *ngIf="!(user || mode === addMode)"></div>
+
+<div class="details-footer form-action-buttons">
+  <button *ngIf="mode === editMode"
+          class="delete-customer-from-portal"
+          mat-icon-button type="button"
+          (click)="openConfirmDelete()">
+    <i class="communication-centre-icon-delete-icon"></i>
+  </button>
+  <button mat-raised-button type="button"
+          class="gray-button"
+          mat-dialog-close>
+    Cancel
+  </button>
+  <button mat-raised-button
+          [disabled]="userDetailsForm?.invalid
+             || roleForm?.invalid
+             || customerForms.invalid
+             || !customerForms.length
+             || loading
+             || dataLoading
+             || viewProfileLoading
+             || userDetailsForm?.pending"
+          type="button"
+          class="green-button"
+          (click)="save()">
+    Save
+  </button>
+</div>
+
+<div class="process-changes" *ngIf="processing">
+  <div class="process-changes-inner" [@fadeBoth]="''" *ngIf="savingChanges">
+    <mat-spinner [diameter]="40"></mat-spinner>
+    <p class="process-text">Saving Changes...</p>
+  </div>
+
+  <div class="process-changes-inner" [@fadeBoth]="''" *ngIf="detailsUpdated && !savingChanges">
+    <i class="communication-centre-icon-success"></i>
+    <p class="process-text">
+      User details successfully updated
+    </p>
+    <div class="confirm-delete-buttons">
+      <button mat-raised-button
+              type="button"
+              class="green-button"
+              (click)="viewProfile()">
+        View profile
+      </button>
+    </div>
+  </div>
+
+  <div class="process-changes-inner" [@fadeBoth]="''" *ngIf="creatingUser">
+    <mat-spinner [diameter]="40"></mat-spinner>
+    <p class="process-text">Creating new user...</p>
+  </div>
+
+  <div class="process-changes-inner" [@fadeBoth]="''" *ngIf="userCreated && !creatingUser">
+    <i class="communication-centre-icon-success"></i>
+    <p class="process-text">
+      User successfully added to the portal
+    </p>
+    <div class="confirm-delete-buttons">
+      <button mat-raised-button
+              type="button"
+              class="green-button"
+              (click)="viewProfile()">
+        View profile
+      </button>
+    </div>
+  </div>
+
+  <div class="process-changes-inner" [@fadeBoth]="''" *ngIf="confirmDelete">
+    <p class="confirm-text">
+      Do you want to delete {{userDetailsForm?.get('fName').value}} {{userDetailsForm?.get('lName').value}}?
+    </p>
+    <div class="confirm-delete-buttons">
+      <button mat-raised-button
+              type="button"
+              class="gray-button"
+              (click)="cancelDeleteConfirm()">
+        Cancel
+      </button>
+      <button mat-raised-button
+              type="button"
+              class="green-button"
+              (click)="deleteUser()">
+        Yes
+      </button>
+    </div>
+  </div>
+
+  <div class="process-changes-inner" [@fadeBoth]="''" *ngIf="deletingUser">
+    <mat-spinner [diameter]="40"></mat-spinner>
+    <p class="process-text">Deleting the user...</p>
+  </div>
+
+  <div class="process-changes-inner" [@fadeBoth]="''" *ngIf="userDeleted && !deletingUser">
+    <i class="communication-centre-icon-success"></i>
+    <p class="process-text">
+      User was successfully removed
+    </p>
+  </div>
+</div>

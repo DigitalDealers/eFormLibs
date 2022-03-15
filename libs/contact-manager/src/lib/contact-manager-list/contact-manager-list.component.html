@@ -1,0 +1,76 @@
+<table mat-table
+       [dataSource]="searchResult"
+       [style.height]="responsiveHeight ? ((100 / 6 * searchResult.length) + '%') : 'auto'">
+
+  <ng-container matColumnDef="UserAvatar">
+    <td mat-cell *matCellDef="let element">
+      <didi-contact-manager-avatar [customerName]="element[contactManager.contactName]"
+                                   [isActive]="element['Portal User Status'] === 'Active'">
+      </didi-contact-manager-avatar>
+    </td>
+  </ng-container>
+
+  <ng-container *ngFor="let column of columns" [cdkColumnDef]="column.columnDef">
+    <td mat-cell *cdkCellDef="let row">{{ column.cell(row) }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="SelectUser">
+    <td mat-cell *matCellDef="let element">
+      <div class="action-wrapper" *ngIf="isContactAdmin">
+        <button *ngIf="isCompanyAdmin
+                        && element[contactManager.isPortalUser] === 'Yes'
+                        && !readOnly
+                        && !settings.hideAssociatedContacts"
+                matTooltip="Associated Contacts"
+                matTooltipClass="didi-comm-centre-action-tooltip"
+                mat-icon-button
+                type="button"
+                [disableRipple]="true"
+                (click)="openAssociatedContacts(element)"
+                class="edit-contact-manager">
+          <mat-icon>list</mat-icon>
+        </button>
+        <ng-container *ngIf="false">
+          <button *ngIf="element['Portal User Status'] === 'Inactive' || element['Portal User Status'] === 'Invited'"
+                  matTooltip="Invite"
+                  matTooltipClass="didi-comm-centre-action-tooltip"
+                  mat-icon-button
+                  type="button"
+                  [disableRipple]="true"
+                  (click)="openInviteModal(element)"
+                  class="edit-contact-manager">
+            <mat-icon>mail_outline</mat-icon>
+          </button>
+        </ng-container>
+        <button *ngIf="element[contactManager.isPortalUser] === 'Yes'"
+                matTooltip="Edit"
+                matTooltipClass="didi-comm-centre-action-tooltip"
+                mat-icon-button
+                type="button"
+                [disableRipple]="true"
+                (click)="editContactManager(element)"
+                class="edit-contact-manager">
+          <mat-icon class="material-icons-outlined">edit_outline</mat-icon>
+        </button>
+        <button *ngIf="element[contactManager.isPortalUser] !== 'Yes'"
+                matTooltip="Add to portal"
+                matTooltipClass="didi-comm-centre-action-tooltip"
+                mat-icon-button
+                type="button"
+                [disableRipple]="true"
+                (click)="addContactManager(element)"
+                class="edit-contact-manager">
+          <mat-icon class="material-icons-outlined">person_add_outline</mat-icon>
+        </button>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+      [class.read-only]="readOnly"
+      [class.active-contact]="activeContact?.Email === getPortalUserEmail(row)"
+      [class.not-in-portal]="row[contactManager.isPortalUser] !== 'Yes'"
+      [style.height]="responsiveHeight ? 'auto' : '48'"
+      [@fadeIn]="'in'"
+      (click)="toggleSelectContact(row, $event)"></tr>
+</table>

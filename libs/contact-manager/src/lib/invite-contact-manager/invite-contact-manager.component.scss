@@ -1,0 +1,64 @@
+@import "../assets/mixins";
+@import "~@digitaldealers/cms-theme/style/mixins";
+
+:host {
+  display: block;
+  margin: -24px -24px;
+  @include details-header;
+  .invite-wrapper {
+    min-height: 450px;
+    position: relative;
+  }
+  .invite-changes-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  .process-text, .confirm-text {
+    font-size: 16px;
+    color: $dark-gray;
+  }
+  .confirm-text-description {
+    font-size: 14px;
+    color: $dark-gray;
+  }
+  .confirm-text-description {
+    margin-bottom: 23px;
+  }
+  .confirm-text {
+    margin-bottom: 1px;
+  }
+  .confirm-delete-buttons, .form-action-buttons {
+    .mat-raised-button {
+      @include raised-button;
+    }
+    .green-button {
+      margin-left: 10px;
+    }
+  }
+  .confirm-delete-buttons {
+    .save-button, .cancel-button {
+      font-weight: normal;
+      height: 30px;
+      line-height: 30px;
+      font-size: 13px;
+    }
+  }
+  .communication-centre-icon-success {
+    font-size: 40px;
+    margin-bottom: 25px;
+    color: $dark-blue;
+  }
+  .mat-spinner {
+    ::ng-deep circle {
+      stroke: $dark-blue !important;
+    }
+    margin-bottom: 25px;
+  }
+}
